@@ -13,13 +13,6 @@
 // ○ Per verificare che il carattere # dell’utente sia passato o meno sopra un carattere $
 // leggere direttamente dalla finestra (non usare strutture dati ausiliarie)
 
-#include <ncurses.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <time.h>
-
-#define MAX_COINS 10
-#define COIN_POINTS 10
 
 #include <ncurses.h>
 #include <unistd.h>
