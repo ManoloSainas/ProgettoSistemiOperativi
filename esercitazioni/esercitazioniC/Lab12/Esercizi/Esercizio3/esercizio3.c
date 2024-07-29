@@ -1,3 +1,12 @@
+
+// ● Codificare in C e con l’utilizzo delle ncurses un programma che:
+// ○ Utilizzi un singolo processo
+// ○ Mostri un oggetto che si muove nelle due dimensioni della finestra del terminale
+// ■ L’oggetto è definito dalla sprite di dimensione 1x5 seguente
+// <-|->
+// ○ Nel momento in cui l’oggetto colpisce un bordo:
+// ■ Rimbalza, senza uscire dalla schermata
+
 #include <unistd.h>
 #include <ncurses.h>
 #include <stdlib.h>

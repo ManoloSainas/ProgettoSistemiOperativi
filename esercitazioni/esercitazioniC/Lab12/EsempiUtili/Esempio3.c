@@ -1,3 +1,7 @@
+
+// ● Rilevamento collisione di una palla con il bordo schermo e rimbalzo su due assi
+
+
 #include <unistd.h>
 #include <ncurses.h>
 #define UDELAY 40000

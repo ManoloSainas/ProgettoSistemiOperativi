@@ -1,3 +1,7 @@
+
+// ● Spostamento di un carattere a intervalli regolari, con sola scelta della direzione
+
+
 #include <ncurses.h>
 #include <unistd.h>
 #define UDELAY 250000

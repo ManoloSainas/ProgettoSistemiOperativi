@@ -1,3 +1,6 @@
+
+// ● Rilevamento collisione di una palla con il bordo schermo (scalabile dinamicamente)
+
 #include <unistd.h>
 #include <ncurses.h>
 #define UDELAY 40000
