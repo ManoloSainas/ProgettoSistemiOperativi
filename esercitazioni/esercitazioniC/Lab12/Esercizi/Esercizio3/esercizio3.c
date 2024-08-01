@@ -11,6 +11,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
+
 #define UDELAY 40000
 #define MAXSPEED 1
 #define SPRITE_WIDTH 5
