@@ -1,0 +1,1 @@
+void ladro(int pipeout);

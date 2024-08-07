@@ -1,23 +1,19 @@
-game: main.o guard.o thief.o parent.o game.o
-    gcc main.o guard.o thief.o parent.o game.o -o game -lncurses
 
-main.o: main.c options.h
-    gcc -c main.c -o main.o
+guardiaLadro: main.o guardia.o ladro.o controllo.o
+	gcc main.o guardia.o ladro.o controllo.o -o guardiaLadro -lncurses
 
-guard.o: guard.c guard.h options.h
-    gcc -c guard.c -o guard.o
+main.o: main.c guardia.h ladro.h controllo.h
+	gcc -c main.c -o main.o 
 
-thief.o: thief.c thief.h options.h
-    gcc -c thief.c -o thief.o
+guardia.o: guardia.c guardia.h
+	gcc -c guardia.c -o guardia.o
 
-parent.o: parent.c parent.h options.h
-    gcc -c parent.c -o parent.o
+ladro.o: ladro.c ladro.h
+	gcc -c ladro.c -o ladro.o
 
-game.o: game.c options.h guard.h thief.h parent.h
-    gcc -c game.c -o game.o
+controllo.o: controllo.c controllo.h
+	gcc -c controllo.c -o controllo.o
 
 clean:
-    rm -f game
-    rm -f *.o
-
-	
+	rm guardiaLadro
+	rm *.o

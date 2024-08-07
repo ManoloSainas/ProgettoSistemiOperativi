@@ -1,5 +1,12 @@
 {
-    "files.associations": {
-        "opzioni.h": "c"
-    }
+  "files.associations": {
+    "opzioni.h": "c",
+    "main.h": "c",
+    "guard.h": "c",
+    "parent.h": "c",
+    "thief.h": "c",
+    "types.h": "c",
+    "stdlib.h": "c",
+    "signal.h": "c"
+  }
 }

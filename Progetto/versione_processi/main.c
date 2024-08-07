@@ -1,10 +1,11 @@
-#include "opzioni.h"
+// Main del programma
 
-int main(){
-    
-    inizializzazioneSchermo();
-    
-    menu();
-    
-    return 0;
+#include "main.h"
+
+int main() {
+
+  // Inizializza la grafica del gioco
+  menu_avvio();
+
+  return 0;
 }

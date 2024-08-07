@@ -1,21 +1,27 @@
-#ifndef OPTIONS_H
-#define OPTIONS_H
-
-#include <ncurses.h>
-#include <unistd.h>
+#include <curses.h>
+#include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
+#include <unistd.h>
 
-// Define characters for guard and thief
-#define GUARD '#'
-#define THIEF '$'
+#define PASSO 1     /* Entita spostamento del ladro */
+#define SU 65       /* Freccia su */
+#define GIU 66      /* Freccia giu */
+#define SINISTRA 68 /* Freccia sinistra */
+#define DESTRA 67   /* Freccia destra */
+#define MAXX 80     /* Numero di colonne dello schermo */
+#define MAXY 24     /* Numero di righe dello schermo */
 
-// Define pipe indices
-#define READ_END 0
-#define WRITE_END 1
+/* Struttura per la comunicazione tra figli e padre */
+struct pos {
+  char c; /* soggetto che invia il dato: ladro o guardia */
+  int x;  /* coordinata x */
+  int y;  /* coordinata y */
+};
 
-void initialize_screen();
-void run_game(int pipe_guard[2], int pipe_thief[2]);
-
-#endif // OPTIONS_H
+void ladro(int pipeout);
+void guardia(int pipeout);
+void controllo(int pipein);
