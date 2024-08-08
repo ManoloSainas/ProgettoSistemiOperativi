@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Librerie per la gestione dei processi e delle pipes
 #include <signal.h>
@@ -28,6 +29,9 @@
 #define TEMPO_GIOCO 60 // Tempo di gioco in secondi
 #define PUNTEGGIO 0    // Punteggio iniziale
 
+#define ALTEZZA_INFORMAZIONI 2 // Linea in cui vengono visualizzate le varie informazioni
+#define LARGEZZA_INFORMAZIONI 80 // Larghezza della barra delle informazioni
+
 // Rana
 #define RANA "><"             // Carattere rappresentante la rana
 #define LARGHEZZA_RANA 2      // Numero spazi occupato dalla rana in larghezza
@@ -47,7 +51,7 @@
 
 // Marciapiede dell'argine
 #define LARGHEZZA_MARCIPIEDE 80 // Larghezza del marciapiede
-#define ALTEZZA_MARCIPIEDE 1    // Altezza del marciapiede
+#define ALTEZZA_MARCIPIEDE 2    // Altezza del marciapiede
 
 // Fiume
 #define LARGHEZZA_FIUME 80 // Larghezza del fiume
@@ -113,5 +117,10 @@ struct posizione {
 };
 
 // Funzioni
-void menu_avvio();
+void avvia_gioco();
 void rana();
+void gioco();
+void inizializza_colori();
+void disegna_rana(int x, int y);
+void disegna_barra_inferiore();
+void disegna_marciapiede();
