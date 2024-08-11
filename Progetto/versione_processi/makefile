@@ -1,17 +1,23 @@
-frogger: main.o rana.o gioco.o grafica.o
-	gcc -g main.o rana.o gioco.o grafica.o -o frogger -lncurses
+frogger: main.o schermo.o gioco.o stampa.o gestione.o rana.o
+	gcc main.o schermo.o gioco.o stampa.o gestione.o rana.o -o frogger -lncurses
 
-main.o: main.c main.h 
-	gcc -g -c main.c -o main.o 
+main.o: main.h  main.c 
+	gcc -c main.c 
 
-rana.o: rana.c main.h
-	gcc -g -c rana.c -o rana.o 
+schermo.o: main.h schermo.c 
+	gcc -c schermo.c
 
-gioco.o: gioco.c main.h
-	gcc -g -c gioco.c -o gioco.o
+gioco.o: main.h gioco.c
+	gcc -c gioco.c
 
-grafica.o: grafica.c main.h
-	gcc -g -c grafica.c -o grafica.o
+stampa.o: main.h stampa.c
+	gcc -c stampa.c
+
+gestione.o: main.h gestione.c
+	gcc -c gestione.c
+
+rana.o: main.h rana.c
+	gcc -c rana.c
 
 clean:
 	rm frogger

@@ -1,57 +1,124 @@
 #include "main.h"
 
-void rana(int pipe_fd) {
-    initscr(); // Inizializza ncurses per il processo rana
-    noecho();
-    curs_set(FALSE);
+int indexProiettile = 0;
 
-    int max_x, max_y;
-    getmaxyx(stdscr, max_y, max_x); // Ottieni le dimensioni attuali della finestra terminale
+void rana(int pipeout)
+{
+    struct timeval start, end;
+    int tempoTrascorso, tempoRicarica = RICARICA_PROIETTILI * maxx; // Adatta la velocità di ricarica dei proiettili a seconda della dimensione dello schermo
 
-    int x = (max_x - LARGHEZZA_RANA) / 2; // Posizione iniziale X (centro in basso)
-    int y = max_y - ALTEZZA_RANA - 2;         // Posizione iniziale Y (in basso)
-    int ch;
+    tempoTrascorso = tempoRicarica + 1; // si aggiunge uno perchè altrimenti il primo proiettile non verrebbe sparato
 
-    // Invio immediato della posizione iniziale della rana
-    write(pipe_fd, &x, sizeof(int));
-    write(pipe_fd, &y, sizeof(int));
+    int pid_rana;
+    bool primoSparo = false; // True se sono stati sparati i primi proiettili
+    keypad(gioco, TRUE);
 
-    while ((ch = getch()) != 'q') {
-        if (is_term_resized(max_y, max_x)) {
-            resize_term(0, 0);
-            getmaxyx(stdscr, max_y, max_x);
+    oggetto oggetto_rana;
+    oggetto_rana.tipo = RANA;
+    oggetto_rana.x = maxx / 2;
+    oggetto_rana.y = maxy - 1;
+    oggetto_rana.pid_oggetto = getpid();
+    oggetto_rana.status = ATTIVO;
+    oggetto_rana.proiettili = TRUE;
+
+    write(pipeout, &oggetto_rana, sizeof(oggetto));
+
+    while (1)
+    {
+        if (primoSparo)
+        {
+            gettimeofday(&end, NULL);
+            tempoTrascorso = ((end.tv_sec - start.tv_sec) * 1000000) + (end.tv_usec - start.tv_usec);
+
+            // Comunica se si può sparare la prossima coppia di proiettili
+            if (tempoTrascorso > tempoRicarica)
+            {
+                oggetto_rana.proiettili = true;
+                write(pipeout, &oggetto_rana, sizeof(oggetto));
+            }
         }
 
-        // Aggiorna la posizione della rana basata sull'input dell'utente
-        switch (ch) {
-            case SU:
-                if (y - SALTO_RANA_SU >= 0) {
-                    y -= SALTO_RANA_SU;
+        wtimeout(gioco, 0); // Non aspetta l'input dell'utente
+        int inputUtente = wgetch(gioco);
+
+        switch (inputUtente)
+        {
+        case KEY_UP:
+            if (oggetto_rana.y > miny)
+                oggetto_rana.y -= SPOSTAMENTO_RANA;
+            break;
+        case KEY_DOWN:
+            if (oggetto_rana.y < maxy)
+                oggetto_rana.y += SPOSTAMENTO_RANA;
+            break;
+        case KEY_LEFT:
+            if (oggetto_rana.x > minx)
+                oggetto_rana.x -= SPOSTAMENTO_RANA;
+            break;
+        case KEY_RIGHT:
+            if (oggetto_rana.x < maxx - COLONNE_SPRITE_RANA)
+                oggetto_rana.x += SPOSTAMENTO_RANA;
+            break;
+
+        case KEY_SPACE:
+            if (tempoTrascorso > tempoRicarica)
+            {
+                if (indexProiettile > NUM_PROIETTILI_RANA)
+                    indexProiettile = 0;
+
+                pid_rana = fork();
+
+                switch (pid_rana)
+                {
+                case -1:
+                    perror("Errore nell'esecuzione della fork.");
+                    _exit(1);
+                case 0:
+                    // Processo proiettile
+                    proiettileRana(pipeout, oggetto_rana.y, oggetto_rana.x);
+                    break;
+                default:
+                    oggetto_rana.proiettili = false;
+                    indexProiettile++;
+
+                    gettimeofday(&start, NULL);
+                    primoSparo = true;
+
+                    tempoTrascorso = 0;
+                    break;
                 }
-                break;
-            case GIU:
-                if (y + SALTO_RANA_GIU < max_y-2) {
-                    y += SALTO_RANA_GIU;
-                }
-                break;
-            case SINISTRA:
-                if (x - SALTO_RANA_SINISTRA >= 6) {
-                    x -= SALTO_RANA_SINISTRA;
-                }
-                break;
-            case DESTRA:
-                if (x + SALTO_RANA_DESTRA < max_x - LARGHEZZA_RANA -6) {
-                    x += SALTO_RANA_DESTRA;
-                }
-                break;
-            default:
-                break;
+            }
         }
 
-        // Scrivi le coordinate aggiornate sulla pipe
-        write(pipe_fd, &x, sizeof(int));
-        write(pipe_fd, &y, sizeof(int));
+        // Scrittura nella pipe delle informazioni della rana
+        write(pipeout, &oggetto_rana, sizeof(oggetto));
     }
 
-    endwin();
+    _exit(1);
+}
+
+void proiettileRana(int pipeout, int pos_ranay, int pos_ranax)
+{
+    oggetto oggetto_proiettile_rana;
+
+    // Inizializzazione dei dati del proiettile
+    oggetto_proiettile_rana.tipo = PROIETTILE_RANA;
+    oggetto_proiettile_rana.x = pos_ranax;
+    oggetto_proiettile_rana.y = pos_ranay - RIGHE_SPRITE_RANA;
+    oggetto_proiettile_rana.y -= SPOSTAMENTO_X_PROIETTILI_RANA;
+    oggetto_proiettile_rana.index = indexProiettile;
+    oggetto_proiettile_rana.pid_oggetto = getpid();
+    oggetto_proiettile_rana.status = ATTIVO;
+
+    // Scrittura nella pipe delle informazioni del proiettile
+    write(pipeout, &oggetto_proiettile_rana, sizeof(oggetto));
+
+    while (1)
+    {
+        oggetto_proiettile_rana.y -= SPOSTAMENTO_Y_PROIETTILI_RANA;
+
+        usleep(SPEED_PROIETTILI);
+
+        write(pipeout, &oggetto_proiettile_rana, sizeof(oggetto));
+    }
 }

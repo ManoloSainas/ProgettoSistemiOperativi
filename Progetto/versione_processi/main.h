@@ -1,8 +1,5 @@
-// import, define, costanti, etc.
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 // Librerie per la gestione dei processi e delle pipes
 #include <signal.h>
@@ -16,111 +13,113 @@
 #include <sys/time.h> //Libreria per tenere traccia del tempo
 #include <time.h>     //Libreria per la generazione casuale
 
-#define SU 65       /* Cursore sopra */
-#define GIU 66      /* Cursore sotto */
-#define SINISTRA 68 /* Cursore sinistra */
-#define DESTRA 67   /* Cursore destra */
-#define SPAZIO ' '  // Tasto Spazio
+// Numero dati
+#define NUM_VITE_RANA 3
+#define NUM_PROIETTILI_RANA 10 // Numero proiettili visibili sullo schermo contemporaneamente
 
-#define MAXX 80 /* Dimensione dello schermo di output (colonne) */
-#define MAXY 20 /* Dimensione dello schermo di output (righe)   */
+#define KEY_SPACE 32 // Valore relativo al carattere spazio
 
-#define NUMERO_VITE 3  // Numero di vite iniziali
-#define TEMPO_GIOCO 60 // Tempo di gioco in secondi
-#define PUNTEGGIO 0    // Punteggio iniziale
+// Colori
+#define COLORE_STANDARD 1
+#define COLORE_CANCELLAZIONE 2
+#define COLORE_ROSSO 3
+#define COLORE_CIANO 4
+#define COLORE_BLU 5
+#define COLORE_VERDE 6
+#define COLORE_GIALLO 7
 
-#define ALTEZZA_INFORMAZIONI 2 // Linea in cui vengono visualizzate le varie informazioni
-#define LARGEZZA_INFORMAZIONI 80 // Larghezza della barra delle informazioni
+// Spostamento oggetti
+#define SPOSTAMENTO_RANA 1
+#define SPOSTAMENTO_X_PROIETTILI_RANA 0
+#define SPOSTAMENTO_Y_PROIETTILI_RANA 1
 
-// Rana
-#define RANA "><"             // Carattere rappresentante la rana
-#define LARGHEZZA_RANA 2      // Numero spazi occupato dalla rana in larghezza
-#define ALTEZZA_RANA 1        // Numero di spazi occupati dalla rana in altezza
-#define SALTO_RANA_SU 1       // Numero di spazi che la rana salta in alto
-#define SALTO_RANA_GIU 1      // Numero di spazi che la rana salta in basso
-#define SALTO_RANA_SINISTRA 2 // Numero di spazi che la rana salta a sinistra
-#define SALTO_RANA_DESTRA 2   // Numero di spazi che la rana salta a destra
+// Dimensione degli sprite
+#define RIGHE_SPRITE_RANA 1
+#define COLONNE_SPRITE_RANA 2
 
-// Proiettile sparato dalla rana
-#define PROIETTILE_RANA                                                        \
-  "^" // Carattere rappresentante il proiettile sparato dalla rana
-#define LARGHEZZA_PROIETTILE                                                   \
-  1 // Numero spazi occupato dal proiettile in larghezza
-#define ALTEZZA_PROIETTILE 1  // Numero spazi occupati dal proiettile in altezza
-#define VELOCITA_PROIETTILE 1 // Velocità di spostamento del proiettile
+#define RIGHE_SPRITE_PROIETTILE_RANA 1
+#define COLONNE_SPRITE_PROIETTILE_RANA 1
 
-// Marciapiede dell'argine
-#define LARGHEZZA_MARCIPIEDE 80 // Larghezza del marciapiede
-#define ALTEZZA_MARCIPIEDE 2    // Altezza del marciapiede
+#define RICARICA_PROIETTILI 9000
+#define SPEED_PROIETTILI 50000
 
-// Fiume
-#define LARGHEZZA_FIUME 80 // Larghezza del fiume
-#define ALTEZZA_FIUME                                                          \
-  8 // Altezza del fiume, formato da 8 flussi d'acqua di altezza 1
+// Definizione degli sprite
+extern char spriteRana[COLONNE_SPRITE_RANA + 1];
+extern char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE_RANA + 1];
 
-// Coccodrillo
-#define COCCODRILLO "====" // Carattere rappresentante il coccodrillo
-#define LARGHEZZA_COCCODRILLO                                                  \
-  4 // Numero spazi occupato dal coccodrillo in larghezza
-#define ALTEZZA_COCCODRILLO                                                    \
-  1 // Numero spazi occupati dal coccodrillo in altezza
-#define VELOCITA_COCCODRILLO 1 // Velocità di spostamento del coccodrillo
-#define COCCODRILLO_SPARISCE                                                   \
-  "-==-" // Carattere rappresentante il coccodrillo mentre sta sparendo
-#define COCCODRILLO_SPARITO                                                    \
-  "    " // Carattere rappresentante il coccodrillo sparito
+// Tipologia di oggetto presente su schermo
+typedef enum tipoOggetto
+{
+    RANA,
+    COCCODRILLO,
+    PIANTA,
+    PROIETTILE_RANA,
+    PROIETTILE_PIANTA
+} tipoOggetto;
 
-// velocità casuale dei coccodrilli
-#define VELOCITA_MIN_COCCODRILLO                                               \
-  1 // Velocità minima di spostamento del coccodrillo
-#define VELOCITA_MAX_COCCODRILLO                                               \
-  3 // Velocità massima di spostamento del coccodrillo
+// Tipologia per distinguere le modalità di utilizzo della pipe
+typedef enum tipoDescrittore
+{
+    LETTURA,
+    SCRITTURA
+} tipoDescrittore;
 
-// la generazione dei coccodrilli avviene utilizzando degli intervalli di tempo
-// casuale
-#define INTERVALLO_MIN_COCCODRILLO                                             \
-  1 // Intervallo minimo di tempo per la generazione
-#define INTERVALLO_MAX_COCCODRILLO                                             \
-  5 // Intervallo massimo di tempo per la generazione
+// Distingue un'oggetto in funzione tra un oggetto non in funzione
+typedef enum statusOggetto
+{
+    NON_ATTIVO,
+    ATTIVO,
+    TERMINATO
+} statusOggetto;
 
-// Sponde d'erba
-#define LARGHEZZA_ERBA 80 // Larghezza del prato
-#define ALTEZZA_ERBA 2    // Altezza del prato
+// Informazioni sugli oggetti presenti su schermo
+typedef struct oggetto
+{
+    tipoOggetto tipo;     // Tipologia
+    int x;                // Posizione x
+    int y;                // Posizione y
+    int index;            // Indice in caso di oggetti multipli uguali
+    int pid_oggetto;      // Pid del processo che gestisce l'oggetto
+    statusOggetto status; // Informa lo status dell'oggetto
+    bool proiettili;      // Contiene i proiettili dell'oggetto (se è un oggetto che spara)
+} oggetto;
 
-// Piante malvagie
-#define PIANTA_MALVAGIA "@@" // Carattere rappresentante la pianta malvagia
-#define LARGHEZZA_PIANTA                                                       \
-  2 // Numero spazi occupato dalla pianta malvagia in larghezza
-#define ALTEZZA_PIANTA                                                         \
-  1 // Numero spazi occupati dalla pianta malvagia in altezza
-#define NUMERO_PIANTE 3 // Numero di piante malvagie
+// Variabili globali
 
-// Proiettile sparato dalla pianta
-#define PROIETTILE_PIANTA                                                      \
-  "|" // Carattere rappresentante il proiettile sparato dalla pianta
-#define LARGHEZZA_PROIETTILE                                                   \
-  1 // Numero spazi occupato dal proiettile in larghezza
-#define ALTEZZA_PROIETTILE 1  // Numero spazi occupati dal proiettile in altezza
-#define VELOCITA_PROIETTILE 1 // Velocità di spostamento del proiettile
+// Coordinate dell'area di gioco
+extern int minx, miny;
+extern int maxx, maxy;
 
-// Tane
-#define LARGHEZZA_TANA 2 // Numero spazi occupato dalla tana in larghezza
-#define ALTEZZA_TANA 1   // Numero spazi occupati dalla tana in altezza
-#define NUMERO_TANE 5    // Numero di tane
-#define TANA_CHIUSA "X"  // Carattere rappresentante la tana chiusa
+extern int indexProiettileRana; // Contiene l'indice di ogni coppia di proiettile
 
-/* Struttura adoperata per veicolare le coordinate */
-struct posizione {
-  char c; /* Identificatore dell'entità che invia i dati */
-  int x;  /* Coordinata X */
-  int y;  /* Coordinata Y */
-};
+extern bool vittoria; // True se il giocatore ha vinto, False altrimenti
 
-// Funzioni
-void avvia_gioco();
-void rana();
-void gioco();
-void inizializza_colori();
-void disegna_rana(int x, int y);
-void disegna_barra_inferiore();
-void disegna_marciapiede();
+// int coccodrilliRimasti; // Contatore di nemici rimanenti
+
+extern int numCoccodrilli; // Numero di coccodrilli presenti sullo schermo
+extern int numPiante;      // Numero di piante presenti sullo schermo
+
+// Schermo ncurses
+extern WINDOW *gioco;
+
+// Definizione funzioni
+void inizializzazioneSchermo();
+void avviaGioco();
+void terminaGioco();
+void inizializzazionePipe(int filedes[]);
+
+void rana(int pipeout);
+void coccodrillo(int pipeout);
+void pianta(int pipeout);
+void proiettileRana(int pipeout, int pos_ranay, int pos_ranax);
+void proiettilePianta(int pipeout);
+
+void controlloGioco(int pipein);
+void terminaGioco();
+
+void resettaOggetto(oggetto *oggetto);
+void initOggetto(oggetto *oggetto);
+void chiudiProcessi(oggetto *proiettileRana, oggetto *rana);
+
+void stampaSprite(oggetto sprite, int viteRana);
+void cancellaSprite(oggetto sprite);

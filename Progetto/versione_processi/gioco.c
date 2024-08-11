@@ -1,62 +1,111 @@
 #include "main.h"
 
-void gioco(int pipe_fd) {
-    int x, y;
-    int vite = NUMERO_VITE;
-    int tempo = TEMPO_GIOCO;
+// Inizializzazione Pipe
+void inizializzazionePipe(int filedes[])
+{
+    if (pipe(filedes) == -1)
+    {
+        perror("Errore nella creazione della pipe");
+        _exit(1);
+    }
+}
 
-    initscr(); // Inizializza ncurses per il processo di gioco
-    noecho();
-    curs_set(FALSE);
+void avviaGioco()
+{
+    wrefresh(gioco);
 
-    inizializza_colori();
-    
-    // Leggi le coordinate iniziali dalla pipe
-    if (read(pipe_fd, &x, sizeof(int)) <= 0) return;
-    if (read(pipe_fd, &y, sizeof(int)) <= 0) return;
+    int filedes[2]; // Dichiarazione file descriptor per lavorare con le pipe
+    int pid_gioco;  // Dichiarazione variabile utile all'utilizzo di più processi
 
-    
+    inizializzazionePipe(filedes);
 
+    pid_gioco = fork(); // Creazione di un processo figlio
 
-    // Disegna la barra inferiore con le vite e il tempo
-    disegna_barra_inferiore(vite, tempo);
-
-    // Disegna il marciapiede di partenza
-    disegna_marciapiede();
-
-
-    // Disegna la rana nella posizione iniziale
-    disegna_rana(x, y);
-    refresh();
-
-    while (1) {
-        // Aggiorna il tempo
-        tempo -= 1;
-
-        // Pulisci lo schermo
-        clear();
-
-        // Leggi le coordinate aggiornate dalla pipe
-        if (read(pipe_fd, &x, sizeof(int)) <= 0) break;
-        if (read(pipe_fd, &y, sizeof(int)) <= 0) break;
-
-       
-
-       
-        // Aggiorna la barra inferiore con le vite e il tempo
-        disegna_barra_inferiore(vite, tempo);
-
-        disegna_marciapiede();
-
-         // Disegna la rana alle coordinate ricevute
-        disegna_rana(x, y);
-
-
-        // Aggiorna lo schermo
-        refresh();
-
-     
+    switch (pid_gioco)
+    {
+    case -1:
+        perror("Errore nella creazione del processo");
+        _exit(1);
+        break;
+    case 0:
+        close(filedes[LETTURA]);
+        // Processo rana
+        rana(filedes[SCRITTURA]);
+        break;
+    default:
+        close(filedes[SCRITTURA]);
+        controlloGioco(filedes[LETTURA]);
     }
 
-    endwin(); // Chiudi correttamente ncurses
+    // chiusura del gioco
+    terminaGioco();
+}
+
+// Funzione per la stampa degli oggetti e il controllo delle collisioni
+void controlloGioco(int pipein)
+{
+    oggetto valoreLetto; // Conterrà il valore letto nella pipe
+
+    // Dichiarazione delle variabili che conterranno la posizione e le altre informazioni di tutti gli elementi del gioco
+    oggetto rana, proiettileRana[NUM_PROIETTILI_RANA];
+
+    int viteRana; // Variabile che conterrà il numero di vite della rana
+
+    int i;
+
+    initOggetto(&rana);
+    viteRana = NUM_VITE_RANA;
+
+    for (i = 0; i < NUM_PROIETTILI_RANA; i++)
+    {
+        initOggetto(&proiettileRana[i]);
+    }
+
+    do
+    {
+        // Legge dalla pipe
+        read(pipein, &valoreLetto, sizeof(valoreLetto));
+
+        switch (valoreLetto.tipo)
+        {
+        case RANA:
+            if (rana.status == ATTIVO)
+                cancellaSprite(rana);
+
+            rana = valoreLetto;
+            break;
+        case PROIETTILE_RANA:
+            if (proiettileRana[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(proiettileRana[valoreLetto.index]);
+
+            proiettileRana[valoreLetto.index] = valoreLetto;
+            break;
+        }
+
+        // Visualizza l'oggetto nella posizione aggiornata
+        wattroff(gioco, COLOR_PAIR(COLORE_STANDARD));
+        if (valoreLetto.status != TERMINATO)
+        {
+            stampaSprite(valoreLetto, viteRana);
+        }
+        else
+        {
+            cancellaSprite(valoreLetto);
+        }
+        curs_set(0);
+
+        wrefresh(gioco);
+
+    } while (viteRana > 0);
+
+    chiudiProcessi(proiettileRana, &rana);
+}
+
+// Funzione per la terminazione del gioco
+void terminaGioco()
+{
+
+    delwin(gioco);           // Elimina la finestra
+    system("killall aplay"); // Termina eventuali suoni
+    endwin();                // Termina ncurses
 }
