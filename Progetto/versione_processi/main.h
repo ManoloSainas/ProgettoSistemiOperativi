@@ -16,6 +16,10 @@
 // Numero dati
 #define NUM_VITE_RANA 3
 #define NUM_PROIETTILI_RANA 10 // Numero proiettili visibili sullo schermo contemporaneamente
+#define NUM_TANE 5
+
+// Tempo di gioco
+#define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
 #define KEY_SPACE 32 // Valore relativo al carattere spazio
 
@@ -27,11 +31,18 @@
 #define COLORE_BLU 5
 #define COLORE_VERDE 6
 #define COLORE_GIALLO 7
+#define SFONDO_ARGINE 8
+#define SFONDO_ACQUA 9
+#define SFONDO_TANE 10
+#define COLORE_TANE 11
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
 #define SPOSTAMENTO_X_PROIETTILI_RANA 0
 #define SPOSTAMENTO_Y_PROIETTILI_RANA 1
+
+#define SPOSTAMENTO_X_COCCODRILLO 1
+#define SPOSTAMENTO_Y_COCCODRILLO 0
 
 // Dimensione degli sprite
 #define RIGHE_SPRITE_RANA 1
@@ -40,12 +51,16 @@
 #define RIGHE_SPRITE_PROIETTILE_RANA 1
 #define COLONNE_SPRITE_PROIETTILE_RANA 1
 
+#define RIGHE_SPRITE_COCCODRILLO 1
+#define COLONNE_SPRITE_COCCODRILLO 4
+
 #define RICARICA_PROIETTILI 9000
-#define SPEED_PROIETTILI 50000
+#define SPEED_PROIETTILI 60000
 
 // Definizione degli sprite
 extern char spriteRana[COLONNE_SPRITE_RANA + 1];
 extern char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE_RANA + 1];
+extern char spriteCoccodrillo[COLONNE_SPRITE_COCCODRILLO + 1];
 
 // Tipologia di oggetto presente su schermo
 typedef enum tipoOggetto
@@ -90,7 +105,7 @@ typedef struct oggetto
 extern int minx, miny;
 extern int maxx, maxy;
 
-extern int indexProiettileRana; // Contiene l'indice di ogni coppia di proiettile
+extern int indexProiettileRana; // Contiene l'indice del proiettile
 
 extern bool vittoria; // True se il giocatore ha vinto, False altrimenti
 
@@ -115,6 +130,7 @@ void proiettileRana(int pipeout, int pos_ranay, int pos_ranax);
 void proiettilePianta(int pipeout);
 
 void controlloGioco(int pipein);
+void visualizzaTimer(int tempoRimanente);
 void terminaGioco();
 
 void resettaOggetto(oggetto *oggetto);
@@ -123,3 +139,4 @@ void chiudiProcessi(oggetto *proiettileRana, oggetto *rana);
 
 void stampaSprite(oggetto sprite, int viteRana);
 void cancellaSprite(oggetto sprite);
+void graficaGioco();

@@ -44,59 +44,74 @@ void avviaGioco()
 // Funzione per la stampa degli oggetti e il controllo delle collisioni
 void controlloGioco(int pipein)
 {
-    oggetto valoreLetto; // Conterrà il valore letto nella pipe
+    int viteRana = NUM_VITE_RANA;      // Inizializza le vite della rana
+    int tempoRimanente = TEMPO_TOTALE; // Timer iniziale
+    time_t inizioTempo = time(NULL);   // Memorizza il tempo di inizio
 
-    // Dichiarazione delle variabili che conterranno la posizione e le altre informazioni di tutti gli elementi del gioco
+    oggetto valoreLetto; // Conterrà il valore letto nella pipe
     oggetto rana, proiettileRana[NUM_PROIETTILI_RANA];
 
-    int viteRana; // Variabile che conterrà il numero di vite della rana
-
-    int i;
-
     initOggetto(&rana);
-    viteRana = NUM_VITE_RANA;
 
-    for (i = 0; i < NUM_PROIETTILI_RANA; i++)
+    for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
     {
         initOggetto(&proiettileRana[i]);
     }
 
     do
     {
-        // Legge dalla pipe
-        read(pipein, &valoreLetto, sizeof(valoreLetto));
-
-        switch (valoreLetto.tipo)
+        // Aggiorna il timer
+        time_t tempoAttuale = time(NULL);
+        if (difftime(tempoAttuale, inizioTempo) >= 1) // Se è passato un secondo
         {
-        case RANA:
-            if (rana.status == ATTIVO)
-                cancellaSprite(rana);
+            tempoRimanente--;           // Decrementa il contatore
+            inizioTempo = tempoAttuale; // Aggiorna il tempo di inizio
 
-            rana = valoreLetto;
-            break;
-        case PROIETTILE_RANA:
-            if (proiettileRana[valoreLetto.index].status == ATTIVO)
+            // Se il tempo è scaduto
+            if (tempoRimanente <= 0)
+            {
+                viteRana--; // Decrementa le vite della rana
+                // Ripristina il timer
+                tempoRimanente = TEMPO_TOTALE;
+            }
+        }
+
+        // Legge dalla pipe
+        if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
+        {
+            // Cancella lo sprite attuale
+            if (valoreLetto.tipo == RANA && rana.status == ATTIVO)
+                cancellaSprite(rana);
+            else if (valoreLetto.tipo == PROIETTILE_RANA && proiettileRana[valoreLetto.index].status == ATTIVO)
                 cancellaSprite(proiettileRana[valoreLetto.index]);
 
-            proiettileRana[valoreLetto.index] = valoreLetto;
-            break;
+            // Aggiorna l'oggetto con il nuovo valore
+            if (valoreLetto.tipo == RANA)
+            {
+                rana = valoreLetto;
+            }
+            else if (valoreLetto.tipo == PROIETTILE_RANA)
+            {
+                proiettileRana[valoreLetto.index] = valoreLetto;
+            }
+
+            // Stampa lo sfondo e tutti gli oggetti
+            graficaGioco(viteRana, tempoRimanente);
+
+            // Visualizza gli oggetti
+            if (rana.status != TERMINATO)
+                stampaSprite(rana, viteRana);
+            for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
+            {
+                if (proiettileRana[i].status != TERMINATO)
+                    stampaSprite(proiettileRana[i], viteRana);
+            }
+
+            curs_set(0);
+            wrefresh(gioco);
         }
 
-        // Visualizza l'oggetto nella posizione aggiornata
-        wattroff(gioco, COLOR_PAIR(COLORE_STANDARD));
-        if (valoreLetto.status != TERMINATO)
-        {
-            stampaSprite(valoreLetto, viteRana);
-        }
-        else
-        {
-            cancellaSprite(valoreLetto);
-        }
-        curs_set(0);
-
-        wrefresh(gioco);
-
-    } while (viteRana > 0);
+    } while (viteRana > 0); // Continua finché ci sono vite
 
     chiudiProcessi(proiettileRana, &rana);
 }
@@ -104,7 +119,6 @@ void controlloGioco(int pipein)
 // Funzione per la terminazione del gioco
 void terminaGioco()
 {
-
     delwin(gioco);           // Elimina la finestra
     system("killall aplay"); // Termina eventuali suoni
     endwin();                // Termina ncurses

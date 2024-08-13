@@ -3,6 +3,7 @@
 // Dichiarazione degli sprite
 char spriteRana[COLONNE_SPRITE_RANA + 1] = "><";
 char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE_RANA + 1] = "^";
+char spriteCoccodrillo[COLONNE_SPRITE_COCCODRILLO + 1] = "====";
 
 // stampa lo sprite dell'oggetto che viene passato durante l'invocazione
 void stampaSprite(oggetto sprite, int viteRana)
@@ -12,18 +13,17 @@ void stampaSprite(oggetto sprite, int viteRana)
     switch (sprite.tipo)
     {
     case RANA:
-
-        wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
-
+        wattron(gioco, COLOR_PAIR(COLORE_GIALLO)); // Colore della rana
         for (i = 0; i < COLONNE_SPRITE_RANA; i++)
         {
-            mvwprintw(gioco, sprite.y, sprite.x + i, "%c", spriteRana[i]);
+            mvwprintw(gioco, sprite.y, sprite.x + i, "%c", spriteRana[i]); // Stampa la rana
         }
+        wattroff(gioco, COLOR_PAIR(COLORE_GIALLO)); // Disattiva il colore della rana
         break;
     case PROIETTILE_RANA:
-
-        wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
-        mvwprintw(gioco, sprite.y, sprite.x, "%s", spriteProiettileRana);
+        wattron(gioco, COLOR_PAIR(COLORE_ROSSO));                         // Colore del proiettile
+        mvwprintw(gioco, sprite.y, sprite.x, "%s", spriteProiettileRana); // Stampa il proiettile
+        wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));                        // Disattiva il colore del proiettile
         break;
     }
 }
@@ -32,18 +32,86 @@ void cancellaSprite(oggetto sprite)
 {
     int i;
 
-    wattron(gioco, COLOR_PAIR(COLORE_CANCELLAZIONE));
-
     switch (sprite.tipo)
     {
     case RANA:
+        // Sovrascrivi l'area della rana con spazi
         for (i = 0; i < COLONNE_SPRITE_RANA; i++)
         {
-            mvwprintw(gioco, sprite.y, sprite.x + i, "%c", spriteRana[i]);
+            mvwprintw(gioco, sprite.y, sprite.x + i, " "); // Cancella con spazi
         }
         break;
     case PROIETTILE_RANA:
-        mvwprintw(gioco, sprite.y, sprite.x, "%s", spriteProiettileRana);
+        mvwprintw(gioco, sprite.y, sprite.x, " "); // Cancella il proiettile
         break;
     }
+}
+// Funzione per stampare lo sfondo del gioco e le varie informazioni
+void graficaGioco(int viteRana, int tempoRimanente)
+{
+    int numeroTane = NUM_TANE;
+    int spazioTraTane = maxx / (numeroTane + 1);
+
+    // Pulizia dello sfondo
+    wattron(gioco, COLOR_PAIR(SFONDO_ARGINE));
+    for (int i = 1; i < maxx; i++)
+    {
+        mvwprintw(gioco, maxy - 1, i, " ");
+    }
+    wattroff(gioco, COLOR_PAIR(SFONDO_ARGINE));
+
+    wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
+    for (int i = 1; i < maxx; i++)
+    {
+        for (int j = maxy - 9; j < maxy - 1; j++)
+        {
+            mvwprintw(gioco, j, i, " ");
+        }
+    }
+    wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
+
+    wattron(gioco, COLOR_PAIR(SFONDO_ARGINE));
+    for (int i = 1; i < maxx; i++)
+    {
+        for (int j = maxy - 11; j < maxy - 9; j++)
+        {
+            mvwprintw(gioco, j, i, " ");
+        }
+    }
+    wattroff(gioco, COLOR_PAIR(SFONDO_ARGINE));
+
+    wattron(gioco, COLOR_PAIR(SFONDO_TANE));
+    for (int i = 1; i < maxx; i++)
+    {
+        for (int j = maxy - 13; j < maxy - 11; j++)
+        {
+            mvwprintw(gioco, j, i, " ");
+        }
+    }
+    wattroff(gioco, COLOR_PAIR(SFONDO_TANE));
+
+    // Stampa delle tane, equidistanti tra loro, nella riga di coordinate y=maxy-12
+    wattron(gioco, COLOR_PAIR(COLORE_TANE));
+    for (int i = 1; i <= numeroTane; i++)
+    {
+        mvwprintw(gioco, maxy - 12, i * spazioTraTane + 2, "  ");
+    }
+    wattroff(gioco, COLOR_PAIR(COLORE_TANE));
+
+    // Stampa delle informazioni
+    wattron(gioco, COLOR_PAIR(COLORE_STANDARD));
+    mvwprintw(gioco, maxy - 17, 3, "Vite rana: ");
+    mvwprintw(gioco, maxy - 15, 3, "Tempo rimasto: ");
+    mvwprintw(gioco, maxy - 16, maxx / 2 + 2, "Punteggio: ");
+    wattroff(gioco, COLOR_PAIR(COLORE_STANDARD));
+
+    wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
+    mvwprintw(gioco, maxy - 17, 14, "%d", viteRana);
+
+    // Cancella prima il numero di tempo rimasto per evitare sovrapposizioni
+    mvwprintw(gioco, maxy - 15, 18, "  ");                 // Spazi per cancellare il numero precedente
+    mvwprintw(gioco, maxy - 15, 18, "%d", tempoRimanente); // Stampa il nuovo tempo rimanente
+
+    mvwprintw(gioco, maxy - 16, maxx / 2 + 13, "%d", 122);
+    wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
 }

@@ -44,11 +44,11 @@ void rana(int pipeout)
         switch (inputUtente)
         {
         case KEY_UP:
-            if (oggetto_rana.y > miny)
+            if (oggetto_rana.y > miny + 6)
                 oggetto_rana.y -= SPOSTAMENTO_RANA;
             break;
         case KEY_DOWN:
-            if (oggetto_rana.y < maxy)
+            if (oggetto_rana.y < maxy - 1)
                 oggetto_rana.y += SPOSTAMENTO_RANA;
             break;
         case KEY_LEFT:

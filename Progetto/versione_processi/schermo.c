@@ -38,4 +38,9 @@ void inizializzazioneSchermo()
     init_pair(COLORE_BLU, COLOR_BLUE, COLOR_BLACK);
     init_pair(COLORE_VERDE, COLOR_GREEN, COLOR_BLACK);
     init_pair(COLORE_GIALLO, COLOR_YELLOW, COLOR_BLACK);
+
+    init_pair(SFONDO_ARGINE, COLOR_MAGENTA, COLOR_MAGENTA); // Colore dell'argine, superiore e inferiore
+    init_pair(SFONDO_ACQUA, COLOR_BLUE, COLOR_BLUE);        // Colore dell'acqua
+    init_pair(SFONDO_TANE, COLOR_GREEN, COLOR_GREEN);       // Colore delle tane
+    init_pair(COLORE_TANE, COLOR_RED, COLOR_WHITE);         // Colore del testo delle tane
 }
