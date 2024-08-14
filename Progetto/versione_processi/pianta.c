@@ -4,10 +4,13 @@ void pianta(int pipeout, int indice)
 {
     oggetto pianta;
 
+    srand(time(NULL)); // Inizializza il generatore di numeri casuali
+
     // Inizializzazione pianta
     pianta.tipo = PIANTA;
-    pianta.x = rand() % (maxx - COLONNE_SPRITE_PIANTA); // Posizione casuale x
-    pianta.y = maxy - 11;                               // Posizionata sulla sponda d'erba
+    // la posizione x dev'essere casuale all'interno della finestra di gioco
+    pianta.x = minx + (rand() % (maxx - minx - 10)); // Posizione casuale
+    pianta.y = maxy - 11;                            // Posizionata sulla sponda d'erba
     pianta.status = ATTIVO;
     pianta.pid_oggetto = getpid();
     pianta.index = indice;

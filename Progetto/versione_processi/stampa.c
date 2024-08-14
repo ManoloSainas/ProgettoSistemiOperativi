@@ -12,6 +12,12 @@ void stampaSprite(oggetto sprite)
 {
     int i;
 
+    // Evita di stampare la rana nelle coordinate (0, 0) se non è intenzionale
+    if (sprite.x == 0 && sprite.y == 0 && sprite.tipo == RANA)
+    {
+        return;
+    }
+
     switch (sprite.tipo)
     {
     case RANA:

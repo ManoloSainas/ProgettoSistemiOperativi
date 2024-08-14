@@ -21,7 +21,7 @@ void rana(int pipeout)
     oggetto_rana.status = ATTIVO;
     oggetto_rana.proiettili = TRUE;
 
-    write(pipeout, &oggetto_rana, sizeof(oggetto));
+    // write(pipeout, &oggetto_rana, sizeof(oggetto));
 
     while (1)
     {

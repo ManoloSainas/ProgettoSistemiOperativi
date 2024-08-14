@@ -37,17 +37,16 @@ void avviaGioco()
         for (int i = 0; i < NUM_PIANTE; i++)
         {
             pid_gioco = fork();
-            switch (pid_gioco)
+            if (pid_gioco == -1)
             {
-            case -1:
-                perror("Errore nella creazione del processo per le piante");
+                perror("Errore nella creazione del processo per la pianta");
                 _exit(1);
-                break;
-            case 0:
+            }
+            else if (pid_gioco == 0)
+            {
                 close(filedes[LETTURA]);
-                pianta(filedes[SCRITTURA], i); // Pass the plant index
+                pianta(filedes[SCRITTURA], i);
                 _exit(0);
-                break;
             }
         }
         close(filedes[SCRITTURA]);
