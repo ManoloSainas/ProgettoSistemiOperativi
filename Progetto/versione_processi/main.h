@@ -17,6 +17,7 @@
 #define NUM_VITE_RANA 3
 #define NUM_PROIETTILI_RANA 10 // Numero proiettili visibili sullo schermo contemporaneamente
 #define NUM_TANE 5
+#define NUM_PIANTE 3
 
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
@@ -31,10 +32,13 @@
 #define COLORE_BLU 5
 #define COLORE_VERDE 6
 #define COLORE_GIALLO 7
-#define SFONDO_ARGINE 8
-#define SFONDO_ACQUA 9
-#define SFONDO_TANE 10
-#define COLORE_TANE 11
+#define COLORE_MAGENTA 8
+
+#define SFONDO_ARGINE 9
+#define SFONDO_ACQUA 10
+#define SFONDO_TANE 11
+#define COLORE_TANE 12
+#define COLORE_PIANTA 13
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
@@ -43,6 +47,9 @@
 
 #define SPOSTAMENTO_X_COCCODRILLO 1
 #define SPOSTAMENTO_Y_COCCODRILLO 0
+
+#define SPOSTAMENTO_X_PROIETTILI_PIANTA 0
+#define SPOSTAMENTO_Y_PROIETTILI_PIANTA 1
 
 // Dimensione degli sprite
 #define RIGHE_SPRITE_RANA 1
@@ -54,13 +61,25 @@
 #define RIGHE_SPRITE_COCCODRILLO 1
 #define COLONNE_SPRITE_COCCODRILLO 4
 
+#define RIGHE_SPRITE_PIANTA 1
+#define COLONNE_SPRITE_PIANTA 2
+
+#define RIGHE_SPRITE_PROIETTILE_PIANTA 1
+#define COLONNE_SPRITE_PROIETTILE_PIANTA 1
+
+// Gestione proiettili
 #define RICARICA_PROIETTILI 9000
 #define SPEED_PROIETTILI 60000
+
+// Distanza tra piante
+#define DISTANZA_PIANTE 2
 
 // Definizione degli sprite
 extern char spriteRana[COLONNE_SPRITE_RANA + 1];
 extern char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE_RANA + 1];
 extern char spriteCoccodrillo[COLONNE_SPRITE_COCCODRILLO + 1];
+extern char spritePianta[COLONNE_SPRITE_PIANTA + 1];
+extern char spriteProiettilePianta[COLONNE_SPRITE_PROIETTILE_PIANTA + 1];
 
 // Tipologia di oggetto presente su schermo
 typedef enum tipoOggetto
@@ -125,9 +144,9 @@ void inizializzazionePipe(int filedes[]);
 
 void rana(int pipeout);
 void coccodrillo(int pipeout);
-void pianta(int pipeout);
+void pianta(int pipeout, int indice);
 void proiettileRana(int pipeout, int pos_ranay, int pos_ranax);
-void proiettilePianta(int pipeout);
+void proiettilePianta(int pipeout, int pos_pianty, int pos_piantax, int index_pianta);
 
 void controlloGioco(int pipein);
 void visualizzaTimer(int tempoRimanente);
@@ -135,8 +154,8 @@ void terminaGioco();
 
 void resettaOggetto(oggetto *oggetto);
 void initOggetto(oggetto *oggetto);
-void chiudiProcessi(oggetto *proiettileRana, oggetto *rana);
+void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, oggetto *proiettilePianta);
 
-void stampaSprite(oggetto sprite, int viteRana);
+void stampaSprite(oggetto sprite);
 void cancellaSprite(oggetto sprite);
 void graficaGioco();

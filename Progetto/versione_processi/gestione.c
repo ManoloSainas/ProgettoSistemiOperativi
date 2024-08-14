@@ -14,22 +14,63 @@ void initOggetto(oggetto *oggetto)
     oggetto->status = NON_ATTIVO;
 }
 
-void chiudiProcessi(oggetto *proiettileRana, oggetto *rana)
+void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, oggetto *proiettilePianta)
 {
     int i;
 
+    // Check if the pointers are not null
+    if (proiettiliRana == NULL || rana == NULL || piante == NULL)
+    {
+        fprintf(stderr, "Errore: puntatore nullo passato a chiudiProcessi\n");
+        return;
+    }
+
+    // Terminate active projectile processes
     for (i = 0; i < NUM_PROIETTILI_RANA; i++)
     {
-        if (proiettileRana[i].status == ATTIVO)
+        if (proiettiliRana[i].status == ATTIVO)
         {
-            kill(proiettileRana[i].pid_oggetto, SIGKILL);
-            proiettileRana[i].status = TERMINATO;
+            if (kill(proiettiliRana[i].pid_oggetto, SIGKILL) == -1)
+            {
+                perror("Errore nel terminare il processo del proiettile");
+            }
+            proiettiliRana[i].status = TERMINATO;
         }
     }
 
+    // Terminate the frog process if active
     if (rana->status == ATTIVO)
     {
-        kill(rana->pid_oggetto, SIGKILL);
+        if (kill(rana->pid_oggetto, SIGKILL) == -1)
+        {
+            perror("Errore nel terminare il processo della rana");
+        }
         rana->status = TERMINATO;
+    }
+
+    // Terminate active plant processes
+    for (i = 0; i < NUM_PIANTE; i++)
+    {
+        if (piante[i].status == ATTIVO)
+        {
+            if (kill(piante[i].pid_oggetto, SIGKILL) == -1)
+            {
+                perror("Errore nel terminare il processo della pianta");
+            }
+            piante[i].status = TERMINATO;
+        }
+    }
+
+    // Terminate actove bullets plants processes
+    for (i = 0; i < NUM_PIANTE; i++)
+    {
+        if (proiettilePianta[i].status == ATTIVO)
+        {
+            if (kill(piante[i].pid_oggetto, SIGKILL) == -1)
+            {
+                perror("Errore nel terminare il processo del proiettile della pianta");
+            }
+            proiettilePianta[i].status = TERMINATO;
+        }
     }
 }

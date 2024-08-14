@@ -1,6 +1,6 @@
 #include "main.h"
 
-// Inizializzazione Pipe
+// Function to initialize a pipe
 void inizializzazionePipe(int filedes[])
 {
     if (pipe(filedes) == -1)
@@ -14,42 +14,60 @@ void avviaGioco()
 {
     wrefresh(gioco);
 
-    int filedes[2]; // Dichiarazione file descriptor per lavorare con le pipe
-    int pid_gioco;  // Dichiarazione variabile utile all'utilizzo di più processi
+    int filedes[2]; // File descriptors for the pipe
+    int pid_gioco;  // Process ID for the game processes
 
     inizializzazionePipe(filedes);
 
-    pid_gioco = fork(); // Creazione di un processo figlio
-
+    // Create process for the frog
+    pid_gioco = fork();
     switch (pid_gioco)
     {
     case -1:
-        perror("Errore nella creazione del processo");
+        perror("Errore nella creazione del processo per la rana");
         _exit(1);
         break;
     case 0:
         close(filedes[LETTURA]);
-        // Processo rana
         rana(filedes[SCRITTURA]);
+        _exit(0);
         break;
     default:
+        // Create processes for each plant
+        for (int i = 0; i < NUM_PIANTE; i++)
+        {
+            pid_gioco = fork();
+            switch (pid_gioco)
+            {
+            case -1:
+                perror("Errore nella creazione del processo per le piante");
+                _exit(1);
+                break;
+            case 0:
+                close(filedes[LETTURA]);
+                pianta(filedes[SCRITTURA], i); // Pass the plant index
+                _exit(0);
+                break;
+            }
+        }
         close(filedes[SCRITTURA]);
+        // The parent process will now control the game
         controlloGioco(filedes[LETTURA]);
     }
 
-    // chiusura del gioco
+    // Close the game
     terminaGioco();
 }
 
-// Funzione per la stampa degli oggetti e il controllo delle collisioni
+// Function to control the game, print objects, and check for collisions
 void controlloGioco(int pipein)
 {
-    int viteRana = NUM_VITE_RANA;      // Inizializza le vite della rana
-    int tempoRimanente = TEMPO_TOTALE; // Timer iniziale
-    time_t inizioTempo = time(NULL);   // Memorizza il tempo di inizio
+    int viteRana = NUM_VITE_RANA;      // Initialize frog lives
+    int tempoRimanente = TEMPO_TOTALE; // Initialize timer
+    time_t inizioTempo = time(NULL);   // Store start time
 
-    oggetto valoreLetto; // Conterrà il valore letto nella pipe
-    oggetto rana, proiettileRana[NUM_PROIETTILI_RANA];
+    oggetto valoreLetto; // Will contain the value read from the pipe
+    oggetto rana, proiettileRana[NUM_PROIETTILI_RANA], piante[NUM_PIANTE], proiettilePianta[NUM_PIANTE];
 
     initOggetto(&rana);
 
@@ -58,34 +76,48 @@ void controlloGioco(int pipein)
         initOggetto(&proiettileRana[i]);
     }
 
+    for (int i = 0; i < NUM_PIANTE; i++)
+    {
+        initOggetto(&piante[i]);
+    }
+
+    for (int i = 0; i < NUM_PIANTE; i++)
+    {
+        initOggetto(&proiettilePianta[i]);
+    }
+
     do
     {
-        // Aggiorna il timer
+        // Update the timer
         time_t tempoAttuale = time(NULL);
-        if (difftime(tempoAttuale, inizioTempo) >= 1) // Se è passato un secondo
+        if (difftime(tempoAttuale, inizioTempo) >= 1) // If a second has passed
         {
-            tempoRimanente--;           // Decrementa il contatore
-            inizioTempo = tempoAttuale; // Aggiorna il tempo di inizio
+            tempoRimanente--;           // Decrement the counter
+            inizioTempo = tempoAttuale; // Update the start time
 
-            // Se il tempo è scaduto
+            // If time has run out
             if (tempoRimanente <= 0)
             {
-                viteRana--; // Decrementa le vite della rana
-                // Ripristina il timer
+                viteRana--; // Decrement frog lives
+                // Reset the timer
                 tempoRimanente = TEMPO_TOTALE;
             }
         }
 
-        // Legge dalla pipe
+        // Read from the pipe
         if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
         {
-            // Cancella lo sprite attuale
+            // Clear the current sprite
             if (valoreLetto.tipo == RANA && rana.status == ATTIVO)
                 cancellaSprite(rana);
             else if (valoreLetto.tipo == PROIETTILE_RANA && proiettileRana[valoreLetto.index].status == ATTIVO)
                 cancellaSprite(proiettileRana[valoreLetto.index]);
+            else if (valoreLetto.tipo == PIANTA && piante[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(piante[valoreLetto.index]);
+            else if (valoreLetto.tipo == PROIETTILE_PIANTA && proiettilePianta[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(proiettilePianta[valoreLetto.index]);
 
-            // Aggiorna l'oggetto con il nuovo valore
+            // Update the object with the new value
             if (valoreLetto.tipo == RANA)
             {
                 rana = valoreLetto;
@@ -94,32 +126,50 @@ void controlloGioco(int pipein)
             {
                 proiettileRana[valoreLetto.index] = valoreLetto;
             }
+            else if (valoreLetto.tipo == PIANTA)
+            {
+                piante[valoreLetto.index] = valoreLetto;
+            }
+            else if (valoreLetto.tipo == PROIETTILE_PIANTA)
+            {
+                proiettilePianta[valoreLetto.index] = valoreLetto;
+            }
 
-            // Stampa lo sfondo e tutti gli oggetti
+            // Print the background and all objects
             graficaGioco(viteRana, tempoRimanente);
 
-            // Visualizza gli oggetti
+            // Display the objects
             if (rana.status != TERMINATO)
-                stampaSprite(rana, viteRana);
+                stampaSprite(rana);
             for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
             {
                 if (proiettileRana[i].status != TERMINATO)
-                    stampaSprite(proiettileRana[i], viteRana);
+                    stampaSprite(proiettileRana[i]);
+            }
+            for (int i = 0; i < NUM_PIANTE; i++)
+            {
+                if (piante[i].status != TERMINATO)
+                    stampaSprite(piante[i]);
+            }
+            for (int i = 0; i < NUM_PIANTE; i++)
+            {
+                if (proiettilePianta[i].status != TERMINATO)
+                    stampaSprite(proiettilePianta[i]);
             }
 
             curs_set(0);
             wrefresh(gioco);
         }
 
-    } while (viteRana > 0); // Continua finché ci sono vite
+    } while (viteRana > 0); // Continue while there are lives
 
-    chiudiProcessi(proiettileRana, &rana);
+    chiudiProcessi(proiettileRana, &rana, piante, proiettilePianta);
 }
 
-// Funzione per la terminazione del gioco
+// Function to terminate the game
 void terminaGioco()
 {
-    delwin(gioco);           // Elimina la finestra
-    system("killall aplay"); // Termina eventuali suoni
-    endwin();                // Termina ncurses
+    delwin(gioco);           // Delete the window
+    system("killall aplay"); // Terminate any sounds
+    endwin();                // End ncurses
 }
