@@ -33,32 +33,57 @@ void avviaGioco()
         _exit(0);
         break;
     default:
-        // Create processes for each plant
-        for (int i = 0; i < NUM_PIANTE; i++)
+        pid_gioco = fork();
+        switch (pid_gioco)
         {
+        case -1:
+            perror("Errore nella creazione del processo per la pianta");
+            _exit(1);
+            break;
+        case 0:
+            close(filedes[LETTURA]);
+            pianta(filedes[SCRITTURA], 0);
+            _exit(0);
+            break;
+        default:
             pid_gioco = fork();
-            if (pid_gioco == -1)
+            switch (pid_gioco)
             {
+            case -1:
                 perror("Errore nella creazione del processo per la pianta");
                 _exit(1);
-            }
-            else if (pid_gioco == 0)
-            {
+                break;
+            case 0:
                 close(filedes[LETTURA]);
-                pianta(filedes[SCRITTURA], i);
+                pianta(filedes[SCRITTURA], 1);
                 _exit(0);
+                break;
+            default:
+                pid_gioco = fork();
+                switch (pid_gioco)
+                {
+                case -1:
+                    perror("Errore nella creazione del processo per la pianta");
+                    _exit(1);
+                    break;
+                case 0:
+                    close(filedes[LETTURA]);
+                    pianta(filedes[SCRITTURA], 2);
+                    _exit(0);
+                    break;
+                default:
+                    close(filedes[SCRITTURA]);
+
+                    // The parent process will now control the game
+                    controlloGioco(filedes[LETTURA]);
+                }
             }
+
+            // Close the game
+            terminaGioco();
         }
-        close(filedes[SCRITTURA]);
-
-        // The parent process will now control the game
-        controlloGioco(filedes[LETTURA]);
     }
-
-    // Close the game
-    terminaGioco();
 }
-
 // Function to control the game, print objects, and check for collisions
 void controlloGioco(int pipein)
 {
