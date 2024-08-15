@@ -50,6 +50,7 @@ void avviaGioco()
             }
         }
         close(filedes[SCRITTURA]);
+
         // The parent process will now control the game
         controlloGioco(filedes[LETTURA]);
     }
