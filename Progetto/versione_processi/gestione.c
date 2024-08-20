@@ -19,7 +19,7 @@ void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, ogg
     int i;
 
     // Check if the pointers are not null
-    if (proiettiliRana == NULL || rana == NULL || piante == NULL)
+    if (proiettiliRana == NULL || rana == NULL || piante == NULL || proiettilePianta == NULL)
     {
         fprintf(stderr, "Errore: puntatore nullo passato a chiudiProcessi\n");
         return;

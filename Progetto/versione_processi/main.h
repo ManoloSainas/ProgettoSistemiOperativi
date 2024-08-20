@@ -81,6 +81,22 @@ extern char spriteCoccodrillo[COLONNE_SPRITE_COCCODRILLO + 1];
 extern char spritePianta[COLONNE_SPRITE_PIANTA + 1];
 extern char spriteProiettilePianta[COLONNE_SPRITE_PROIETTILE_PIANTA + 1];
 
+// Direzione flusso del fiume
+typedef enum
+{
+    SINISTRA,
+    DESTRA,
+    NESSUNA_DIREZIONE
+} DirezioneFiume;
+
+// Tipologia del coccodrillo
+typedef enum
+{
+    BUONO,
+    CATTIVO,
+    NESSUNA_TIPOLOGIA
+} TipologiaCoccodrillo;
+
 // Tipologia di oggetto presente su schermo
 typedef enum tipoOggetto
 {
@@ -109,13 +125,15 @@ typedef enum statusOggetto
 // Informazioni sugli oggetti presenti su schermo
 typedef struct oggetto
 {
-    tipoOggetto tipo;     // Tipologia
-    int x;                // Posizione x
-    int y;                // Posizione y
-    int index;            // Indice in caso di oggetti multipli uguali
-    int pid_oggetto;      // Pid del processo che gestisce l'oggetto
-    statusOggetto status; // Informa lo status dell'oggetto
-    bool proiettili;      // Contiene i proiettili dell'oggetto (se è un oggetto che spara)
+    tipoOggetto tipo;                          // Tipologia
+    int x;                                     // Posizione x
+    int y;                                     // Posizione y
+    int index;                                 // Indice in caso di oggetti multipli uguali
+    int pid_oggetto;                           // Pid del processo che gestisce l'oggetto
+    statusOggetto status;                      // Informa lo status dell'oggetto
+    bool proiettili;                           // Contiene i proiettili dell'oggetto (se è un oggetto che spara)
+    DirezioneFiume direzioneFiume;             // Direzione del coccodrillo
+    TipologiaCoccodrillo tipologiaCoccodrillo; // Tipo di coccodrillo (buono o cattivo)
 } oggetto;
 
 // Variabili globali
@@ -132,6 +150,8 @@ extern bool vittoria; // True se il giocatore ha vinto, False altrimenti
 
 extern int numCoccodrilli; // Numero di coccodrilli presenti sullo schermo
 extern int numPiante;      // Numero di piante presenti sullo schermo
+
+extern int posizionePianteX[NUM_PIANTE]; // Posizioni delle piante
 
 // Schermo ncurses
 extern WINDOW *gioco;
@@ -159,3 +179,6 @@ void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, ogg
 void stampaSprite(oggetto sprite);
 void cancellaSprite(oggetto sprite);
 void graficaGioco();
+
+DirezioneFiume getDirezioneFiume();
+TipologiaCoccodrillo getTipologiaCoccodrillo();

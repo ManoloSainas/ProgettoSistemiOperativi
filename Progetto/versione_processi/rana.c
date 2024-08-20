@@ -20,6 +20,9 @@ void rana(int pipeout)
     oggetto_rana.pid_oggetto = getpid();
     oggetto_rana.status = ATTIVO;
     oggetto_rana.proiettili = TRUE;
+    oggetto_rana.index = 0;
+    oggetto_rana.direzioneFiume = NESSUNA_DIREZIONE;
+    oggetto_rana.tipologiaCoccodrillo = NESSUNA_TIPOLOGIA;
 
     // write(pipeout, &oggetto_rana, sizeof(oggetto));
 
@@ -109,6 +112,9 @@ void proiettileRana(int pipeout, int pos_ranay, int pos_ranax)
     oggetto_proiettile_rana.index = indexProiettile;
     oggetto_proiettile_rana.pid_oggetto = getpid();
     oggetto_proiettile_rana.status = ATTIVO;
+    oggetto_proiettile_rana.proiettili = FALSE;
+    oggetto_proiettile_rana.direzioneFiume = NESSUNA_DIREZIONE;
+    oggetto_proiettile_rana.tipologiaCoccodrillo = NESSUNA_TIPOLOGIA;
 
     // Scrittura nella pipe delle informazioni del proiettile
     write(pipeout, &oggetto_proiettile_rana, sizeof(oggetto));

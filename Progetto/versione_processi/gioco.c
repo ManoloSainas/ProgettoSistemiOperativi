@@ -33,19 +33,8 @@ void avviaGioco()
         _exit(0);
         break;
     default:
-        pid_gioco = fork();
-        switch (pid_gioco)
+        for (int i = 0; i < NUM_PIANTE; i++)
         {
-        case -1:
-            perror("Errore nella creazione del processo per la pianta");
-            _exit(1);
-            break;
-        case 0:
-            close(filedes[LETTURA]);
-            pianta(filedes[SCRITTURA], 0);
-            _exit(0);
-            break;
-        default:
             pid_gioco = fork();
             switch (pid_gioco)
             {
@@ -55,34 +44,18 @@ void avviaGioco()
                 break;
             case 0:
                 close(filedes[LETTURA]);
-                pianta(filedes[SCRITTURA], 1);
+                srand(time(NULL) + i); // Unique seed for each plant
+                pianta(filedes[SCRITTURA], i);
                 _exit(0);
                 break;
-            default:
-                pid_gioco = fork();
-                switch (pid_gioco)
-                {
-                case -1:
-                    perror("Errore nella creazione del processo per la pianta");
-                    _exit(1);
-                    break;
-                case 0:
-                    close(filedes[LETTURA]);
-                    pianta(filedes[SCRITTURA], 2);
-                    _exit(0);
-                    break;
-                default:
-                    close(filedes[SCRITTURA]);
-
-                    // The parent process will now control the game
-                    controlloGioco(filedes[LETTURA]);
-                }
             }
-
-            // Close the game
-            terminaGioco();
         }
+        close(filedes[SCRITTURA]);
+        controlloGioco(filedes[LETTURA]);
+        break;
     }
+    // Termina gioco
+    terminaGioco();
 }
 // Function to control the game, print objects, and check for collisions
 void controlloGioco(int pipein)
