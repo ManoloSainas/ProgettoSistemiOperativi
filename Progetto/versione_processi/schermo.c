@@ -40,9 +40,11 @@ void inizializzazioneSchermo()
     init_pair(COLORE_GIALLO, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLORE_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
 
-    init_pair(SFONDO_ARGINE, COLOR_WHITE, COLOR_WHITE); // Colore dell'argine, superiore e inferiore
-    init_pair(SFONDO_ACQUA, COLOR_CYAN, COLOR_CYAN);    // Colore dell'acqua
-    init_pair(SFONDO_TANE, COLOR_GREEN, COLOR_GREEN);   // Colore delle tane
-    init_pair(COLORE_TANE, COLOR_RED, COLOR_YELLOW);    // Colore del testo delle tane
-    init_pair(COLORE_PIANTA, COLOR_RED, COLOR_WHITE);   // Colore delle piante
+    init_pair(SFONDO_ARGINE, COLOR_WHITE, COLOR_WHITE);           // Colore dell'argine, superiore e inferiore
+    init_pair(SFONDO_ACQUA, COLOR_CYAN, COLOR_CYAN);              // Colore dell'acqua
+    init_pair(SFONDO_TANE, COLOR_GREEN, COLOR_GREEN);             // Colore delle tane
+    init_pair(COLORE_TANE, COLOR_RED, COLOR_YELLOW);              // Colore del testo delle tane
+    init_pair(COLORE_PIANTA, COLOR_RED, COLOR_WHITE);             // Colore delle piante
+    init_pair(COLORE_COCCODRILLO_BUONO, COLOR_GREEN, COLOR_CYAN); // Colore dei coccodrilli
+    init_pair(COLORE_COCCODRILLO_CATTIVO, COLOR_RED, COLOR_CYAN); // Colore dei coccodrilli
 }

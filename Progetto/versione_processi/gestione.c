@@ -14,12 +14,12 @@ void initOggetto(oggetto *oggetto)
     oggetto->status = NON_ATTIVO;
 }
 
-void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, oggetto *proiettilePianta)
+void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, oggetto *proiettiliPianta, oggetto *coccodrilli)
 {
     int i;
 
     // Check if the pointers are not null
-    if (proiettiliRana == NULL || rana == NULL || piante == NULL || proiettilePianta == NULL)
+    if (proiettiliRana == NULL || rana == NULL || piante == NULL || proiettiliPianta == NULL || coccodrilli == NULL)
     {
         fprintf(stderr, "Errore: puntatore nullo passato a chiudiProcessi\n");
         return;
@@ -64,13 +64,26 @@ void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, ogg
     // Terminate actove bullets plants processes
     for (i = 0; i < NUM_PIANTE; i++)
     {
-        if (proiettilePianta[i].status == ATTIVO)
+        if (proiettiliPianta[i].status == ATTIVO)
         {
             if (kill(piante[i].pid_oggetto, SIGKILL) == -1)
             {
                 perror("Errore nel terminare il processo del proiettile della pianta");
             }
-            proiettilePianta[i].status = TERMINATO;
+            proiettiliPianta[i].status = TERMINATO;
+        }
+    }
+
+    // Terminate active crocodile processes
+    for (i = 0; i < NUM_TOT_COCCODIRLLI; i++)
+    {
+        if (coccodrilli[i].status == ATTIVO)
+        {
+            if (kill(coccodrilli[i].pid_oggetto, SIGKILL) == -1)
+            {
+                perror("Errore nel terminare il processo del coccodrillo");
+            }
+            coccodrilli[i].status = TERMINATO;
         }
     }
 }

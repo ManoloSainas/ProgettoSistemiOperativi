@@ -22,6 +22,9 @@ rana.o: main.h rana.c
 pianta.o: main.h pianta.c
 	gcc -c pianta.c
 
+coccodrillo.o: main.h coccodrillo.c
+	gcc -c coccodrillo.c
+
 clean:
 	rm frogger
 	rm *.o

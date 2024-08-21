@@ -39,12 +39,6 @@
 //     la rana cadrà in acqua;
 // ● Se la rana cade(o salta) in acqua, perde una vita e la manche
 
-// inizializza una direzione casuale
-DirezioneFiume getDirezioneFiume()
-{
-    return rand() % 2 == 0 ? SINISTRA : DESTRA;
-}
-
 // inizializza una tipologia casuale
 TipologiaCoccodrillo getTipologiaCoccodrillo()
 {

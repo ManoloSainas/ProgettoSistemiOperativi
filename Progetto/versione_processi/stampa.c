@@ -49,6 +49,24 @@ void stampaSprite(oggetto sprite)
         mvwprintw(gioco, sprite.y, sprite.x, "%s", spriteProiettilePianta); // Stampa il proiettile
         wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));                          // Disattiva il colore del proiettile
         break;
+
+    case COCCODRILLO_BUONO:
+        wattron(gioco, COLOR_PAIR(COLORE_COCCODRILLO_BUONO)); // Colore del coccodrillo
+        for (i = 0; i < COLONNE_SPRITE_COCCODRILLO; i++)
+        {
+            mvwprintw(gioco, sprite.y, sprite.x + i, "%c", spriteCoccodrillo[i]); // Stampa il coccodrillo
+        }
+        wattroff(gioco, COLOR_PAIR(COLORE_COCCODRILLO_BUONO)); // Disattiva il colore del coccodrillo
+        break;
+
+    case COCCODRILLO_CATTIVO:
+        wattron(gioco, COLOR_PAIR(COLORE_COCCODRILLO_CATTIVO)); // Colore del coccodrillo
+        for (i = 0; i < COLONNE_SPRITE_COCCODRILLO; i++)
+        {
+            mvwprintw(gioco, sprite.y, sprite.x + i, "%c", spriteCoccodrillo[i]); // Stampa il coccodrillo
+        }
+        wattroff(gioco, COLOR_PAIR(COLORE_COCCODRILLO_CATTIVO)); // Disattiva il colore del coccodrillo
+        break;
     }
 }
 
@@ -80,6 +98,22 @@ void cancellaSprite(oggetto sprite)
 
     case PROIETTILE_PIANTA:
         mvwprintw(gioco, sprite.y, sprite.x, " "); // Cancella il proiettile
+        break;
+
+    case COCCODRILLO_BUONO:
+        // Sovrascrivi l'area del coccodrillo con spazi
+        for (i = 0; i < COLONNE_SPRITE_COCCODRILLO; i++)
+        {
+            mvwprintw(gioco, sprite.y, sprite.x + i, " "); // Cancella con spazi
+        }
+        break;
+
+    case COCCODRILLO_CATTIVO:
+        // Sovrascrivi l'area del coccodrillo con spazi
+        for (i = 0; i < COLONNE_SPRITE_COCCODRILLO; i++)
+        {
+            mvwprintw(gioco, sprite.y, sprite.x + i, " "); // Cancella con spazi
+        }
         break;
     }
 }

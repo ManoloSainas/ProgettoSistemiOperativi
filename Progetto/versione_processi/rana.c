@@ -23,6 +23,7 @@ void rana(int pipeout)
     oggetto_rana.index = 0;
     oggetto_rana.direzioneFiume = NESSUNA_DIREZIONE;
     oggetto_rana.tipologiaCoccodrillo = NESSUNA_TIPOLOGIA;
+    oggetto_rana.velocita = 0;
 
     // write(pipeout, &oggetto_rana, sizeof(oggetto));
 
@@ -115,6 +116,7 @@ void proiettileRana(int pipeout, int pos_ranay, int pos_ranax)
     oggetto_proiettile_rana.proiettili = FALSE;
     oggetto_proiettile_rana.direzioneFiume = NESSUNA_DIREZIONE;
     oggetto_proiettile_rana.tipologiaCoccodrillo = NESSUNA_TIPOLOGIA;
+    oggetto_proiettile_rana.velocita = SPEED_PROIETTILI;
 
     // Scrittura nella pipe delle informazioni del proiettile
     write(pipeout, &oggetto_proiettile_rana, sizeof(oggetto));
@@ -123,7 +125,7 @@ void proiettileRana(int pipeout, int pos_ranay, int pos_ranax)
     {
         oggetto_proiettile_rana.y -= SPOSTAMENTO_Y_PROIETTILI_RANA;
 
-        usleep(SPEED_PROIETTILI);
+        usleep(oggetto_proiettile_rana.velocita);
 
         write(pipeout, &oggetto_proiettile_rana, sizeof(oggetto));
     }

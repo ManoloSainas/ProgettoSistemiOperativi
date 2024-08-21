@@ -18,6 +18,10 @@
 #define NUM_PROIETTILI_RANA 10 // Numero proiettili visibili sullo schermo contemporaneamente
 #define NUM_TANE 5
 #define NUM_PIANTE 3
+#define NUM_MIN_COCCODRILLI_FLUSSO 1
+#define NUM_MAX_COCCODRILLI_FLUSSO 8
+#define NUM_FLUSSI_FIUME 8
+#define NUM_TOT_COCCODIRLLI 64
 
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
@@ -39,6 +43,8 @@
 #define SFONDO_TANE 11
 #define COLORE_TANE 12
 #define COLORE_PIANTA 13
+#define COLORE_COCCODRILLO_BUONO 14
+#define COLORE_COCCODRILLO_CATTIVO 15
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
@@ -71,6 +77,10 @@
 #define RICARICA_PROIETTILI 9000
 #define SPEED_PROIETTILI 60000
 
+// Gestione fiume
+#define VELOCITA_MAX_FLUSSO 100000
+#define VELOCITA_MIN_FLUSSO 50000
+
 // Distanza tra piante
 #define DISTANZA_PIANTE 2
 
@@ -101,7 +111,8 @@ typedef enum
 typedef enum tipoOggetto
 {
     RANA,
-    COCCODRILLO,
+    COCCODRILLO_BUONO,
+    COCCODRILLO_CATTIVO,
     PIANTA,
     PROIETTILE_RANA,
     PROIETTILE_PIANTA
@@ -134,7 +145,16 @@ typedef struct oggetto
     bool proiettili;                           // Contiene i proiettili dell'oggetto (se è un oggetto che spara)
     DirezioneFiume direzioneFiume;             // Direzione del coccodrillo
     TipologiaCoccodrillo tipologiaCoccodrillo; // Tipo di coccodrillo (buono o cattivo)
+    int velocita;
 } oggetto;
+
+// Informazioni sul fiume e sui flussi
+typedef struct
+{
+    DirezioneFiume direzioneFlussi[NUM_FLUSSI_FIUME];
+    int velocitaFlussi[NUM_FLUSSI_FIUME];
+    int numeroCoccodrilliFlussi[NUM_FLUSSI_FIUME];
+} InformazioniFiume;
 
 // Variabili globali
 
@@ -152,6 +172,8 @@ extern int numCoccodrilli; // Numero di coccodrilli presenti sullo schermo
 extern int numPiante;      // Numero di piante presenti sullo schermo
 
 extern int posizionePianteX[NUM_PIANTE]; // Posizioni delle piante
+
+extern InformazioniFiume infoFiume; // Informazioni sui flussi del fiume
 
 // Schermo ncurses
 extern WINDOW *gioco;
@@ -182,3 +204,5 @@ void graficaGioco();
 
 DirezioneFiume getDirezioneFiume();
 TipologiaCoccodrillo getTipologiaCoccodrillo();
+int getVelocitaFlussoFiume();
+void inizializzaFlussiFiume(InformazioniFiume *infoFiume);

@@ -15,6 +15,7 @@ void pianta(int pipeout, int indice)
     oggetto_pianta.proiettili = true;
     oggetto_pianta.direzioneFiume = NESSUNA_DIREZIONE;
     oggetto_pianta.tipologiaCoccodrillo = NESSUNA_TIPOLOGIA;
+    oggetto_pianta.velocita = 0;
 
     // Scrivi l'oggetto pianta nella pipe
     write(pipeout, &oggetto_pianta, sizeof(oggetto));
@@ -49,13 +50,14 @@ void proiettilePianta(int pipeout, int x_iniziale, int y_iniziale, int index_pia
     oggetto_proiettile_pianta.proiettili = false;
     oggetto_proiettile_pianta.direzioneFiume = NESSUNA_DIREZIONE;
     oggetto_proiettile_pianta.tipologiaCoccodrillo = NESSUNA_TIPOLOGIA;
+    oggetto_proiettile_pianta.velocita = SPEED_PROIETTILI;
 
     // Movimento del proiettile verso il basso
     while (oggetto_proiettile_pianta.y < maxy && oggetto_proiettile_pianta.status == ATTIVO)
     {
         oggetto_proiettile_pianta.y++; // Sposta il proiettile verso il basso
 
-        usleep(SPEED_PROIETTILI); // Ritardo per il movimento del proiettile
+        usleep(oggetto_proiettile_pianta.velocita); // Ritardo per il movimento del proiettile
 
         // Scrivi l'oggetto proiettile nella pipe
         write(pipeout, &oggetto_proiettile_pianta, sizeof(oggetto));

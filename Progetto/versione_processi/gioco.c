@@ -65,13 +65,13 @@ void controlloGioco(int pipein)
     time_t inizioTempo = time(NULL);   // Store start time
 
     oggetto valoreLetto; // Will contain the value read from the pipe
-    oggetto rana, proiettileRana[NUM_PROIETTILI_RANA], piante[NUM_PIANTE], proiettilePianta[NUM_PIANTE];
+    oggetto rana, proiettiliRana[NUM_PROIETTILI_RANA], piante[NUM_PIANTE], proiettiliPianta[NUM_PIANTE];
 
     initOggetto(&rana);
 
     for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
     {
-        initOggetto(&proiettileRana[i]);
+        initOggetto(&proiettiliRana[i]);
     }
 
     for (int i = 0; i < NUM_PIANTE; i++)
@@ -81,7 +81,7 @@ void controlloGioco(int pipein)
 
     for (int i = 0; i < NUM_PIANTE; i++)
     {
-        initOggetto(&proiettilePianta[i]);
+        initOggetto(&proiettiliPianta[i]);
     }
 
     do
@@ -108,12 +108,12 @@ void controlloGioco(int pipein)
             // Clear the current sprite
             if (valoreLetto.tipo == RANA && rana.status == ATTIVO)
                 cancellaSprite(rana);
-            else if (valoreLetto.tipo == PROIETTILE_RANA && proiettileRana[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(proiettileRana[valoreLetto.index]);
+            else if (valoreLetto.tipo == PROIETTILE_RANA && proiettiliRana[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(proiettiliRana[valoreLetto.index]);
             else if (valoreLetto.tipo == PIANTA && piante[valoreLetto.index].status == ATTIVO)
                 cancellaSprite(piante[valoreLetto.index]);
-            else if (valoreLetto.tipo == PROIETTILE_PIANTA && proiettilePianta[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(proiettilePianta[valoreLetto.index]);
+            else if (valoreLetto.tipo == PROIETTILE_PIANTA && proiettiliPianta[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(proiettiliPianta[valoreLetto.index]);
 
             // Update the object with the new value
             if (valoreLetto.tipo == RANA)
@@ -122,7 +122,7 @@ void controlloGioco(int pipein)
             }
             else if (valoreLetto.tipo == PROIETTILE_RANA)
             {
-                proiettileRana[valoreLetto.index] = valoreLetto;
+                proiettiliRana[valoreLetto.index] = valoreLetto;
             }
             else if (valoreLetto.tipo == PIANTA)
             {
@@ -130,7 +130,7 @@ void controlloGioco(int pipein)
             }
             else if (valoreLetto.tipo == PROIETTILE_PIANTA)
             {
-                proiettilePianta[valoreLetto.index] = valoreLetto;
+                proiettiliPianta[valoreLetto.index] = valoreLetto;
             }
 
             // Print the background and all objects
@@ -141,8 +141,8 @@ void controlloGioco(int pipein)
                 stampaSprite(rana);
             for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
             {
-                if (proiettileRana[i].status != TERMINATO)
-                    stampaSprite(proiettileRana[i]);
+                if (proiettiliRana[i].status != TERMINATO)
+                    stampaSprite(proiettiliRana[i]);
             }
             for (int i = 0; i < NUM_PIANTE; i++)
             {
@@ -151,8 +151,8 @@ void controlloGioco(int pipein)
             }
             for (int i = 0; i < NUM_PIANTE; i++)
             {
-                if (proiettilePianta[i].status != TERMINATO)
-                    stampaSprite(proiettilePianta[i]);
+                if (proiettiliPianta[i].status != TERMINATO)
+                    stampaSprite(proiettiliPianta[i]);
             }
 
             curs_set(0);
@@ -161,7 +161,7 @@ void controlloGioco(int pipein)
 
     } while (viteRana > 0); // Continue while there are lives
 
-    chiudiProcessi(proiettileRana, &rana, piante, proiettilePianta);
+    chiudiProcessi(proiettiliRana, &rana, piante, proiettiliPianta);
 }
 
 // Function to terminate the game
