@@ -12,8 +12,9 @@ void stampaSprite(oggetto sprite)
 {
     int i;
 
-    // Evita di stampare la rana nelle coordinate (0, 0) se non è intenzionale
-    if (sprite.x == 0 && sprite.y == 0 && sprite.tipo == RANA)
+    // Evita di stampare la rana o il coccodrillo nelle coordinate (0, 0) se non è intenzionale
+    if ((sprite.x >= 0 && sprite.y < maxy - 13) &&
+        (sprite.tipo == RANA || sprite.tipo == COCCODRILLO_BUONO || sprite.tipo == COCCODRILLO_CATTIVO))
     {
         return;
     }
@@ -21,12 +22,12 @@ void stampaSprite(oggetto sprite)
     switch (sprite.tipo)
     {
     case RANA:
-        wattron(gioco, COLOR_PAIR(COLORE_GIALLO)); // Colore della rana
+        wattron(gioco, COLOR_PAIR(COLORE_RANA)); // Colore della rana
         for (i = 0; i < COLONNE_SPRITE_RANA; i++)
         {
             mvwprintw(gioco, sprite.y, sprite.x + i, "%c", spriteRana[i]); // Stampa la rana
         }
-        wattroff(gioco, COLOR_PAIR(COLORE_GIALLO)); // Disattiva il colore della rana
+        wattroff(gioco, COLOR_PAIR(COLORE_RANA)); // Disattiva il colore della rana
         break;
 
     case PROIETTILE_RANA:

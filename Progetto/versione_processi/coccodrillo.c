@@ -45,6 +45,51 @@ TipologiaCoccodrillo getTipologiaCoccodrillo()
     return rand() % 2 == 0 ? BUONO : CATTIVO;
 }
 
-void coccodrillo(int pipeout)
+void coccodrillo(int pipeout, int indice)
 {
+    oggetto oggetto_coccodrillo;
+
+    // Inizializzazione coccodrillo
+    oggetto_coccodrillo.tipo = (rand() % 2 == 0) ? COCCODRILLO_BUONO : COCCODRILLO_CATTIVO;
+    oggetto_coccodrillo.x = minx + rand() % (maxx - COLONNE_SPRITE_COCCODRILLO - minx);
+    oggetto_coccodrillo.y = maxy - 9 + indice; // Assign each crocodile to a specific row in the water area
+    oggetto_coccodrillo.status = ATTIVO;
+    oggetto_coccodrillo.pid_oggetto = getpid();
+    oggetto_coccodrillo.index = indice;
+    oggetto_coccodrillo.proiettili = false;
+    oggetto_coccodrillo.direzioneFiume = getDirezioneFiume();
+    oggetto_coccodrillo.tipologiaCoccodrillo = (oggetto_coccodrillo.tipo == COCCODRILLO_BUONO) ? BUONO : CATTIVO;
+    oggetto_coccodrillo.velocita = getVelocitaFlussoFiume();
+
+    // Scrivi l'oggetto coccodrillo nella pipe
+    write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
+
+    // Movimento del coccodrillo
+    while (oggetto_coccodrillo.status == ATTIVO)
+    {
+        if (oggetto_coccodrillo.direzioneFiume == SINISTRA)
+        {
+            oggetto_coccodrillo.x -= SPOSTAMENTO_X_COCCODRILLO;
+            if (oggetto_coccodrillo.x < minx)
+            {
+                oggetto_coccodrillo.status = TERMINATO;
+            }
+        }
+        else
+        {
+            oggetto_coccodrillo.x += SPOSTAMENTO_X_COCCODRILLO;
+            if (oggetto_coccodrillo.x > maxx)
+            {
+                oggetto_coccodrillo.status = TERMINATO;
+            }
+        }
+
+        usleep(oggetto_coccodrillo.velocita);
+
+        // Scrivi l'oggetto coccodrillo nella pipe
+        write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
+    }
+
+    // Termina il processo quando il coccodrillo esce dallo schermo
+    _exit(0);
 }

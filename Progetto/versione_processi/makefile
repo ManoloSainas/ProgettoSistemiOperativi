@@ -1,5 +1,5 @@
-frogger: main.o schermo.o gioco.o stampa.o gestione.o rana.o pianta.o
-	gcc main.o schermo.o gioco.o stampa.o gestione.o rana.o pianta.o -o frogger -lncurses
+frogger: main.o schermo.o gioco.o stampa.o gestione.o rana.o pianta.o coccodrillo.o
+	gcc main.o schermo.o gioco.o stampa.o gestione.o rana.o pianta.o coccodrillo.o  -o frogger -lncurses
 
 main.o: main.h  main.c 
 	gcc -c main.c 

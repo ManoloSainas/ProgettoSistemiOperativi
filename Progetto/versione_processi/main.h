@@ -21,7 +21,7 @@
 #define NUM_MIN_COCCODRILLI_FLUSSO 1
 #define NUM_MAX_COCCODRILLI_FLUSSO 8
 #define NUM_FLUSSI_FIUME 8
-#define NUM_TOT_COCCODIRLLI 64
+#define NUM_TOT_COCCODIRLLI 8
 
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
@@ -45,6 +45,7 @@
 #define COLORE_PIANTA 13
 #define COLORE_COCCODRILLO_BUONO 14
 #define COLORE_COCCODRILLO_CATTIVO 15
+#define COLORE_RANA 16
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
@@ -78,9 +79,8 @@
 #define SPEED_PROIETTILI 60000
 
 // Gestione fiume
-#define VELOCITA_MAX_FLUSSO 100000
-#define VELOCITA_MIN_FLUSSO 50000
-
+#define VELOCITA_MAX_FLUSSO 500000
+#define VELOCITA_MIN_FLUSSO 300000
 // Distanza tra piante
 #define DISTANZA_PIANTE 2
 
@@ -185,7 +185,7 @@ void terminaGioco();
 void inizializzazionePipe(int filedes[]);
 
 void rana(int pipeout);
-void coccodrillo(int pipeout);
+void coccodrillo(int pipeout, int indice);
 void pianta(int pipeout, int indice);
 void proiettileRana(int pipeout, int pos_ranay, int pos_ranax);
 void proiettilePianta(int pipeout, int pos_pianty, int pos_piantax, int index_pianta);
@@ -196,7 +196,7 @@ void terminaGioco();
 
 void resettaOggetto(oggetto *oggetto);
 void initOggetto(oggetto *oggetto);
-void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, oggetto *proiettilePianta);
+void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, oggetto *proiettilePianta, oggetto *coccodrilli);
 
 void stampaSprite(oggetto sprite);
 void cancellaSprite(oggetto sprite);

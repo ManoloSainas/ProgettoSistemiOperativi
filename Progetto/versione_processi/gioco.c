@@ -50,6 +50,23 @@ void avviaGioco()
                 break;
             }
         }
+        for (int j = 0; j < NUM_TOT_COCCODIRLLI; j++)
+        {
+            pid_gioco = fork();
+            switch (pid_gioco)
+            {
+            case -1:
+                perror("Errore nella creazione del processo per il coccodrillo");
+                _exit(1);
+                break;
+            case 0:
+                close(filedes[LETTURA]);
+                srand(time(NULL) + j); // Unique seed for each crocodile
+                coccodrillo(filedes[SCRITTURA], j);
+                _exit(0);
+                break;
+            }
+        }
         close(filedes[SCRITTURA]);
         controlloGioco(filedes[LETTURA]);
         break;
@@ -65,7 +82,7 @@ void controlloGioco(int pipein)
     time_t inizioTempo = time(NULL);   // Store start time
 
     oggetto valoreLetto; // Will contain the value read from the pipe
-    oggetto rana, proiettiliRana[NUM_PROIETTILI_RANA], piante[NUM_PIANTE], proiettiliPianta[NUM_PIANTE];
+    oggetto rana, proiettiliRana[NUM_PROIETTILI_RANA], piante[NUM_PIANTE], proiettiliPianta[NUM_PIANTE], coccodrilli[NUM_TOT_COCCODIRLLI];
 
     initOggetto(&rana);
 
@@ -82,6 +99,11 @@ void controlloGioco(int pipein)
     for (int i = 0; i < NUM_PIANTE; i++)
     {
         initOggetto(&proiettiliPianta[i]);
+    }
+
+    for (int i = 0; i < NUM_TOT_COCCODIRLLI; i++)
+    {
+        initOggetto(&coccodrilli[i]);
     }
 
     do
@@ -114,31 +136,37 @@ void controlloGioco(int pipein)
                 cancellaSprite(piante[valoreLetto.index]);
             else if (valoreLetto.tipo == PROIETTILE_PIANTA && proiettiliPianta[valoreLetto.index].status == ATTIVO)
                 cancellaSprite(proiettiliPianta[valoreLetto.index]);
+            else if (valoreLetto.tipo == COCCODRILLO_BUONO && coccodrilli[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(coccodrilli[valoreLetto.index]);
+            else if (valoreLetto.tipo == COCCODRILLO_CATTIVO && coccodrilli[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(coccodrilli[valoreLetto.index]);
 
-            // Update the object with the new value
-            if (valoreLetto.tipo == RANA)
+            // Update the object array
+            switch (valoreLetto.tipo)
             {
+            case RANA:
                 rana = valoreLetto;
-            }
-            else if (valoreLetto.tipo == PROIETTILE_RANA)
-            {
+                break;
+            case PROIETTILE_RANA:
                 proiettiliRana[valoreLetto.index] = valoreLetto;
-            }
-            else if (valoreLetto.tipo == PIANTA)
-            {
+                break;
+            case PIANTA:
                 piante[valoreLetto.index] = valoreLetto;
-            }
-            else if (valoreLetto.tipo == PROIETTILE_PIANTA)
-            {
+                break;
+            case PROIETTILE_PIANTA:
                 proiettiliPianta[valoreLetto.index] = valoreLetto;
+                break;
+            case COCCODRILLO_BUONO:
+            case COCCODRILLO_CATTIVO:
+                coccodrilli[valoreLetto.index] = valoreLetto;
+                break;
             }
 
             // Print the background and all objects
             graficaGioco(viteRana, tempoRimanente);
 
             // Display the objects
-            if (rana.status != TERMINATO)
-                stampaSprite(rana);
+
             for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
             {
                 if (proiettiliRana[i].status != TERMINATO)
@@ -154,6 +182,13 @@ void controlloGioco(int pipein)
                 if (proiettiliPianta[i].status != TERMINATO)
                     stampaSprite(proiettiliPianta[i]);
             }
+            for (int i = 0; i < NUM_TOT_COCCODIRLLI; i++)
+            {
+                if (coccodrilli[i].status != TERMINATO)
+                    stampaSprite(coccodrilli[i]);
+            }
+            if (rana.status != TERMINATO)
+                stampaSprite(rana);
 
             curs_set(0);
             wrefresh(gioco);
@@ -161,7 +196,7 @@ void controlloGioco(int pipein)
 
     } while (viteRana > 0); // Continue while there are lives
 
-    chiudiProcessi(proiettiliRana, &rana, piante, proiettiliPianta);
+    chiudiProcessi(proiettiliRana, &rana, piante, proiettiliPianta, coccodrilli);
 }
 
 // Function to terminate the game
