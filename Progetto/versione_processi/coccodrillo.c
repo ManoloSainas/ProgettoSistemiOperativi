@@ -52,7 +52,7 @@ void coccodrillo(int pipeout, int indice)
     // Inizializzazione coccodrillo
     oggetto_coccodrillo.tipo = (rand() % 2 == 0) ? COCCODRILLO_BUONO : COCCODRILLO_CATTIVO;
     oggetto_coccodrillo.x = minx + rand() % (maxx - COLONNE_SPRITE_COCCODRILLO - minx);
-    oggetto_coccodrillo.y = maxy - 9 + indice; // Assign each crocodile to a specific row in the water area
+    oggetto_coccodrillo.y = (rand() % (maxy - (maxy - 9) - 1)) + (maxy - 9);
     oggetto_coccodrillo.status = ATTIVO;
     oggetto_coccodrillo.pid_oggetto = getpid();
     oggetto_coccodrillo.index = indice;
