@@ -69,6 +69,17 @@ void coccodrillo(int pipeout, int row, int indice, InformazioniFiume *infoFiume)
     // Movimento del coccodrillo
     while (oggetto_coccodrillo.status == ATTIVO)
     {
+        if (oggetto_coccodrillo.tipo == COCCODRILLO_CATTIVO)
+        {
+            // Randomly decide to submerge
+            if (rand() % 100 < 5) // 5% chance to submerge
+            {
+                oggetto_coccodrillo.status = TERMINATO;
+                write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
+                _exit(0);
+            }
+        }
+
         if (oggetto_coccodrillo.direzioneFiume == SINISTRA)
         {
             oggetto_coccodrillo.x -= SPOSTAMENTO_X_COCCODRILLO;
