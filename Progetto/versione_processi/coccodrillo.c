@@ -45,21 +45,23 @@ TipologiaCoccodrillo getTipologiaCoccodrillo()
     return rand() % 2 == 0 ? BUONO : CATTIVO;
 }
 
-void coccodrillo(int pipeout, int indice)
+void coccodrillo(int pipeout, int row, int indice, InformazioniFiume *infoFiume)
 {
     oggetto oggetto_coccodrillo;
+
+    srand(time(NULL) + indice); // Unique seed for each crocodile
 
     // Inizializzazione coccodrillo
     oggetto_coccodrillo.tipo = (rand() % 2 == 0) ? COCCODRILLO_BUONO : COCCODRILLO_CATTIVO;
     oggetto_coccodrillo.x = minx + rand() % (maxx - COLONNE_SPRITE_COCCODRILLO - minx);
-    oggetto_coccodrillo.y = (rand() % (maxy - (maxy - 9) - 1)) + (maxy - 9);
+    oggetto_coccodrillo.y = row; // Set y coordinate based on row
     oggetto_coccodrillo.status = ATTIVO;
     oggetto_coccodrillo.pid_oggetto = getpid();
     oggetto_coccodrillo.index = indice;
     oggetto_coccodrillo.proiettili = false;
-    oggetto_coccodrillo.direzioneFiume = getDirezioneFiume();
+    oggetto_coccodrillo.direzioneFiume = infoFiume->direzioneFlussi[row - (maxy - 9)]; // Use direction for the specific row
     oggetto_coccodrillo.tipologiaCoccodrillo = (oggetto_coccodrillo.tipo == COCCODRILLO_BUONO) ? BUONO : CATTIVO;
-    oggetto_coccodrillo.velocita = getVelocitaFlussoFiume();
+    oggetto_coccodrillo.velocita = infoFiume->velocitaFlussi[row - (maxy - 9)]; // Use speed for the specific row
 
     // Scrivi l'oggetto coccodrillo nella pipe
     write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));

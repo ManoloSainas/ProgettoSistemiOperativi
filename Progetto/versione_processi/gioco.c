@@ -62,7 +62,8 @@ void avviaGioco()
             case 0:
                 close(filedes[LETTURA]);
                 srand(time(NULL) + j); // Unique seed for each crocodile
-                coccodrillo(filedes[SCRITTURA], j);
+                int row = (rand() % 8) + (maxy - 9);
+                coccodrillo(filedes[SCRITTURA], row, j, &infoFiume);
                 _exit(0);
                 break;
             }

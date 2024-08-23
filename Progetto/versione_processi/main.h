@@ -21,7 +21,7 @@
 #define NUM_MIN_COCCODRILLI_FLUSSO 1
 #define NUM_MAX_COCCODRILLI_FLUSSO 8
 #define NUM_FLUSSI_FIUME 8
-#define NUM_TOT_COCCODIRLLI 8
+#define NUM_TOT_COCCODIRLLI 16
 
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
@@ -185,7 +185,7 @@ void terminaGioco();
 void inizializzazionePipe(int filedes[]);
 
 void rana(int pipeout);
-void coccodrillo(int pipeout, int indice);
+void coccodrillo(int pipeout, int row, int indice, InformazioniFiume *infoFiume);
 void pianta(int pipeout, int indice);
 void proiettileRana(int pipeout, int pos_ranay, int pos_ranax);
 void proiettilePianta(int pipeout, int pos_pianty, int pos_piantax, int index_pianta);
