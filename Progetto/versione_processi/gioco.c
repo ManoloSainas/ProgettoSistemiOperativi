@@ -50,7 +50,7 @@ void avviaGioco()
                 break;
             }
         }
-        for (int j = 0; j < NUM_TOT_COCCODIRLLI; j++)
+        for (int j = 0; j < NUM_TOT_COCCODRILLI; j++)
         {
             pid_gioco = fork();
             switch (pid_gioco)
@@ -67,7 +67,7 @@ void avviaGioco()
 
                 _exit(0);
                 break;
-                        }
+            }
         }
         close(filedes[SCRITTURA]);
         controlloGioco(filedes[LETTURA]);
@@ -84,7 +84,7 @@ void controlloGioco(int pipein)
     time_t inizioTempo = time(NULL);   // Store start time
 
     oggetto valoreLetto; // Will contain the value read from the pipe
-    oggetto rana, proiettiliRana[NUM_PROIETTILI_RANA], piante[NUM_PIANTE], proiettiliPianta[NUM_PIANTE], coccodrilli[NUM_TOT_COCCODIRLLI];
+    oggetto rana, proiettiliRana[NUM_PROIETTILI_RANA], piante[NUM_PIANTE], proiettiliPianta[NUM_PIANTE], coccodrilli[NUM_TOT_COCCODRILLI];
 
     initOggetto(&rana);
 
@@ -103,7 +103,7 @@ void controlloGioco(int pipein)
         initOggetto(&proiettiliPianta[i]);
     }
 
-    for (int i = 0; i < NUM_TOT_COCCODIRLLI; i++)
+    for (int i = 0; i < NUM_TOT_COCCODRILLI; i++)
     {
         initOggetto(&coccodrilli[i]);
     }
@@ -184,7 +184,7 @@ void controlloGioco(int pipein)
                 if (proiettiliPianta[i].status != TERMINATO)
                     stampaSprite(proiettiliPianta[i]);
             }
-            for (int i = 0; i < NUM_TOT_COCCODIRLLI; i++)
+            for (int i = 0; i < NUM_TOT_COCCODRILLI; i++)
             {
                 if (coccodrilli[i].status != TERMINATO)
                     stampaSprite(coccodrilli[i]);

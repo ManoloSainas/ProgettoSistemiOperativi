@@ -75,7 +75,7 @@ void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, ogg
     }
 
     // Terminate active crocodile processes
-    for (i = 0; i < NUM_TOT_COCCODIRLLI; i++)
+    for (i = 0; i < NUM_TOT_COCCODRILLI; i++)
     {
         if (coccodrilli[i].status == ATTIVO)
         {
