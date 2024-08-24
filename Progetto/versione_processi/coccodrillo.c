@@ -63,6 +63,9 @@ void coccodrillo(int pipeout, int row, int indice, InformazioniFiume *infoFiume)
     oggetto_coccodrillo.tipologiaCoccodrillo = (oggetto_coccodrillo.tipo == COCCODRILLO_BUONO) ? BUONO : CATTIVO;
     oggetto_coccodrillo.velocita = infoFiume->velocitaFlussi[row - (maxy - 9)]; // Use speed for the specific row
 
+    // Random delay before generating the next crocodile
+    usleep(2000000 + (rand() % 5000000)); // Random delay between 2 and 5 seconds
+
     // Scrivi l'oggetto coccodrillo nella pipe
     write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
 

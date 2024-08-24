@@ -21,7 +21,7 @@
 #define NUM_MIN_COCCODRILLI_FLUSSO 1
 #define NUM_MAX_COCCODRILLI_FLUSSO 8
 #define NUM_FLUSSI_FIUME 8
-#define NUM_TOT_COCCODIRLLI 16
+#define NUM_TOT_COCCODIRLLI 24
 
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)

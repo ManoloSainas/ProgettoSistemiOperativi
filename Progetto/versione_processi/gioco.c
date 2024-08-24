@@ -67,7 +67,7 @@ void avviaGioco()
 
                 _exit(0);
                 break;
-            }
+                        }
         }
         close(filedes[SCRITTURA]);
         controlloGioco(filedes[LETTURA]);
