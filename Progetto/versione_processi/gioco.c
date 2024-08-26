@@ -45,7 +45,7 @@ void avviaGioco()
             case 0:
                 close(filedes[LETTURA]);
                 srand(time(NULL) + i); // Unique seed for each plant
-                pianta(filedes[SCRITTURA], i);
+                pianta(filedes[SCRITTURA], i, posizionePianteX[i]);
                 _exit(0);
                 break;
             }

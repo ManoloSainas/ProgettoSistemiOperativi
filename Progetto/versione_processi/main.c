@@ -6,7 +6,7 @@ int maxx, maxy;
 WINDOW *gioco;
 
 // Inizializza un'array di posizioni delle piante inizializzato a -1 per tutte e tre le piante
-int posizionePianteX[NUM_PIANTE] = {-1, -1, -1};
+int posizionePianteX[NUM_PIANTE] = {19, 29, 39};
 
 // Inizializza le informazioni sui flussi del fiume
 InformazioniFiume infoFiume;

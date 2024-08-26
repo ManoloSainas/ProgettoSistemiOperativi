@@ -186,7 +186,7 @@ void inizializzazionePipe(int filedes[]);
 
 void rana(int pipeout);
 void coccodrillo(int pipeout, int row, int indice, InformazioniFiume *infoFiume);
-void pianta(int pipeout, int indice);
+void pianta(int pipeout, int indice, int pos_x);
 void proiettileRana(int pipeout, int pos_ranay, int pos_ranax);
 void proiettilePianta(int pipeout, int pos_pianty, int pos_piantax, int index_pianta);
 

@@ -1,14 +1,14 @@
 #include "main.h"
 
-void pianta(int pipeout, int indice)
+void pianta(int pipeout, int indice, int posizione_x)
 {
     oggetto oggetto_pianta;
 
     // Inizializzazione pianta
     oggetto_pianta.tipo = PIANTA;
     // la posizione x dev'essere casuale all'interno della finestra di gioco
-    oggetto_pianta.x = minx + (rand() % (maxx - minx - 10)); // Posizione casuale
-    oggetto_pianta.y = maxy - 11;                            // Posizionata sulla sponda d'erba
+    oggetto_pianta.x = posizione_x; // Posizione casuale
+    oggetto_pianta.y = maxy - 11;   // Posizionata sulla sponda d'erba
     oggetto_pianta.status = ATTIVO;
     oggetto_pianta.pid_oggetto = getpid();
     oggetto_pianta.index = indice;
