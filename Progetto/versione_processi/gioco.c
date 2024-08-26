@@ -129,21 +129,29 @@ void controlloGioco(int pipein)
         // Read from the pipe
         if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
         {
-            // Clear the current sprite
-            if (valoreLetto.tipo == RANA && rana.status == ATTIVO)
-                cancellaSprite(rana);
-            else if (valoreLetto.tipo == PROIETTILE_RANA && proiettiliRana[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(proiettiliRana[valoreLetto.index]);
-            else if (valoreLetto.tipo == PIANTA && piante[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(piante[valoreLetto.index]);
-            else if (valoreLetto.tipo == PROIETTILE_PIANTA && proiettiliPianta[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(proiettiliPianta[valoreLetto.index]);
-            else if (valoreLetto.tipo == COCCODRILLO_BUONO && coccodrilli[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(coccodrilli[valoreLetto.index]);
-            else if (valoreLetto.tipo == COCCODRILLO_CATTIVO && coccodrilli[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(coccodrilli[valoreLetto.index]);
-            else if (valoreLetto.tipo == COCCODRILLO_IMMERSIONE && coccodrilli[valoreLetto.index].status == ATTIVO)
-                cancellaSprite(coccodrilli[valoreLetto.index]);
+
+            oggetto oggettoLetto;
+            switch (valoreLetto.tipo)
+            {
+            case RANA:
+                if (rana.status == ATTIVO)
+                    oggettoLetto = rana;
+            case PROIETTILE_RANA:
+                if (proiettiliRana[valoreLetto.index].status == ATTIVO)
+                    oggettoLetto = proiettiliRana[valoreLetto.index];
+            case PIANTA:
+                if (piante[valoreLetto.index].status == ATTIVO)
+                    oggettoLetto = piante[valoreLetto.index];
+            case PROIETTILE_PIANTA:
+                if (proiettiliPianta[valoreLetto.index].status == ATTIVO)
+                    oggettoLetto = proiettiliPianta[valoreLetto.index];
+            case COCCODRILLO_BUONO:
+            case COCCODRILLO_CATTIVO:
+            case COCCODRILLO_IMMERSIONE:
+                if (coccodrilli[valoreLetto.index].status == ATTIVO)
+                    oggettoLetto = coccodrilli[valoreLetto.index];
+            }
+            cancellaSprite(oggettoLetto);
 
             // Update the object array
             switch (valoreLetto.tipo)
