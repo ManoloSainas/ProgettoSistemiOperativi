@@ -46,6 +46,7 @@
 #define COLORE_COCCODRILLO_BUONO 14
 #define COLORE_COCCODRILLO_CATTIVO 15
 #define COLORE_RANA 16
+#define COLORE_COCCODRILLO_IMMERSIONE 17
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
@@ -88,6 +89,7 @@
 extern char spriteRana[COLONNE_SPRITE_RANA + 1];
 extern char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE_RANA + 1];
 extern char spriteCoccodrillo[COLONNE_SPRITE_COCCODRILLO + 1];
+extern char spriteCoccodrilloImmersione[COLONNE_SPRITE_COCCODRILLO + 1];
 extern char spritePianta[COLONNE_SPRITE_PIANTA + 1];
 extern char spriteProiettilePianta[COLONNE_SPRITE_PROIETTILE_PIANTA + 1];
 
@@ -113,6 +115,7 @@ typedef enum tipoOggetto
     RANA,
     COCCODRILLO_BUONO,
     COCCODRILLO_CATTIVO,
+    COCCODRILLO_IMMERSIONE,
     PIANTA,
     PROIETTILE_RANA,
     PROIETTILE_PIANTA

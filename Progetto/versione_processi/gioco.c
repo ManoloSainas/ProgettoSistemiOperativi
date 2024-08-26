@@ -142,6 +142,8 @@ void controlloGioco(int pipein)
                 cancellaSprite(coccodrilli[valoreLetto.index]);
             else if (valoreLetto.tipo == COCCODRILLO_CATTIVO && coccodrilli[valoreLetto.index].status == ATTIVO)
                 cancellaSprite(coccodrilli[valoreLetto.index]);
+            else if (valoreLetto.tipo == COCCODRILLO_IMMERSIONE && coccodrilli[valoreLetto.index].status == ATTIVO)
+                cancellaSprite(coccodrilli[valoreLetto.index]);
 
             // Update the object array
             switch (valoreLetto.tipo)
@@ -160,6 +162,7 @@ void controlloGioco(int pipein)
                 break;
             case COCCODRILLO_BUONO:
             case COCCODRILLO_CATTIVO:
+            case COCCODRILLO_IMMERSIONE:
                 coccodrilli[valoreLetto.index] = valoreLetto;
                 break;
             }
