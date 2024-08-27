@@ -133,6 +133,7 @@ typedef enum statusOggetto
 {
     NON_ATTIVO,
     ATTIVO,
+    SOSPESO,
     TERMINATO
 } statusOggetto;
 
@@ -149,7 +150,21 @@ typedef struct oggetto
     DirezioneFiume direzioneFiume;             // Direzione del coccodrillo
     TipologiaCoccodrillo tipologiaCoccodrillo; // Tipo di coccodrillo (buono o cattivo)
     int velocita;
+
 } oggetto;
+
+// Stato gioco
+typedef struct stato_gioco
+{
+    oggetto
+        rana,
+        proiettiliRana[NUM_PROIETTILI_RANA],
+        piante[NUM_PIANTE],
+        proiettiliPianta[NUM_PIANTE],
+        coccodrilli[NUM_TOT_COCCODRILLI];
+
+    int pipe_coccodrilli[NUM_TOT_COCCODRILLI][2]; /* pipe dal padre verso i figli */
+} StatoGioco;
 
 // Informazioni sul fiume e sui flussi
 typedef struct
@@ -157,7 +172,37 @@ typedef struct
     DirezioneFiume direzioneFlussi[NUM_FLUSSI_FIUME];
     int velocitaFlussi[NUM_FLUSSI_FIUME];
     int numeroCoccodrilliFlussi[NUM_FLUSSI_FIUME];
+    struct
+    {
+        short id_coccodrilli[NUM_MAX_COCCODRILLI_FLUSSO];
+        short presenti; /* Quanti coccodrilli in un flusso */
+        short posizione_coccodrilli[NUM_MAX_COCCODRILLI_FLUSSO];
+    } info_flusso[NUM_FLUSSI_FIUME];
 } InformazioniFiume;
+
+// La tana può essere aperta o chiusa
+typedef enum
+{
+    APERTA,
+    CHIUSA
+} StatoTana;
+
+typedef struct messaggio
+{
+    enum
+    {
+        SVEGLIA,
+        SOSPENDI,
+        CAMBIA,
+        CONT
+    } codice;
+
+    struct
+    {
+        int x, y
+    } posizione;
+
+} Messaggio;
 
 // Variabili globali
 

@@ -30,9 +30,9 @@ void inizializzaFlussiFiume(InformazioniFiume *infoFiume)
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
     {
         // Initialize direction and speed for each row
-        infoFiume->direzioneFlussi[i] = rand() % 2 == 0 ? SINISTRA : DESTRA;                                                                           // Random direction for each row
-        infoFiume->velocitaFlussi[i] = getVelocitaFlussoFiume();                                                                                       // Random speed for each row
-        infoFiume->numeroCoccodrilliFlussi[i] = NUM_MIN_COCCODRILLI_FLUSSO + (rand() % (NUM_MAX_COCCODRILLI_FLUSSO - NUM_MIN_COCCODRILLI_FLUSSO + 1)); // Random number of crocodiles
+        infoFiume->direzioneFlussi[i] = rand() % 2 == 0 ? SINISTRA : DESTRA;                                              // Random direction for each row
+        infoFiume->velocitaFlussi[i] = getVelocitaFlussoFiume();                                                          // Random speed for each row
+        infoFiume->numeroCoccodrilliFlussi[i] = NUM_MIN_COCCODRILLI_FLUSSO + (rand() % (NUM_MAX_COCCODRILLI_FLUSSO - 1)); // Random number of crocodiles
     }
 }
 
