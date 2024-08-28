@@ -171,7 +171,7 @@ typedef struct
 {
     DirezioneFiume direzioneFlussi[NUM_FLUSSI_FIUME];
     int velocitaFlussi[NUM_FLUSSI_FIUME];
-    int numeroCoccodrilliFlussi[NUM_FLUSSI_FIUME];
+    // int numeroCoccodrilliFlussi[NUM_FLUSSI_FIUME];
     struct
     {
         short id_coccodrilli[NUM_MAX_COCCODRILLI_FLUSSO];

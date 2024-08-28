@@ -87,11 +87,11 @@ void avviaGioco()
                  * generane un'altra altrimenti
                  */
 
-                msg.posizione.y = maxy - 9 + rand() % 9;
-                while (infoFiume.numeroCoccodrilliFlussi[msg.posizione.y - (maxy - 9)] >= NUM_MAX_COCCODRILLI_FLUSSO)
-                {
-                    msg.posizione.y = maxy - 9 + rand() % 9;
-                }
+                short fl = rand() % 9;
+                while (infoFiume.info_flusso[fl].presenti >= NUM_MAX_COCCODRILLI_FLUSSO)
+                    fl = rand() % 9;
+
+                msg.posizione.y = tmp + maxy - 1; /* CHECKME */
 
                 /*~ Come generare la x:
                  * Per ogni coccodrillo in un flusso, controlla la sua posizione
@@ -99,6 +99,58 @@ void avviaGioco()
                  * Genera randomicamente la x entro quello spazio
                  * Assegna la x a quel messaggio
                  */
+
+                /* Due casistiche: flusso senza coccodrilli, e flusso con dei coccodrilli */
+                if (infoFiume.info_flusso[fl].presenti == 0)
+                {
+                    msg.posizione.x = (rand() % (maxx - COLONNE_SPRITE_COCCODRILLO)) + COLONNE_SPRITE_COCCODRILLO;
+                }
+                else
+                {
+                    int left = 0, right;
+                    int id = infoFiume.info_flusso[fl].id_coccodrilli[0];
+
+                    for (int i = 0; i < infoFiume.info_flusso[fl].presenti; i++)
+                    {
+                        /* ATTENZIONE: suppone che se un ID viene eliminato, gli ID vengano spostati tutti
+                         * di una posizione indietro.
+                         * Per rendere la cosa più efficiente servono le liste
+                         */
+                        id = infoFiume.info_flusso[fl].id_coccodrilli[i];
+
+                        /* Selezione della coordinata destra: quando si raggiunge l'ultimo
+                         * coccodrillo, la coodrinata destra deve essere per forza il bordo destro
+                         * dello schermo
+                         */
+                        right = i + 1 < infoFiume.info_flusso[fl].presenti
+                                    ? stato.coccodrilli[id].x
+                                    : maxx;
+
+                        if ((right - left) <= (COLONNE_SPRITE_COCCODRILLO * 2) + 1)
+                        {
+                            msg.posizione.x = rand() % (COLONNE_SPRITE_COCCODRILLO) + 1; /* Almeno uno spazio a sinistra */
+                            break;
+                        }
+
+                        /* Aggiorna */
+                        left = right;
+
+                        /* Side note: se non trova uno spazio, deve rigenerare un'altra y */
+                    }
+
+                    /* Inserire l'id del coccodrillo da inserire "in mezzo" agli altri nell'array.
+                     * Copia, poi inserisci
+                     */
+                    int old_i = i;
+                    if (i < infoFiume.info_flusso[fl].presenti)
+                    {
+                        for (; i < infoFiume.info_flusso[fl].presenti - 1; i++)
+                        {
+                            infoFiume.info_flusso[fl].id_coccodrilli[i + 1] = infoFiume.info_flusso[fl].id_coccodrilli[i];
+                        }
+                        infoFiume.info_flusso[fl].id_coccodrilli[old_i] = id;
+                    }
+                }
 
                 close(stato.pipe_coccodrilli[i][LETTURA]);
                 write(stato.pipe_coccodrilli[i][SCRITTURA], &msg, sizeof(msg));
@@ -123,10 +175,10 @@ void controlloGioco(int pipein, StatoGioco *stato)
 
     initOggetto(&rana);
 
-    for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
-    {
-        initOggetto(&(stato->proiettiliRana[i])); /// E' GIUSTO??????????????????????????????????????????????????????????
-    }
+    /*  for (int i = 0; i < NUM_PROIETTILI_RANA; i++)
+      {
+          //initOggetto(&(stato->proiettiliRana[i]));
+      }*/
 
     for (int i = 0; i < NUM_PIANTE; i++)
     {
