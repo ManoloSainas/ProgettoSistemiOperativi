@@ -1,15 +1,22 @@
 #include "main.h"
+#include <signal.h>
 
-// inizializza una tipologia casuale
-TipologiaCoccodrillo getTipologiaCoccodrillo()
+/* Routine debug */
+void handler(int sig)
 {
-    return rand() % 2 == 0 ? BUONO : CATTIVO;
+    fprintf(stderr, "Hello, this shouldn't happen! I am crocodile %d, and a %s was raised\n",
+            getpid(),
+            sig == SIGSEGV ? "Segmentation violation" : sig == SIGPIPE ? "broken pipe signal"
+                                                                       : "unknown signal");
 }
 
 // void coccodrillo(int pipeout, int row, int indice, InformazioniFiume *infoFiume)
 void coccodrillo(int pipeout, int pipein, int indice, InformazioniFiume *infoFiume)
 {
     oggetto oggetto_coccodrillo;
+
+    signal(SIGSEGV, handler);
+    signal(SIGPIPE, handler);
 
     srand(time(NULL) + indice); // Unique seed for each crocodile
 
@@ -22,26 +29,32 @@ void coccodrillo(int pipeout, int pipein, int indice, InformazioniFiume *infoFiu
     oggetto_coccodrillo.index = indice;
     oggetto_coccodrillo.proiettili = false;
 
-    /*~
-     * read from pipein the following parameters:
-     * switch (msg) {
-     * case STOP:
-     * oggetto_coccodrillo.status = SOSPESO;
-     * }
-     */
-
     // Random delay before generating the next crocodile
-    usleep(1000000 + (rand() % 6000000)); // Random delay between 2 and 5 seconds
+    // usleep(1000000 + (rand() % 6000000)); // Random delay between 2 and 5 seconds
 
-    // Scrivi l'oggetto coccodrillo nella pipe
-    write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
+    Messaggio msg = {0};
+    {
+        // read(pipein, &msg, sizeof(msg));
 
-    Messaggio msg;
+        oggetto_coccodrillo.status = ATTIVO;
+        oggetto_coccodrillo.x = 40;
+        oggetto_coccodrillo.y = maxy - 2;
+
+        // oggetto_coccodrillo.direzioneFiume = infoFiume->direzioneFlussi[msg.posizione.y - (maxy - 9)]; // Use direction for the specific row
+        // oggetto_coccodrillo.velocita = infoFiume->velocitaFlussi[msg.posizione.y - (maxy - 9)]; // Use speed for the specific row
+
+        oggetto_coccodrillo.direzioneFiume = infoFiume->direzioneFlussi[0]; // Use direction for the specific row
+        oggetto_coccodrillo.velocita = infoFiume->velocitaFlussi[0];        // Use speed for the specific row
+    }
+
+    /* TODO: revamp della formula per ottenere il flusso esatto. Si potrebbe evitare di usare
+     * la coordinata, e mandare semplicemente un indice?
+     */
     // Movimento del coccodrillo
-    // while (oggetto_coccodrillo.status == ATTIVO)
     while (1)
     {
         /*~ Aspetta una risposta dal padre */
+#ifdef disabled
         read(pipein, &msg, sizeof(msg));
         switch (msg.codice)
         {
@@ -55,23 +68,19 @@ void coccodrillo(int pipeout, int pipein, int indice, InformazioniFiume *infoFiu
                 oggetto_coccodrillo.y = msg.posizione.y;
 
                 oggetto_coccodrillo.direzioneFiume = infoFiume->direzioneFlussi[msg.posizione.y - (maxy - 9)]; // Use direction for the specific row
-                oggetto_coccodrillo.tipologiaCoccodrillo = (oggetto_coccodrillo.tipo == COCCODRILLO_BUONO) ? BUONO : CATTIVO;
+                // oggetto_coccodrillo.tipologiaCoccodrillo = (oggetto_coccodrillo.tipo == COCCODRILLO_BUONO) ? BUONO : CATTIVO;
                 oggetto_coccodrillo.velocita = infoFiume->velocitaFlussi[msg.posizione.y - (maxy - 9)]; // Use speed for the specific row
             }
             break;
-        case SOSPENDI:
+        case SOSPENDI: /* Non dovrebbe verificarsi in teoria */
             if (oggetto_coccodrillo.status == ATTIVO)
-            {
                 oggetto_coccodrillo.status = SOSPESO;
-            }
             else
                 continue;
             break;
         case CAMBIA: /*~quando abbiamo una collisione, allora il coccodrillo diventa buono*/
             if (oggetto_coccodrillo.status == ATTIVO)
-            {
                 oggetto_coccodrillo.tipologiaCoccodrillo = COCCODRILLO_BUONO;
-            }
             else
                 continue;
             break;
@@ -80,54 +89,32 @@ void coccodrillo(int pipeout, int pipein, int indice, InformazioniFiume *infoFiu
                 continue;
             break;
         }
+#endif
 
         if (oggetto_coccodrillo.tipo == COCCODRILLO_CATTIVO)
         {
             // Randomly decide to submerge
             if (rand() % 100 < 5) // 5% chance to submerge
-            {
                 oggetto_coccodrillo.status = SOSPESO;
-
-                // _exit(0);
-            }
-        }
-
-        if (oggetto_coccodrillo.direzioneFiume == SINISTRA)
-        {
-            oggetto_coccodrillo.x -= SPOSTAMENTO_X_COCCODRILLO;
-            // if (oggetto_coccodrillo.x < minx + 1)
-            // {
-            //     oggetto_coccodrillo.tipo = COCCODRILLO_IMMERSIONE;
-            //     write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
-            //     usleep(2000000); // Wait for 2 seconds
-            //     oggetto_coccodrillo.status = SOSPESO;
-            // }
         }
         else
         {
-            oggetto_coccodrillo.x += SPOSTAMENTO_X_COCCODRILLO;
-            // if (oggetto_coccodrillo.x > maxx - COLONNE_SPRITE_COCCODRILLO - 1)
-            // {
-            //     oggetto_coccodrillo.tipo = COCCODRILLO_IMMERSIONE;
-            //     write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
-            //     usleep(2000000); // Wait for 2 seconds
-            //     oggetto_coccodrillo.status = SOSPESO;
-            // }
-        }
 
-        /* Refactoring */
-        if (oggetto_coccodrillo.x < minx + 1 || oggetto_coccodrillo.x > maxx - COLONNE_SPRITE_COCCODRILLO - 1)
-        {
-            oggetto_coccodrillo.tipo = COCCODRILLO_IMMERSIONE;
-            oggetto_coccodrillo.status = SOSPESO;
-        }
+            if (oggetto_coccodrillo.direzioneFiume == SINISTRA)
+                oggetto_coccodrillo.x -= SPOSTAMENTO_X_COCCODRILLO;
+            else
+                oggetto_coccodrillo.x += SPOSTAMENTO_X_COCCODRILLO;
 
-        usleep(oggetto_coccodrillo.status == SOSPESO ? 2000000 : oggetto_coccodrillo.velocita);
+            if (oggetto_coccodrillo.x < minx + 1 || oggetto_coccodrillo.x > maxx - COLONNE_SPRITE_COCCODRILLO - 1)
+            {
+                oggetto_coccodrillo.tipo = COCCODRILLO_IMMERSIONE;
+                oggetto_coccodrillo.status = SOSPESO;
+            }
+        }
 
         // Scrivi l'oggetto coccodrillo nella pipe
         write(pipeout, &oggetto_coccodrillo, sizeof(oggetto));
-    }
 
-    // Termina il processo quando il coccodrillo esce dallo schermo
-    // _exit(0);
+        usleep(oggetto_coccodrillo.status == SOSPESO ? 2000000 : oggetto_coccodrillo.velocita);
+    }
 }

@@ -1,38 +1,40 @@
 #include "main.h"
 
-// Definizione delle variabili globali
+// Definizione variabili globali
+
+// Schermata di gioco e dimensioni
 int minx, miny;
 int maxx, maxy;
 WINDOW *gioco;
 
-// Inizializza un'array di posizioni delle piante inizializzato a -1 per tutte e tre le piante
+// Posizione iniziale delle piante
 int posizionePianteX[NUM_PIANTE] = {19, 29, 39};
 
-// Inizializza le informazioni sui flussi del fiume
+// Informazioni sui flussi del fiume
 InformazioniFiume infoFiume;
 
-// inizializza una direzione casuale
+// Inizializza una direzione casuale, utilizzata in fase di creazione dei flussi
 DirezioneFiume getDirezioneFiume()
 {
 
     return rand() % 2 == 0 ? SINISTRA : DESTRA;
 }
 
+// Inizializza una velocità casuale, utilizzata in fase di creazione dei flussi
 int getVelocitaFlussoFiume()
 {
 
     return VELOCITA_MIN_FLUSSO + (rand() % (VELOCITA_MAX_FLUSSO - VELOCITA_MIN_FLUSSO + 1));
 }
 
+// Inizializza i flussi del fiume, assegnando a ciascuno una direzione e una velocità casuali
 void inizializzaFlussiFiume(InformazioniFiume *infoFiume)
 {
 
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
     {
-        // Initialize direction and speed for each row
-        infoFiume->direzioneFlussi[i] = rand() % 2 == 0 ? SINISTRA : DESTRA; // Random direction for each row
-        infoFiume->velocitaFlussi[i] = getVelocitaFlussoFiume();             // Random speed for each row
-        infoFiume->numeroCoccodrilliFlussi[i] = 0;
+        infoFiume->direzioneFlussi[i] = rand() % 2 == 0 ? SINISTRA : DESTRA; // Direzione casuale per ogni flusso
+        infoFiume->velocitaFlussi[i] = getVelocitaFlussoFiume();             // Velocità casuale per ogni flusso
     }
 }
 

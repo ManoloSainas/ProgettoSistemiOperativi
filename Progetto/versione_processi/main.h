@@ -9,26 +9,26 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include <ncurses.h>  //Libreria ncurses
-#include <sys/time.h> //Libreria per tenere traccia del tempo
-#include <time.h>     //Libreria per la generazione casuale
+#include <ncurses.h>  // Libreria ncurses
+#include <sys/time.h> // Libreria per tenere traccia del tempo
+#include <time.h>     // Libreria per la generazione casuale di numeri
 
-// Numero dati
+// Definizione costanti di gioco
 #define NUM_VITE_RANA 3
 #define NUM_PROIETTILI_RANA 10 // Numero proiettili visibili sullo schermo contemporaneamente
 #define NUM_TANE 5
 #define NUM_PIANTE 3
-#define NUM_MIN_COCCODRILLI_FLUSSO 1
-#define NUM_MAX_COCCODRILLI_FLUSSO 8
+#define NUM_MIN_COCCODRILLI_FLUSSO 1 // Numero minimo di coccodrilli per flusso
+#define NUM_MAX_COCCODRILLI_FLUSSO 8 // Numero massimo di coccodrilli per flusso
 #define NUM_FLUSSI_FIUME 8
-#define NUM_TOT_COCCODRILLI 32
+// #define NUM_TOT_COCCODRILLI 32 // Numero totale di coccodrilli presenti sullo schermo
+#define NUM_TOT_COCCODRILLI 1 // Numero totale di coccodrilli presenti sullo schermo
 
-// Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
-#define KEY_SPACE 32 // Valore relativo al carattere spazio
+#define KEY_SPACE 32 // Valore relativo al carattere spazio (per sparare proiettili con la rana)
 
-// Colori
+// Colori utilizzati per lo sfondo e per gli oggetti
 #define COLORE_STANDARD 1
 #define COLORE_CANCELLAZIONE 2
 #define COLORE_ROSSO 3
@@ -48,8 +48,9 @@
 #define COLORE_RANA 16
 #define COLORE_COCCODRILLO_IMMERSIONE 17
 
-// Spostamento oggetti
+// Costanti per la gestione dello spostamento degli oggetti
 #define SPOSTAMENTO_RANA 1
+
 #define SPOSTAMENTO_X_PROIETTILI_RANA 0
 #define SPOSTAMENTO_Y_PROIETTILI_RANA 1
 
@@ -75,14 +76,19 @@
 #define RIGHE_SPRITE_PROIETTILE_PIANTA 1
 #define COLONNE_SPRITE_PROIETTILE_PIANTA 1
 
-// Gestione proiettili
+// Gestione proiettili, tempo di ricarica e velocità
 #define RICARICA_PROIETTILI 9000
 #define SPEED_PROIETTILI 60000
 
-// Gestione fiume
+// Gestione fiume, velocità minima e massima
 #define VELOCITA_MAX_FLUSSO 500000
 #define VELOCITA_MIN_FLUSSO 300000
-// Distanza tra piante
+
+// Primo e ultimo flusso del fiume
+#define PRIMO_FLUSSO maxy - 1
+#define ULTIMO_FLUSSO maxy - 9
+
+// Distanza minima tra piante
 #define DISTANZA_PIANTE 2
 
 // Definizione degli sprite
@@ -124,11 +130,11 @@ typedef enum tipoOggetto
 // Tipologia per distinguere le modalità di utilizzo della pipe
 typedef enum tipoDescrittore
 {
-    LETTURA,
+    LETTURA = 0,
     SCRITTURA
 } tipoDescrittore;
 
-// Distingue un'oggetto in funzione tra un oggetto non in funzione
+// Distingue un'oggetto in funzione tra un oggetto non in funzione (stato generale dell'oggetto)
 typedef enum statusOggetto
 {
     NON_ATTIVO,
@@ -137,7 +143,7 @@ typedef enum statusOggetto
     TERMINATO
 } statusOggetto;
 
-// Informazioni sugli oggetti presenti su schermo
+// Informazioni sul singolo oggetto (le informazioni sono comuni a tutti gli oggetti presenti sullo schermo)
 typedef struct oggetto
 {
     tipoOggetto tipo;                          // Tipologia
@@ -145,15 +151,15 @@ typedef struct oggetto
     int y;                                     // Posizione y
     int index;                                 // Indice in caso di oggetti multipli uguali
     int pid_oggetto;                           // Pid del processo che gestisce l'oggetto
-    statusOggetto status;                      // Informa lo status dell'oggetto
+    statusOggetto status;                      // Informazione sullo stato dell'oggetto
     bool proiettili;                           // Contiene i proiettili dell'oggetto (se è un oggetto che spara)
     DirezioneFiume direzioneFiume;             // Direzione del coccodrillo
     TipologiaCoccodrillo tipologiaCoccodrillo; // Tipo di coccodrillo (buono o cattivo)
-    int velocita;
-
+    int velocita;                              // Velocità di spostamento dell'oggetto
+    short indice_flusso;                       // indice del flusso del fiume (se `e un coccodrillo)
 } oggetto;
 
-// Stato gioco
+// Struttura per contenere lo stato del gioco con tutte le varie informazioni (oggetti nello schermo e pipe per comunicare con i coccodrilli)
 typedef struct stato_gioco
 {
     oggetto
@@ -169,24 +175,30 @@ typedef struct stato_gioco
 // Informazioni sul fiume e sui flussi
 typedef struct
 {
-    DirezioneFiume direzioneFlussi[NUM_FLUSSI_FIUME];
-    int velocitaFlussi[NUM_FLUSSI_FIUME];
+    DirezioneFiume direzioneFlussi[NUM_FLUSSI_FIUME]; // Direzione dei flussi del fiume
+    int velocitaFlussi[NUM_FLUSSI_FIUME];             // Velocità dei flussi del fiume
     // int numeroCoccodrilliFlussi[NUM_FLUSSI_FIUME];
     struct
     {
-        short id_coccodrilli[NUM_MAX_COCCODRILLI_FLUSSO];
-        short presenti; /* Quanti coccodrilli in un flusso */
-        short posizione_coccodrilli[NUM_MAX_COCCODRILLI_FLUSSO];
-    } info_flusso[NUM_FLUSSI_FIUME];
+        short origine;                                    // la y dove inizia
+        short id_coccodrilli[NUM_MAX_COCCODRILLI_FLUSSO]; // Identificativo dei coccodrilli presenti in un flusso
+        short presenti;                                   // Numero di coccodrilli presenti in un flusso
+    } info_flusso[NUM_FLUSSI_FIUME];                      // Informazioni sui coccodrilli presenti in un flusso
 } InformazioniFiume;
 
-// La tana può essere aperta o chiusa
+// Indica se la tana è aperta o chiusa
 typedef enum
 {
     APERTA,
     CHIUSA
 } StatoTana;
 
+typedef struct posizione
+{
+    int x, y;
+} Posizione;
+
+// Struttura per gestire lo stato di un oggetto
 typedef struct messaggio
 {
     enum
@@ -197,11 +209,7 @@ typedef struct messaggio
         CONT
     } codice;
 
-    struct
-    {
-        int x, y
-    } posizione;
-
+    Posizione posizione;
 } Messaggio;
 
 // Variabili globali
@@ -210,7 +218,7 @@ typedef struct messaggio
 extern int minx, miny;
 extern int maxx, maxy;
 
-extern int indexProiettileRana; // Contiene l'indice del proiettile
+extern int indexProiettileRana; // Contiene l'indice del proiettile rana
 
 extern bool vittoria; // True se il giocatore ha vinto, False altrimenti
 
@@ -233,12 +241,12 @@ void terminaGioco();
 void inizializzazionePipe(int filedes[]);
 
 void rana(int pipeout);
-void coccodrillo(int pipeout, int row, int indice, InformazioniFiume *infoFiume);
+void coccodrillo(int pipeout, int pipein, int indice, InformazioniFiume *infoFiume);
 void pianta(int pipeout, int indice, int pos_x);
 void proiettileRana(int pipeout, int pos_ranay, int pos_ranax);
 void proiettilePianta(int pipeout, int pos_pianty, int pos_piantax, int index_pianta);
 
-void controlloGioco(int pipein);
+void controlloGioco(int pipein, StatoGioco *statoGioco);
 void visualizzaTimer(int tempoRimanente);
 void terminaGioco();
 
@@ -254,3 +262,4 @@ DirezioneFiume getDirezioneFiume();
 TipologiaCoccodrillo getTipologiaCoccodrillo();
 int getVelocitaFlussoFiume();
 void inizializzaFlussiFiume(InformazioniFiume *infoFiume);
+Posizione genera_posizione_fiume(StatoGioco *stato, InformazioniFiume *infoFiume);

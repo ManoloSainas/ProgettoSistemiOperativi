@@ -23,12 +23,12 @@ void inizializzazioneSchermo()
     box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno
 
     // Settaggio delle coordinate dell'area di gioco per la generazione degli
-    // oggetti e per le collisioni Vista la presenza del bordo l'area di gioco
+    // oggetti e per le collisioni. Vista la presenza del bordo l'area di gioco
     // viene ristretta di 1 carattere per evitare collisioni con esso
-    miny = 1;
-    minx = 1;
-    maxy -= 2; // Diminuito di due perchè verranno scritte le informazioni
-    maxx -= 1;
+    miny = 1;  // DA MODIFICARE
+    minx = 1;  // DA MODIFICARE
+    maxy -= 2; // DA MODIFICARE
+    maxx -= 1; // DA MODIFICARE
 
     // Inizializzazione dei colori
     init_pair(COLORE_STANDARD, COLOR_WHITE, COLOR_BLACK);
@@ -46,7 +46,7 @@ void inizializzazioneSchermo()
     init_pair(SFONDO_TANE, COLOR_GREEN, COLOR_GREEN);                    // Colore delle tane
     init_pair(COLORE_TANE, COLOR_RED, COLOR_YELLOW);                     // Colore del testo delle tane
     init_pair(COLORE_PIANTA, COLOR_RED, COLOR_WHITE);                    // Colore delle piante
-    init_pair(COLORE_COCCODRILLO_BUONO, COLOR_GREEN, COLOR_BLUE);        // Colore dei coccodrilli
-    init_pair(COLORE_COCCODRILLO_CATTIVO, COLOR_RED, COLOR_BLUE);        // Colore dei coccodrilli
-    init_pair(COLORE_COCCODRILLO_IMMERSIONE, COLOR_MAGENTA, COLOR_BLUE); // Colore dei coccodrilli
+    init_pair(COLORE_COCCODRILLO_BUONO, COLOR_GREEN, COLOR_BLUE);        // Colore dei coccodrilli buoni
+    init_pair(COLORE_COCCODRILLO_CATTIVO, COLOR_RED, COLOR_BLUE);        // Colore dei coccodrilli cattivi
+    init_pair(COLORE_COCCODRILLO_IMMERSIONE, COLOR_MAGENTA, COLOR_BLUE); // Colore dei coccodrilli che si immergono
 }

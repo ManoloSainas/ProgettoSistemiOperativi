@@ -28,13 +28,9 @@ void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, ogg
     // Terminate active projectile processes
     for (i = 0; i < NUM_PROIETTILI_RANA; i++)
     {
-        if (proiettiliRana[i].status == ATTIVO)
+        if (kill(proiettiliRana[i].pid_oggetto, SIGKILL) == -1)
         {
-            if (kill(proiettiliRana[i].pid_oggetto, SIGKILL) == -1)
-            {
-                perror("Errore nel terminare il processo del proiettile");
-            }
-            proiettiliRana[i].status = TERMINATO;
+            perror("Errore nel terminare il processo del proiettile");
         }
     }
 
@@ -45,45 +41,33 @@ void chiudiProcessi(oggetto *proiettiliRana, oggetto *rana, oggetto *piante, ogg
         {
             perror("Errore nel terminare il processo della rana");
         }
-        rana->status = TERMINATO;
     }
 
     // Terminate active plant processes
     for (i = 0; i < NUM_PIANTE; i++)
     {
-        if (piante[i].status == ATTIVO)
+        if (kill(piante[i].pid_oggetto, SIGKILL) == -1)
         {
-            if (kill(piante[i].pid_oggetto, SIGKILL) == -1)
-            {
-                perror("Errore nel terminare il processo della pianta");
-            }
-            piante[i].status = TERMINATO;
+            perror("Errore nel terminare il processo della pianta");
         }
     }
 
     // Terminate actove bullets plants processes
     for (i = 0; i < NUM_PIANTE; i++)
     {
-        if (proiettiliPianta[i].status == ATTIVO)
+
+        if (kill(piante[i].pid_oggetto, SIGKILL) == -1)
         {
-            if (kill(piante[i].pid_oggetto, SIGKILL) == -1)
-            {
-                perror("Errore nel terminare il processo del proiettile della pianta");
-            }
-            proiettiliPianta[i].status = TERMINATO;
+            perror("Errore nel terminare il processo del proiettile della pianta");
         }
     }
 
     // Terminate active crocodile processes
     for (i = 0; i < NUM_TOT_COCCODRILLI; i++)
     {
-        if (coccodrilli[i].status == ATTIVO)
+        if (kill(coccodrilli[i].pid_oggetto, SIGKILL) == -1)
         {
-            if (kill(coccodrilli[i].pid_oggetto, SIGKILL) == -1)
-            {
-                perror("Errore nel terminare il processo del coccodrillo");
-            }
-            coccodrilli[i].status = TERMINATO;
+            perror("Errore nel terminare il processo del coccodrillo");
         }
     }
 }
