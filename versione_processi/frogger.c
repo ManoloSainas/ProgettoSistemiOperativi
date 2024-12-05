@@ -12,7 +12,7 @@ int main()
 
     while (true)
     {
-        mvwaddstr(gioco, 1, 1, "----------xx----------xx----------xx----------xx----------xx----------");
+        mvwaddstr(gioco, 1, 1, "----------xx----------xx----------xx----------xx----------xx----------"); // Per visualizzare la distanza tra le tane
         wrefresh(gioco);
 
         if (wgetch(gioco) == 'x')
