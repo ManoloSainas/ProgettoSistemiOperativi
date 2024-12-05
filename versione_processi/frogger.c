@@ -12,7 +12,7 @@ int main()
 
     while (true)
     {
-        mvwaddstr(gioco, 1, 1, "FROGGER 2 LA VENDETTa");
+        mvwaddstr(gioco, 1, 1, "----------xx----------xx----------xx----------xx----------xx----------");
         wrefresh(gioco);
 
         if (wgetch(gioco) == 'x')

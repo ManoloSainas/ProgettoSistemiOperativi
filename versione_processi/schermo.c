@@ -10,10 +10,10 @@ int inizializzazioneSchermo()
     getmaxyx(stdscr, maxy, maxx); // Rileva la dimensione del terminale
 
     // Settaggio delle coordinate relative la grandezza dello schermo di gioco
-    miny = maxy / 5;
-    minx = maxx / 5;
-    maxy = 25;
-    maxx = 60;
+    miny = 5;
+    minx = 10;
+    maxy = 18;
+    maxx = 72;
 
     gioco = newwin(maxy, maxx, miny, minx);
 
