@@ -1,6 +1,6 @@
 #include "frogger.h"
 
-int inizializzazioneSchermo()
+void inizializzazioneSchermo()
 {
     initscr();     // inizializzazione schermo
     noecho();      // elimina visualizazzione tasti premuti
@@ -30,9 +30,9 @@ int inizializzazioneSchermo()
     init_pair(COLORE_RANA, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLORE_COCCODRILLO, COLOR_GREEN, COLOR_BLACK);
     init_pair(COLORE_COCCODRILLO_SPARO, COLOR_RED, COLOR_BLACK);
-    init_pair(SFONDO_MARCIAPIEDE, COLOR_WHITE, COLOR_BLACK);
-    init_pair(SFONDO_ACQUA, COLOR_BLUE, COLOR_BLACK);
-    init_pair(SFONDO_ERBA, COLOR_GREEN, COLOR_BLACK);
-    init_pair(SFONDO_TANE, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(COLORE_TANE, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(SFONDO_MARCIAPIEDE, COLOR_BLACK, COLOR_MAGENTA);
+    init_pair(SFONDO_ACQUA, COLOR_BLACK, COLOR_BLUE);
+    init_pair(SFONDO_ERBA, COLOR_BLACK, COLOR_MAGENTA);
+    init_pair(SFONDO_TANE, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(COLORE_TANE, COLOR_BLACK, COLOR_WHITE);
 }

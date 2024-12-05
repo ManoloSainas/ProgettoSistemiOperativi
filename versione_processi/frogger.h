@@ -21,6 +21,18 @@
 #define NUM_MIN_COCCODRILLI_FLUSSO 5
 #define NUM_FLUSSI_FIUME 8
 
+// Dimensione Sprite
+#define RIGHE_SPRITE_RANA 1
+#define COLONNE_SPRITE_RANA 2
+
+#define RIGHE_SPRITE_COCCODRILLO 1
+#define COLONNE_SPRITE_COCCODRILLO 4
+
+#define DIMENSIONE_TANA 2
+
+#define RIGHE_SPRITE_PROIETTILE 1
+#define COLONNE_SPRITE_PROIETTILE 1
+
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
@@ -46,11 +58,50 @@
 #define SFONDO_TANE 15
 #define COLORE_TANE 16
 
+// Spostamento oggetti
+#define SPOSTAMENTO_RANA 1
+
+// direzione flusso fiume
+typedef enum
+{
+    SINISTRA,
+    DESTRA
+} DirezioneFlusso;
+
+// differenziazione tra oggetti
+typedef enum tipoOggetto
+{
+    RANA,
+    COCCODRILLO,
+    PROIETTILE_RANA,
+    PROIETTILE_COCCODRILLO
+} tipoOggetto;
+
+// struttura per rappresentare i vari elementi non statici del gioco
+typedef struct elementoGioco
+{
+    tipoOggetto tipo;
+    int x;
+    int y;
+    int pid_oggetto;
+    int velocita;
+} elementoGioco;
+
+// Tipologia per distinguere le modalità di utilizzo della pipe
+typedef enum tipoDescrittore
+{
+    LETTURA,
+    SCRITTURA
+} tipoDescrittore;
+
 // Coordinate dell'area di gioco
-extern int minx, miny;
+extern int minx,
+    miny;
 extern int maxx, maxy;
 
 // Schermo ncurses
 extern WINDOW *gioco;
 
-int inizializzazioneSchermo();
+void inizializzazioneSchermo();
+void graficaGioco();
+void avviaGioco();
