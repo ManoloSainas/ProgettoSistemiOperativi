@@ -73,7 +73,7 @@ void controlloGioco(int pipein)
             wrefresh(gioco);
         }
 
-    } while (wgetch(gioco) != 'x');
+    } while (1);
 
     chiudiProcessi(&rana);
 }
