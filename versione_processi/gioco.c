@@ -39,37 +39,41 @@ void avviaGioco()
     terminaGioco();
 }
 
-void terminaGioco(){
-    delwin(gioco);           // Delete the window
-    endwin();                // End ncurses
+void terminaGioco()
+{
+    delwin(gioco); // Delete the window
+    endwin();      // End ncurses
 }
 
-void controlloGioco(int pipein) {
+void controlloGioco(int pipein)
+{
     elementoGioco valoreLetto;
     elementoGioco rana;
-    do{
-        if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0){
+    do
+    {
+        if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
+        {
             elementoGioco oggettoLetto;
-            switch(valoreLetto.tipo){
-                case RANA:
+            switch (valoreLetto.tipo)
+            {
+            case RANA:
                 oggettoLetto = rana;
             }
             cancellaSprite(oggettoLetto);
 
-            switch(valoreLetto.tipo)
+            switch (valoreLetto.tipo)
             {
-                case RANA:
+            case RANA:
                 rana = valoreLetto;
                 break;
             }
 
             stampaSprite(rana);
-            
-            curs_set(0);
+
             wrefresh(gioco);
         }
 
-    }while(wgetch(gioco) != 'x');
+    } while (wgetch(gioco) != 'x');
 
     chiudiProcessi(&rana);
 }

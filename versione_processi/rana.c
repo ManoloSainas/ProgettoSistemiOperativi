@@ -12,13 +12,10 @@ void rana(int pipeout)
     oggetto_rana.pid_oggetto = pid_rana;
     oggetto_rana.velocita = 0;
 
-    write(pipeout, &oggetto_rana, sizeof(elementoGioco));
-
     while (1)
     {
-        int inputUtente = wgetch(gioco);
 
-        switch (inputUtente)
+        switch (wgetch(gioco))
         {
         case KEY_UP:
             if (oggetto_rana.y > miny)
