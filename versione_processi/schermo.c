@@ -6,7 +6,8 @@ void inizializzazioneSchermo()
     noecho();      // elimina visualizazzione tasti premuti
     curs_set(0);   // nasconde cursore
     start_color(); // inizializzazione colori
-
+    
+    
     // Settaggio delle coordinate relative la grandezza dello schermo di gioco
     miny = 5;
     minx = 10;
@@ -14,7 +15,7 @@ void inizializzazioneSchermo()
     maxx = 72;
 
     gioco = newwin(maxy, maxx, miny, minx);
-
+    nodelay(gioco, true);
     box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno
 
     // Inizializzazione dei colori

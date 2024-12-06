@@ -33,6 +33,9 @@
 #define RIGHE_SPRITE_PROIETTILE 1
 #define COLONNE_SPRITE_PROIETTILE 1
 
+#define RIGHE_SPRITE_GRANATA 1
+#define COLONNE_SPRITE_gRANATA 1
+
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
@@ -65,7 +68,8 @@
 typedef enum
 {
     SINISTRA,
-    DESTRA
+    DESTRA,
+    NESSUNA
 } DirezioneFlusso;
 
 // differenziazione tra oggetti
@@ -73,9 +77,18 @@ typedef enum tipoOggetto
 {
     RANA,
     COCCODRILLO,
-    PROIETTILE_RANA,
+    GRANATA_RANA,
     PROIETTILE_COCCODRILLO
 } tipoOggetto;
+
+/*typedef enum statusOggetto
+{
+    NON_ATTIVO,
+    ATTIVO,
+    TERMINATO
+} statusOggetto;
+*/
+
 
 // struttura per rappresentare i vari elementi non statici del gioco
 typedef struct elementoGioco
@@ -85,7 +98,11 @@ typedef struct elementoGioco
     int y;
     int pid_oggetto;
     int velocita;
+    DirezioneFlusso direzione;
+    //statusOggetto status;
 } elementoGioco;
+
+
 
 // Tipologia per distinguere le modalità di utilizzo della pipe
 typedef enum tipoDescrittore
@@ -105,3 +122,10 @@ extern WINDOW *gioco;
 void inizializzazioneSchermo();
 void graficaGioco();
 void avviaGioco();
+void stampaSprite(elementoGioco elemento);
+void cancellaSprite(elementoGioco elemento);
+void rana(int pipeout);
+
+void controlloGioco(int pipein);
+void terminaGioco();
+void chiudiProcessi();
