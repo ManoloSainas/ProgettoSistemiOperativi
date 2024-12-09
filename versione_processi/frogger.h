@@ -101,6 +101,11 @@ typedef struct elementoGioco
     // statusOggetto status;
 } elementoGioco;
 
+typedef struct corrente{
+    DirezioneFlusso direzione;
+    int velocita;
+} corrente;
+
 // Tipologia per distinguere le modalità di utilizzo della pipe
 typedef enum tipoDescrittore
 {
