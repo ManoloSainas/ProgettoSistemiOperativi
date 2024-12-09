@@ -18,11 +18,11 @@ void rana(int pipeout)
         switch (wgetch(gioco))
         {
         case KEY_UP:
-            if (oggetto_rana.y > miny)
+            if (oggetto_rana.y > miny + 5)
                 oggetto_rana.y -= SPOSTAMENTO_RANA;
             break;
         case KEY_DOWN:
-            if (oggetto_rana.y < maxy - 1)
+            if (oggetto_rana.y < maxy - 2)
                 oggetto_rana.y += SPOSTAMENTO_RANA;
             break;
         case KEY_LEFT:
@@ -30,7 +30,7 @@ void rana(int pipeout)
                 oggetto_rana.x -= SPOSTAMENTO_RANA;
             break;
         case KEY_RIGHT:
-            if (oggetto_rana.x < maxx - COLONNE_SPRITE_RANA)
+            if (oggetto_rana.x < maxx - 3)
                 oggetto_rana.x += SPOSTAMENTO_RANA;
             break;
         }

@@ -6,11 +6,10 @@ void inizializzazioneSchermo()
     noecho();      // elimina visualizazzione tasti premuti
     curs_set(0);   // nasconde cursore
     start_color(); // inizializzazione colori
-    
-    
+
     // Settaggio delle coordinate relative la grandezza dello schermo di gioco
-    miny = 5;
-    minx = 10;
+    miny = 1;
+    minx = 1;
     maxy = 18;
     maxx = 72;
 

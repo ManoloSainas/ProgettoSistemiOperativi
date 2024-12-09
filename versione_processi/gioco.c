@@ -61,6 +61,8 @@ void controlloGioco(int pipein)
             }
             cancellaSprite(oggettoLetto);
 
+            graficaGioco();
+
             switch (valoreLetto.tipo)
             {
             case RANA:

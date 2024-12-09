@@ -89,7 +89,6 @@ typedef enum tipoOggetto
 } statusOggetto;
 */
 
-
 // struttura per rappresentare i vari elementi non statici del gioco
 typedef struct elementoGioco
 {
@@ -99,10 +98,8 @@ typedef struct elementoGioco
     int pid_oggetto;
     int velocita;
     DirezioneFlusso direzione;
-    //statusOggetto status;
+    // statusOggetto status;
 } elementoGioco;
-
-
 
 // Tipologia per distinguere le modalità di utilizzo della pipe
 typedef enum tipoDescrittore
