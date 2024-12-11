@@ -127,7 +127,7 @@ void avviaGioco();
 void stampaSprite(elementoGioco elemento);
 void cancellaSprite(elementoGioco elemento);
 void rana(int pipeout);
-
+void coccodrillo(int pipeout,int riga ,corrente flusso);
 void controlloGioco(int pipein);
 void terminaGioco();
 void chiudiProcessi();

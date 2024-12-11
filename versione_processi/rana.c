@@ -35,7 +35,11 @@ void rana(int pipeout)
             break;
         }
         // Scrittura nella pipe delle informazioni della rana
-        write(pipeout, &oggetto_rana, sizeof(elementoGioco));
+        if (write(pipeout, &oggetto_rana, sizeof(elementoGioco)) == -1) {
+    perror("Errore nella scrittura sulla pipe");
+    _exit(1);
+}
+
     }
 
     _exit(1);

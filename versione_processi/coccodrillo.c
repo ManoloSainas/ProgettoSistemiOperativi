@@ -1,11 +1,12 @@
 #include "frogger.h"
 
-void coccodrillo(int pipeout, int row, int indice, corrente flusso){
+void coccodrillo(int pipeout,int riga ,corrente flusso){
+
 
 elementoGioco coccodrillo;
 
 coccodrillo.tipo= COCCODRILLO;
-coccodrillo.y= row;
+coccodrillo.y= maxy-5-riga;
 coccodrillo.pid_oggetto= getpid();
 coccodrillo.direzione= flusso.direzione;
 coccodrillo.velocita= flusso.velocita;
@@ -41,13 +42,19 @@ case SINISTRA:
 default:
     break;
 }
-usleep(2000000 - coccodrillo.velocita*10000); //velocita del coccodrillo 2s- velocita flusso*10000
+
 
 //scrittura del coccodrillo nella pipe
-write(pipeout, &coccodrillo, sizeof(elementoGioco));
+if (write(pipeout, &coccodrillo, sizeof(elementoGioco)) == -1) {
+    perror("Errore nella scrittura sulla pipe");
+    _exit(1);
+}
+
+//velocita del coccodrillo 2s- velocita flusso*10000
+usleep(2000000 - coccodrillo.velocita*10000); 
 
 }
 //terminazione processo se il coccodrillo esce dallo schermo
-_exit(0);
+
 
 }
