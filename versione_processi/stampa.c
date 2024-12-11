@@ -122,13 +122,33 @@ void cancellaSprite(elementoGioco elemento)
     switch (elemento.tipo)
     {
     case RANA:
-        wattron(gioco, COLOR_PAIR(COLORE_BLU));
-        mvwprintw(gioco, elemento.y, elemento.x, "  ");
-        wattroff(gioco, COLOR_PAIR(COLORE_BLU));
+        switch (elemento.y)
+        {
+        case (6):
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_TANA));
+            mvwprintw(gioco, elemento.y, elemento.x, "  ");
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_TANA));
+            break;
+        case (7):
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            mvwprintw(gioco, elemento.y, elemento.x, "  ");
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            break;
+        case (16):
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            mvwprintw(gioco, elemento.y, elemento.x, "  ");
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            break;
+        default:
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
+            mvwprintw(gioco, elemento.y, elemento.x, "  ");
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
+            break;
+        }
 
         break;
     case COCCODRILLO:
-        wattron(gioco, COLOR_PAIR(COLORE_BLU));
+        wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
         if (elemento.direzione == SINISTRA)
         {
             mvwprintw(gioco, elemento.y, elemento.x + 4, "%c", ' ');
@@ -137,10 +157,10 @@ void cancellaSprite(elementoGioco elemento)
         {
             mvwprintw(gioco, elemento.y, elemento.x - 1, "%c", ' ');
         }
-        wattroff(gioco, COLOR_PAIR(COLORE_BLU));
+        wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
         break;
     case PROIETTILE_COCCODRILLO:
-        wattron(gioco, COLOR_PAIR(COLORE_BLU));
+        wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
         if (elemento.direzione == SINISTRA)
         {
             mvwprintw(gioco, elemento.y, elemento.x + 1, "%c", ' ');
@@ -149,7 +169,7 @@ void cancellaSprite(elementoGioco elemento)
         {
             mvwprintw(gioco, elemento.y, elemento.x - 1, "%c", ' ');
         }
-        wattroff(gioco, COLOR_PAIR(COLORE_BLU));
+        wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
         break;
     case GRANATA_RANA:
         if (elemento.y >= maxy - 1 || elemento.y < miny + 7)

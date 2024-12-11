@@ -10,7 +10,6 @@ int main()
     srand(time(NULL));
 
     inizializzazioneSchermo();
-    graficaGioco();
 
     avviaGioco();
 

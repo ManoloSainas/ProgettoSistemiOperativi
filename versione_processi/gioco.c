@@ -18,6 +18,8 @@ void avviaGioco()
     int coccodrilli_flusso[NUM_FLUSSI_FIUME];
     corrente flussi[NUM_FLUSSI_FIUME + 3];
 
+    graficaGioco();
+
     // inizializzazione flussi del fiume
     flussi[0].direzione = NESSUNA;
     flussi[NUM_FLUSSI_FIUME + 2].direzione = NESSUNA;
