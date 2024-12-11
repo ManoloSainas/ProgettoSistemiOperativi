@@ -61,13 +61,33 @@ void graficaGioco()
 
 void stampaSprite(elementoGioco elemento)
 {
+
     switch (elemento.tipo)
     {
     case RANA:
-        wattron(gioco, COLOR_PAIR(COLORE_RANA));
-        mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteRana);
-        wattroff(gioco, COLOR_PAIR(COLORE_RANA));
-        break;
+        switch (elemento.y)
+        {
+        case (6):
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_TANA));
+            mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteRana);
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_TANA));
+            break;
+        case (7):
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteRana);
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            break;
+        case (16):
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteRana);
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
+            break;
+        default:
+            wattron(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
+            mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteRana);
+            wattroff(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
+            break;
+        }
 
     case COCCODRILLO:
         wattron(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
@@ -101,6 +121,12 @@ void cancellaSprite(elementoGioco elemento)
 {
     switch (elemento.tipo)
     {
+    case RANA:
+        wattron(gioco, COLOR_PAIR(COLORE_BLU));
+        mvwprintw(gioco, elemento.y, elemento.x, "  ");
+        wattroff(gioco, COLOR_PAIR(COLORE_BLU));
+
+        break;
     case COCCODRILLO:
         wattron(gioco, COLOR_PAIR(COLORE_BLU));
         if (elemento.direzione == SINISTRA)
@@ -148,10 +174,6 @@ void cancellaSprite(elementoGioco elemento)
             wattroff(gioco, COLOR_PAIR(SFONDO_ERBA));
         break;
     default:
-        wattron(gioco, COLOR_PAIR(COLORE_BLU));
-        mvwprintw(gioco, elemento.y, elemento.x, "  ");
-        wattroff(gioco, COLOR_PAIR(COLORE_BLU));
-
         break;
     }
 }

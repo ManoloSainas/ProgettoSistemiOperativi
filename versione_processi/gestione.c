@@ -1,26 +1,29 @@
 #include "frogger.h"
 
-void chiudiProcessi(elementoGioco *elemento){
-    if (elemento == NULL){
+void chiudiProcessi(elementoGioco *elemento)
+{
+    if (elemento == NULL)
+    {
         fprintf(stderr, "Errore: puntatore nullo passato a chiudiProcessi\n");
         return;
     }
-switch (elemento->tipo)
-{
-case RANA:
-   if (kill(elemento->pid_oggetto, SIGKILL) == -1)
+    switch (elemento->tipo)
+    {
+    case RANA:
+        if (kill(elemento->pid_oggetto, SIGKILL) == -1)
         {
             perror("Errore nel terminare il processo della rana");
         }
-    break;
-case COCCODRILLO:
-if (kill(elemento->pid_oggetto, SIGKILL) == -1)
+        waitpid(elemento->pid_oggetto, NULL, 0);
+        break;
+    case COCCODRILLO:
+        if (kill(elemento->pid_oggetto, SIGKILL) == -1)
         {
             perror("Errore nel terminare il processo coccodrillo");
         }
-    break;
-default:
-    break;
-}
-    
+        waitpid(elemento->pid_oggetto, NULL, 0);
+        break;
+    default:
+        break;
+    }
 }

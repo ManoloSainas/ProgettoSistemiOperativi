@@ -52,14 +52,16 @@
 #define COLORE_MAGENTA 8
 
 // Colori gioco
-#define COLORE_RANA 9
-#define COLORE_COCCODRILLO 10
-#define COLORE_COCCODRILLO_SPARO 11
-#define SFONDO_MARCIAPIEDE 12
-#define SFONDO_ACQUA 13
-#define SFONDO_ERBA 14
-#define SFONDO_TANE 15
-#define COLORE_TANE 16
+#define COLORE_RANA_ARGINE 9
+#define COLORE_RANA_COCCODRILLO 10
+#define COLORE_RANA_TANA 11
+#define COLORE_COCCODRILLO 12
+#define COLORE_COCCODRILLO_SPARO 13
+#define SFONDO_MARCIAPIEDE 14
+#define SFONDO_ACQUA 15
+#define SFONDO_ERBA 16
+#define SFONDO_TANE 17
+#define COLORE_TANE 18
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
@@ -101,7 +103,8 @@ typedef struct elementoGioco
     // statusOggetto status;
 } elementoGioco;
 
-typedef struct corrente{
+typedef struct corrente
+{
     DirezioneFlusso direzione;
     int velocita;
 } corrente;
@@ -127,7 +130,7 @@ void avviaGioco();
 void stampaSprite(elementoGioco elemento);
 void cancellaSprite(elementoGioco elemento);
 void rana(int pipeout);
-void coccodrillo(int pipeout,int riga ,corrente flusso);
+void coccodrillo(int pipeout, int riga, corrente flusso);
 void controlloGioco(int pipein);
 void terminaGioco();
 void chiudiProcessi();

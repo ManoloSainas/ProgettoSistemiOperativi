@@ -1,60 +1,62 @@
 #include "frogger.h"
 
-void coccodrillo(int pipeout,int riga ,corrente flusso){
-
-
-elementoGioco coccodrillo;
-
-coccodrillo.tipo= COCCODRILLO;
-coccodrillo.y= maxy-5-riga;
-coccodrillo.pid_oggetto= getpid();
-coccodrillo.direzione= flusso.direzione;
-coccodrillo.velocita= flusso.velocita;
-
-bool status_flag=true;
-
-if(coccodrillo.direzione==DESTRA){
-    coccodrillo.x=minx;
-}else{
-    coccodrillo.x=maxx;
-}
-
-while(status_flag){
-
-
-switch (coccodrillo.direzione)
+void coccodrillo(int pipeout, int riga, corrente flusso)
 {
-case DESTRA:
-    coccodrillo.x += 1;
-    if(coccodrillo.x>maxx+COLONNE_SPRITE_COCCODRILLO){
-        status_flag=false;
+
+    elementoGioco coccodrillo;
+
+    coccodrillo.tipo = COCCODRILLO;
+    coccodrillo.y = maxy - riga - 2;
+    coccodrillo.pid_oggetto = getpid();
+    coccodrillo.direzione = flusso.direzione;
+    coccodrillo.velocita = flusso.velocita;
+
+    bool status_flag = true;
+
+    if (coccodrillo.direzione == DESTRA)
+    {
+        coccodrillo.x = minx;
     }
-    
-    break;
-case SINISTRA:
-      coccodrillo.x -= 1;
-    if(coccodrillo.x<minx-COLONNE_SPRITE_COCCODRILLO){
-        status_flag=false;
+    else
+    {
+        coccodrillo.x = maxx;
     }
-    
-    break;   
 
-default:
-    break;
-}
+    while (status_flag)
+    {
 
+        switch (coccodrillo.direzione)
+        {
+        case DESTRA:
+            coccodrillo.x += 1;
+            if (coccodrillo.x > maxx + COLONNE_SPRITE_COCCODRILLO)
+            {
+                status_flag = false;
+            }
 
-//scrittura del coccodrillo nella pipe
-if (write(pipeout, &coccodrillo, sizeof(elementoGioco)) == -1) {
-    perror("Errore nella scrittura sulla pipe");
-    _exit(1);
-}
+            break;
+        case SINISTRA:
+            coccodrillo.x -= 1;
+            if (coccodrillo.x < minx - COLONNE_SPRITE_COCCODRILLO)
+            {
+                status_flag = false;
+            }
 
-//velocita del coccodrillo 2s- velocita flusso*10000
-usleep(2000000 - coccodrillo.velocita*10000); 
+            break;
 
-}
-//terminazione processo se il coccodrillo esce dallo schermo
+        default:
+            break;
+        }
 
+        // scrittura del coccodrillo nella pipe
+        if (write(pipeout, &coccodrillo, sizeof(elementoGioco)) == -1)
+        {
+            perror("Errore nella scrittura sulla pipe");
+            _exit(1);
+        }
 
+        // velocita del coccodrillo 2s- velocita flusso*10000
+        usleep(2000000 - coccodrillo.velocita * 10000);
+    }
+    // terminazione processo se il coccodrillo esce dallo schermo
 }
