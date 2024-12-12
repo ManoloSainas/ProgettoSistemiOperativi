@@ -61,6 +61,7 @@ void graficaGioco()
 
 void stampaSprite(elementoGioco elemento)
 {
+    int lunghezza,start_visibile, fine_visibile;
 
     switch (elemento.tipo)
     {
@@ -90,13 +91,33 @@ void stampaSprite(elementoGioco elemento)
         }
 
     case COCCODRILLO:
+        lunghezza = 4;
+
+    // Se c'è una parte visibile, stampala
         wattron(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
-        if (elemento.direzione == SINISTRA)
-        {
-            mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteCoccodrilloSinistra);
+        if (elemento.direzione == SINISTRA) {
+        
+
+    // Calcola l'inizio e la fine visibili
+    start_visibile = (elemento.x < minx + 1) ? (minx + 1) - elemento.x : 0;
+    fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx - 1 - elemento.x : lunghezza;
+
+    if (start_visibile < fine_visibile) {   
+        mvwprintw(gioco, elemento.y, elemento.x + start_visibile, "%.*s", fine_visibile - start_visibile, spriteCoccodrilloSinistra + start_visibile);
         }
+
+
+        }
+
         if (elemento.direzione == DESTRA)
         {
+            if(elemento.x==maxx-2) mvwprintw(gioco, elemento.y, elemento.x, "%s", "=");
+            if(elemento.x==maxx-3) mvwprintw(gioco, elemento.y, elemento.x, "%s", "==");
+            if(elemento.x==maxx-4) mvwprintw(gioco, elemento.y, elemento.x, "%s", "===");
+            if(elemento.x>=minx && elemento.x<maxx-5) mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteCoccodrilloDestra);
+            if(elemento.x==minx+3) mvwprintw(gioco, elemento.y, elemento.x, "%s", "==<");
+            if(elemento.x==minx+2) mvwprintw(gioco, elemento.y, elemento.x, "%s", "=<");
+            if(elemento.x==minx+1) mvwprintw(gioco, elemento.y, elemento.x, "%s", "<");
             mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteCoccodrilloDestra);
         }
         wattroff(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
@@ -149,11 +170,11 @@ void cancellaSprite(elementoGioco elemento)
         break;
     case COCCODRILLO:
         wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
-        if (elemento.direzione == SINISTRA)
+        if (elemento.direzione == SINISTRA && elemento.x<maxx-5) 
         {
             mvwprintw(gioco, elemento.y, elemento.x + 4, "%c", ' ');
         }
-        if (elemento.direzione == DESTRA)
+        if (elemento.direzione == DESTRA )
         {
             mvwprintw(gioco, elemento.y, elemento.x - 1, "%c", ' ');
         }

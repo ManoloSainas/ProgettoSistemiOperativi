@@ -46,7 +46,7 @@ void avviaGioco()
         {
             flussi[i].direzione = DESTRA;
         }
-        flussi[i].velocita = rand() % (10) + 1;
+        flussi[i].velocita = rand() % (100) + 1;
     }
 
     // inizializazione numero di coccodrilli per flusso

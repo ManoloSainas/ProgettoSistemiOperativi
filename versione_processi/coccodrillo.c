@@ -15,6 +15,7 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
 
     if (coccodrillo.direzione == DESTRA)
     {
+       
         coccodrillo.x = minx;
     }
     else
@@ -29,7 +30,7 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
         {
         case DESTRA:
             coccodrillo.x += 1;
-            if (coccodrillo.x > maxx + COLONNE_SPRITE_COCCODRILLO)
+            if (coccodrillo.x > maxx -4)
             {
                 status_flag = false;
             }
@@ -37,7 +38,7 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            if (coccodrillo.x < minx - COLONNE_SPRITE_COCCODRILLO)
+            if (coccodrillo.x < minx - 2)
             {
                 status_flag = false;
             }
@@ -56,7 +57,7 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
         }
 
         // velocita del coccodrillo 2s- velocita flusso*10000
-        usleep(2000000 - coccodrillo.velocita * 10000);
+        usleep(1000000 - coccodrillo.velocita * 10000);
     }
     // terminazione processo se il coccodrillo esce dallo schermo
 }
