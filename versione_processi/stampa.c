@@ -93,7 +93,6 @@ void stampaSprite(elementoGioco elemento)
     case COCCODRILLO:
         lunghezza = 4;
 
-    // Se c'è una parte visibile, stampala
         wattron(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
         if (elemento.direzione == SINISTRA) {
         
@@ -111,14 +110,17 @@ void stampaSprite(elementoGioco elemento)
 
         if (elemento.direzione == DESTRA)
         {
-            if(elemento.x==maxx-2) mvwprintw(gioco, elemento.y, elemento.x, "%s", "=");
-            if(elemento.x==maxx-3) mvwprintw(gioco, elemento.y, elemento.x, "%s", "==");
-            if(elemento.x==maxx-4) mvwprintw(gioco, elemento.y, elemento.x, "%s", "===");
-            if(elemento.x>=minx && elemento.x<maxx-5) mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteCoccodrilloDestra);
-            if(elemento.x==minx+3) mvwprintw(gioco, elemento.y, elemento.x, "%s", "==<");
-            if(elemento.x==minx+2) mvwprintw(gioco, elemento.y, elemento.x, "%s", "=<");
-            if(elemento.x==minx+1) mvwprintw(gioco, elemento.y, elemento.x, "%s", "<");
-            mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteCoccodrilloDestra);
+         // Calcola l'inizio e la fine visibile dello sprite, correggendo per i limiti dello schermo
+        start_visibile = (elemento.x < minx + 1) ? (minx + 1) - elemento.x : 0;
+        fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx - 1 - elemento.x : lunghezza;
+
+        // Verifica che lo sprite non vada oltre i limiti orizzontali
+        if (fine_visibile > start_visibile) {
+            if (elemento.x >= minx && elemento.x < maxx) { // Assicura che sia nella finestra visibile
+                mvwprintw(gioco, elemento.y, elemento.x + start_visibile, "%.*s", fine_visibile - start_visibile, spriteCoccodrilloDestra + start_visibile);
+            }
+        }
+
         }
         wattroff(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
         break;
