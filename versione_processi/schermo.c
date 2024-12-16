@@ -15,7 +15,7 @@ void inizializzazioneSchermo()
 
     gioco = newwin(maxy, maxx, miny, minx);
     nodelay(gioco, true);
-    // box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno
+    box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno
 
     // Inizializzazione dei colori
     init_pair(COLORE_STANDARD, COLOR_WHITE, COLOR_BLACK);
