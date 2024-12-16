@@ -17,6 +17,10 @@ void inizializzazioneSchermo()
     nodelay(gioco, true);
     box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno
 
+    // Pulizia dello schermo
+    clear();
+    refresh();
+
     // Inizializzazione dei colori
     init_pair(COLORE_STANDARD, COLOR_WHITE, COLOR_BLACK);
     init_pair(COLORE_CANCELLAZIONE, COLOR_BLACK, COLOR_BLACK);

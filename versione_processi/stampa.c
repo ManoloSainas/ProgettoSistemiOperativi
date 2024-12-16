@@ -58,6 +58,9 @@ void graficaGioco()
     mvwprintw(gioco, 6, 59, "  ");
 
     wattroff(gioco, COLOR_PAIR(COLORE_TANE));
+
+    // refresh della finestra
+    wrefresh(gioco);
 }
 
 void stampaSprite(elementoGioco elemento)
