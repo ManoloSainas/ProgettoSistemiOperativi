@@ -9,6 +9,7 @@ char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 
 void graficaGioco()
 {
+
     // Pulizia dello sfondo
     wattron(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
     for (int i = 1; i < maxx - 1; i++)
@@ -61,7 +62,7 @@ void graficaGioco()
 
 void stampaSprite(elementoGioco elemento)
 {
-    int lunghezza,start_visibile, fine_visibile;
+    int lunghezza, start_visibile, fine_visibile;
 
     switch (elemento.tipo)
     {
@@ -94,43 +95,50 @@ void stampaSprite(elementoGioco elemento)
         lunghezza = 4;
 
         wattron(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
-        if (elemento.direzione == SINISTRA) {
-        
+        if (elemento.direzione == SINISTRA)
+        {
 
-    // Calcola l'inizio e la fine visibili
-    start_visibile = (elemento.x < minx + 1) ? (minx ) - elemento.x : 0;
-    fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx - 1 - elemento.x : lunghezza;
+            // Calcola l'inizio e la fine visibili
+            start_visibile = (elemento.x < minx + 1) ? (minx)-elemento.x : 0;
+            fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx - 1 - elemento.x : lunghezza;
 
-    if (start_visibile < fine_visibile) {   
-        mvwprintw(gioco, elemento.y, elemento.x + start_visibile, "%.*s", fine_visibile - start_visibile, spriteCoccodrilloSinistra + start_visibile);
-        }
-
-
+            if (start_visibile < fine_visibile)
+            {
+                mvwprintw(gioco, elemento.y, elemento.x + start_visibile, "%.*s", fine_visibile - start_visibile, spriteCoccodrilloSinistra + start_visibile);
+            }
         }
 
         if (elemento.direzione == DESTRA)
         {
-       int start_visibile, fine_visibile;
+            int start_visibile, fine_visibile;
 
-        // Calcola l'inizio e la fine visibile dello sprite, correggendo per i limiti dello schermo
-        start_visibile = (elemento.x < minx) ? minx - elemento.x : 0;
-        fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx + 2 - elemento.x : lunghezza;
+            // Calcola l'inizio e la fine visibile dello sprite, correggendo per i limiti dello schermo
+            start_visibile = (elemento.x < minx) ? minx - elemento.x : 0;
+            fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx + 2 - elemento.x : lunghezza;
 
-        // Verifica che lo sprite non vada oltre i limiti orizzontali
-        if(elemento.x>4){if (fine_visibile > start_visibile) {
-            if (elemento.x + lunghezza >= minx && elemento.x < maxx) { // Assicura che sia nella finestra visibile
-                mvwprintw(gioco, elemento.y, elemento.x + start_visibile - 3, "%.*s", fine_visibile - start_visibile, spriteCoccodrilloDestra + start_visibile);
+            // Verifica che lo sprite non vada oltre i limiti orizzontali
+            if (elemento.x > 4)
+            {
+                if (fine_visibile > start_visibile)
+                {
+                    if (elemento.x + lunghezza >= minx && elemento.x < maxx)
+                    { // Assicura che sia nella finestra visibile
+                        mvwprintw(gioco, elemento.y, elemento.x + start_visibile - 3, "%.*s", fine_visibile - start_visibile, spriteCoccodrilloDestra + start_visibile);
+                    }
+                }
             }
-        }}
-        else{
-            
-            if(elemento.x==1) mvwprintw(gioco, elemento.y, 1, "%s", "<");
-            if(elemento.x==2) mvwprintw(gioco, elemento.y, 1, "%s", "=<");
-            if(elemento.x==3) mvwprintw(gioco, elemento.y, 1, "%s", "==<");
-            if(elemento.x==4) mvwprintw(gioco, elemento.y, 1, "%s", "===<");
-        }
+            else
+            {
 
-
+                if (elemento.x == 1)
+                    mvwprintw(gioco, elemento.y, 1, "%s", "<");
+                if (elemento.x == 2)
+                    mvwprintw(gioco, elemento.y, 1, "%s", "=<");
+                if (elemento.x == 3)
+                    mvwprintw(gioco, elemento.y, 1, "%s", "==<");
+                if (elemento.x == 4)
+                    mvwprintw(gioco, elemento.y, 1, "%s", "===<");
+            }
         }
         wattroff(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
         break;
@@ -182,11 +190,11 @@ void cancellaSprite(elementoGioco elemento)
         break;
     case COCCODRILLO:
         wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
-        if (elemento.direzione == SINISTRA && elemento.x<maxx-5) 
+        if (elemento.direzione == SINISTRA && elemento.x < maxx - 5)
         {
             mvwprintw(gioco, elemento.y, elemento.x + 4, "%c", ' ');
         }
-        if (elemento.direzione == DESTRA && elemento.x>4)
+        if (elemento.direzione == DESTRA && elemento.x > 4)
         {
             mvwprintw(gioco, elemento.y, elemento.x - 4, "%c", ' ');
         }

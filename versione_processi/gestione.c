@@ -1,5 +1,15 @@
 #include "frogger.h"
 
+// Function to initialize a pipe
+void inizializzazionePipe(int filedes[])
+{
+    if (pipe(filedes) == -1)
+    {
+        perror("Errore nella creazione della pipe");
+        _exit(1);
+    }
+}
+
 void chiudiProcessi(elementoGioco *elemento)
 {
     if (elemento == NULL)

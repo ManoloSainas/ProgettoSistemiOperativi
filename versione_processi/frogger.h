@@ -134,3 +134,5 @@ void coccodrillo(int pipeout, int riga, corrente flusso);
 void controlloGioco(int pipein);
 void terminaGioco();
 void chiudiProcessi();
+void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
+void inizializzazionePipe(int filedes[]);

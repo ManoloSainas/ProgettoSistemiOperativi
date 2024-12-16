@@ -1,25 +1,7 @@
 #include "frogger.h"
 
-// Function to initialize a pipe
-void inizializzazionePipe(int filedes[])
+void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 {
-    if (pipe(filedes) == -1)
-    {
-        perror("Errore nella creazione della pipe");
-        _exit(1);
-    }
-}
-
-void avviaGioco()
-{
-
-    int filedes[2];
-    int pid_gioco;
-    int coccodrilli_flusso[NUM_FLUSSI_FIUME];
-    corrente flussi[NUM_FLUSSI_FIUME + 3];
-
-    graficaGioco();
-
     // inizializzazione flussi del fiume
     flussi[0].direzione = NESSUNA;
     flussi[NUM_FLUSSI_FIUME + 2].direzione = NESSUNA;
@@ -31,7 +13,6 @@ void avviaGioco()
     {
         flussi[1].direzione = SINISTRA;
     }
-
 
     flussi[NUM_FLUSSI_FIUME + 2].velocita = 0;
     flussi[NUM_FLUSSI_FIUME + 1].velocita = 0;
@@ -49,13 +30,23 @@ void avviaGioco()
         }
         flussi[i].velocita = rand() % (100) + 1;
     }
-
     // inizializazione numero di coccodrilli per flusso
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
     {
         coccodrilli_flusso[i] = rand() % (15 + 1 - 5) + 5;
     }
+}
 
+void avviaGioco()
+{
+
+    int filedes[2];
+    int pid_gioco;
+    int coccodrilli_flusso[NUM_FLUSSI_FIUME];
+    corrente flussi[NUM_FLUSSI_FIUME + 3];
+
+    graficaGioco();
+    gestioneFlussi(flussi, coccodrilli_flusso);
     inizializzazionePipe(filedes);
 
     pid_gioco = fork();
@@ -93,7 +84,7 @@ void avviaGioco()
         break;
     }
 
-    terminaGioco();
+    // terminaGioco();
 }
 
 void terminaGioco()
@@ -104,6 +95,7 @@ void terminaGioco()
 
 void controlloGioco(int pipein)
 {
+    int vita = 3;
     elementoGioco valoreLetto;
     elementoGioco rana, coccodrillo;
 
@@ -142,7 +134,7 @@ void controlloGioco(int pipein)
             wrefresh(gioco);
         }
 
-    } while (1);
+    } while (true);
 
     chiudiProcessi(&rana);
     chiudiProcessi(&coccodrillo);
