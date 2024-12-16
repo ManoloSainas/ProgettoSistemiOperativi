@@ -98,7 +98,7 @@ void stampaSprite(elementoGioco elemento)
         
 
     // Calcola l'inizio e la fine visibili
-    start_visibile = (elemento.x < minx + 1) ? (minx + 1) - elemento.x : 0;
+    start_visibile = (elemento.x < minx + 1) ? (minx ) - elemento.x : 0;
     fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx - 1 - elemento.x : lunghezza;
 
     if (start_visibile < fine_visibile) {   

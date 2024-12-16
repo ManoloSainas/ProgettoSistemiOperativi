@@ -32,6 +32,7 @@ void avviaGioco()
         flussi[1].direzione = SINISTRA;
     }
 
+
     flussi[NUM_FLUSSI_FIUME + 2].velocita = 0;
     flussi[NUM_FLUSSI_FIUME + 1].velocita = 0;
     flussi[1].velocita = rand() % (10) + 1;

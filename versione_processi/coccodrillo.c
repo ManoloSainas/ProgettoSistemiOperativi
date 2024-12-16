@@ -38,7 +38,7 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            if (coccodrillo.x < minx - 2)
+            if (coccodrillo.x < minx - 3)
             {
                 status_flag = false;
             }
