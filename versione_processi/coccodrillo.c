@@ -30,7 +30,7 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
         {
         case DESTRA:
             coccodrillo.x += 1;
-            if (coccodrillo.x > maxx-2)
+            if (coccodrillo.x > maxx+1)
             {
                 status_flag = false;
             }
