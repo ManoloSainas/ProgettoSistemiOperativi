@@ -69,7 +69,6 @@ void avviaGioco()
         {
             for (int j = 0; j < coccodrilli_flusso[i]; j++)
             {
-
                 pid_gioco = fork();
                 switch (pid_gioco)
                 {
@@ -89,14 +88,7 @@ void avviaGioco()
         }
         close(filedes[SCRITTURA]);
         controlloGioco(filedes[LETTURA]);
-        // Wait for all child processes to complete
-        for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
-        {
-            for (int j = 0; j < coccodrilli_flusso[i]; j++)
-            {
-                waitpid(-1, NULL, 0);
-            }
-        }
+
         break;
     }
 
