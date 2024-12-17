@@ -16,7 +16,8 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 
     flussi[NUM_FLUSSI_FIUME + 2].velocita = 0;
     flussi[NUM_FLUSSI_FIUME + 1].velocita = 0;
-    flussi[1].velocita = rand() % (10) + 1;
+    // flussi[1].velocita = rand() % (10) + 1;
+    flussi[1].velocita = 1;
 
     for (int i = 2; i <= NUM_FLUSSI_FIUME; i++)
     {
@@ -28,7 +29,8 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
         {
             flussi[i].direzione = DESTRA;
         }
-        flussi[i].velocita = rand() % (100) + 1;
+        // flussi[i].velocita = rand() % (100) + 1;
+        flussi[i].velocita = 1;
     }
     // inizializazione numero di coccodrilli per flusso
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
@@ -65,22 +67,36 @@ void avviaGioco()
     default:
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
-            pid_gioco = fork();
-            switch (pid_gioco)
+            for (int j = 0; j < coccodrilli_flusso[i]; j++)
             {
-            case -1:
-                perror("Errore nella creazione del processo per il coccodrillo");
-                _exit(1);
-                break;
-            case 0:
-                close(filedes[LETTURA]);
-                coccodrillo(filedes[SCRITTURA], i, flussi[i]);
-                _exit(0);
-                break;
+
+                pid_gioco = fork();
+                switch (pid_gioco)
+                {
+                case -1:
+                    perror("Errore nella creazione del processo per il coccodrillo");
+                    _exit(1);
+                    break;
+                case 0:
+                    close(filedes[LETTURA]);
+                    coccodrillo(filedes[SCRITTURA], i, flussi[i]);
+                    _exit(0);
+                    break;
+                default:
+                    break;
+                }
             }
         }
         close(filedes[SCRITTURA]);
         controlloGioco(filedes[LETTURA]);
+        // Wait for all child processes to complete
+        for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
+        {
+            for (int j = 0; j < coccodrilli_flusso[i]; j++)
+            {
+                waitpid(-1, NULL, 0);
+            }
+        }
         break;
     }
 

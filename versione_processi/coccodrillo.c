@@ -15,8 +15,8 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
 
     if (coccodrillo.direzione == DESTRA)
     {
-       
-        coccodrillo.x = minx;
+
+        coccodrillo.x = minx - 2;
     }
     else
     {
@@ -30,7 +30,7 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
         {
         case DESTRA:
             coccodrillo.x += 1;
-            if (coccodrillo.x > maxx+1)
+            if (coccodrillo.x > maxx + 1)
             {
                 status_flag = false;
             }
