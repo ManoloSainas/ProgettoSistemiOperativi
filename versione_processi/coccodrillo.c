@@ -1,6 +1,6 @@
 #include "frogger.h"
 
-void coccodrillo(int pipeout, int riga, corrente flusso)
+void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
 {
 
     elementoGioco coccodrillo;
@@ -16,11 +16,11 @@ void coccodrillo(int pipeout, int riga, corrente flusso)
     if (coccodrillo.direzione == DESTRA)
     {
 
-        coccodrillo.x = minx - 2;
+        coccodrillo.x = minx - 2 + id_coccodrillo * 6;
     }
     else
     {
-        coccodrillo.x = maxx;
+        coccodrillo.x = maxx + id_coccodrillo * 6;
     }
 
     while (status_flag)
