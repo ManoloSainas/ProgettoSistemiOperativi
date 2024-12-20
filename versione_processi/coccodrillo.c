@@ -4,7 +4,6 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
 {
 
     elementoGioco coccodrillo;
-
     coccodrillo.tipo = COCCODRILLO;
     coccodrillo.y = maxy - riga - 2;
     coccodrillo.pid_oggetto = getpid();
@@ -16,11 +15,11 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
     if (coccodrillo.direzione == DESTRA)
     {
 
-        coccodrillo.x = minx - 2 + id_coccodrillo * 6;
+        coccodrillo.x = minx - 2;
     }
     else
     {
-        coccodrillo.x = maxx + id_coccodrillo * 6;
+        coccodrillo.x = maxx;
     }
 
     while (status_flag)
@@ -32,7 +31,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
             coccodrillo.x += 1;
             if (coccodrillo.x > maxx + 1)
             {
-                status_flag = false;
+                coccodrillo.x = minx - 2;
             }
 
             break;
@@ -40,7 +39,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
             coccodrillo.x -= 1;
             if (coccodrillo.x < minx - 3)
             {
-                status_flag = false;
+                coccodrillo.x = maxx;
             }
 
             break;

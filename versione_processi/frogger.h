@@ -66,6 +66,8 @@
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
 
+// struttura campo da gioco
+
 // direzione flusso fiume
 typedef enum
 {
@@ -123,6 +125,7 @@ extern int maxx, maxy;
 
 // Schermo ncurses
 extern WINDOW *gioco;
+extern char campo[18][72];
 
 void inizializzazioneSchermo();
 void graficaGioco();

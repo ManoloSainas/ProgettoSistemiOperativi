@@ -67,7 +67,7 @@ void avviaGioco()
     default:
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < 4; j++)
             {
                 pid_gioco = fork();
                 switch (pid_gioco)
@@ -79,7 +79,8 @@ void avviaGioco()
                 case 0:
                     close(filedes[LETTURA]);
                     srand(time(NULL) + i);
-                    usleep(1000000 + (rand() % 6000000)); // Random delay between 2 and 5 seconds
+                    sleep(1);
+                    usleep(5000000 + (rand() % 10000000) * j); // Random delay between 2 and 5 seconds
                     coccodrillo(filedes[SCRITTURA], i, j, flussi[i]);
                     _exit(0);
                     break;
@@ -105,6 +106,7 @@ void terminaGioco()
 
 void controlloGioco(int pipein)
 {
+
     int vita = 3;
     elementoGioco valoreLetto;
     elementoGioco rana, coccodrillo;
