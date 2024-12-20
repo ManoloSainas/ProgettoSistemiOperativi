@@ -1,5 +1,5 @@
-frogger: frogger.o schermo.o stampa.o gioco.o gestione.o rana.o coccodrillo.o
-	gcc frogger.o schermo.o stampa.o gioco.o gestione.o rana.o  coccodrillo.o -o frogger -lncurses
+frogger: frogger.o schermo.o stampa.o gioco.o gestione.o rana.o coccodrillo.o granateRana.o
+	gcc frogger.o schermo.o stampa.o gioco.o gestione.o rana.o  coccodrillo.o granateRana.o -o frogger -lncurses
 
 frogger.o: frogger.h frogger.c
 	gcc -c frogger.c
@@ -21,6 +21,10 @@ rana.o: frogger.h rana.c
 
 coccodrillo.o: frogger.h coccodrillo.c
 	gcc -c coccodrillo.c
+
+granateRana.o: frogger.h granateRana.c
+	gcc -c granateRana.c
+
 clean:
 	rm frogger
 	rm *.o

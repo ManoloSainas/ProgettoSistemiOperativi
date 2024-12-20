@@ -10,8 +10,6 @@ void inizializzazioneSchermo()
     // Settaggio delle coordinate relative la grandezza dello schermo di gioco
     miny = 1;
     minx = 1;
-    maxy = 18;
-    maxx = 72;
 
     gioco = newwin(maxy, maxx, miny, minx);
     nodelay(gioco, true);

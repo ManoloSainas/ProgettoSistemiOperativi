@@ -39,6 +39,26 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
     }
 }
 
+void inizializzazioneCampo()
+{
+    int x, y, c, i;
+    c = 1;
+    i = 0;
+    for (x = 0; x < maxx; x++)
+    {
+        for (y = 0; y < maxy; y++)
+        {
+            campo[y][x] = 'w';
+        }
+
+        campo[maxy - 14][x] = (x % (11 * c + i) == 0 || x % (12 * c) == 0) ? 't' : 'e';
+        campo[maxy - 13][x] = 'e';
+        campo[maxy - 1][x] = 'e';
+        c++;
+        i++;
+    }
+}
+
 void avviaGioco()
 {
 
@@ -67,7 +87,7 @@ void avviaGioco()
     default:
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
-            for (int j = 1; j <= 4; j++)
+            for (int j = 1; j <= 1; j++)
             {
                 pid_gioco = fork();
                 switch (pid_gioco)
@@ -150,4 +170,65 @@ void controlloGioco(int pipein)
     chiudiProcessi(&rana);
     chiudiProcessi(&coccodrillo);
     terminaGioco();
+}
+
+int gestioneCampo(elementoGioco elemento)
+{
+
+    switch (elemento.tipo)
+    {
+    case RANA:
+        switch (elemento.y)
+        {
+        case maxy:
+            campo[elemento.y][elemento.x] = 'e';
+            campo[elemento.y][elemento.x + 1] = 'e';
+            break;
+        case maxy - 13:
+            campo[elemento.y][elemento.x] = 'e';
+            campo[elemento.y][elemento.x + 1] = 'e';
+            break;
+        case maxy - 12:
+            campo[elemento.y][elemento.x] = 'e';
+            campo[elemento.y][elemento.x + 1] = 'e';
+            break;
+        default:
+
+            break;
+        }
+        if (campo[elemento.y][elemento.x] != 'w' && campo[elemento.y][elemento.x + 1] != 'w')
+        {
+            campo[elemento.y][elemento.x] = 'r';
+            campo[elemento.y][elemento.x + 1] = 'r';
+        }
+        else
+        {
+            return 0;
+        }
+
+        break;
+    case COCCODRILLO:
+        for (int i = 0; i < 4; i++)
+        {
+            campo[elemento.y][elemento.x + i] = 'c';
+        }
+        switch (elemento.direzione)
+        {
+        case DESTRA:
+            campo[elemento.y][elemento.x - 1] = 'w';
+            break;
+        case SINISTRA:
+            campo[elemento.y][elemento.x + 3] = 'w';
+        default:
+            break;
+        }
+        break;
+    case PROIETTILE_COCCODRILLO:
+        break;
+    case GRANATA_RANA:
+        break;
+    default:
+        break;
+    }
+    return 1;
 }

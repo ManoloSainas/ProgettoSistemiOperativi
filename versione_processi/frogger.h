@@ -20,7 +20,8 @@
 #define NUM_TANE 5
 #define NUM_MIN_COCCODRILLI_FLUSSO 5
 #define NUM_FLUSSI_FIUME 8
-
+#define maxy 18
+#define maxx 72
 // Dimensione Sprite
 #define RIGHE_SPRITE_RANA 1
 #define COLONNE_SPRITE_RANA 2
@@ -102,6 +103,7 @@ typedef struct elementoGioco
     int pid_oggetto;
     int velocita;
     DirezioneFlusso direzione;
+    bool ha_sparato;
     // statusOggetto status;
 } elementoGioco;
 
@@ -121,7 +123,6 @@ typedef enum tipoDescrittore
 // Coordinate dell'area di gioco
 extern int minx,
     miny;
-extern int maxx, maxy;
 
 // Schermo ncurses
 extern WINDOW *gioco;
@@ -130,12 +131,17 @@ extern char campo[18][72];
 void inizializzazioneSchermo();
 void graficaGioco();
 void avviaGioco();
+
 void stampaSprite(elementoGioco elemento);
 void cancellaSprite(elementoGioco elemento);
+
 void rana(int pipeout);
 void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso);
+void granateRana();
+
 void controlloGioco(int pipein);
 void terminaGioco();
 void chiudiProcessi();
-void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
 void inizializzazionePipe(int filedes[]);
+
+void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);

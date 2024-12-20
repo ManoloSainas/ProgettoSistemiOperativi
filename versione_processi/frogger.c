@@ -2,7 +2,7 @@
 
 // Definizione delle variabili globali
 int minx, miny;
-int maxx, maxy;
+
 WINDOW *gioco;
 
 int main()

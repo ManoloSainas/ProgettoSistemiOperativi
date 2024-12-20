@@ -5,12 +5,13 @@ void rana(int pipeout)
     int pid_rana = getpid();
     keypad(gioco, TRUE);
 
-    elementoGioco oggetto_rana;
-    oggetto_rana.tipo = RANA;
-    oggetto_rana.x = 36;
-    oggetto_rana.y = 16;
-    oggetto_rana.pid_oggetto = pid_rana;
-    oggetto_rana.velocita = 0;
+    elementoGioco rana;
+    rana.tipo = RANA;
+    rana.x = 36;
+    rana.y = 16;
+    rana.pid_oggetto = pid_rana;
+    rana.velocita = 0;
+    rana.ha_sparato = false;
 
     while (1)
     {
@@ -18,28 +19,33 @@ void rana(int pipeout)
         switch (wgetch(gioco))
         {
         case KEY_UP:
-            if (oggetto_rana.y > miny + 5)
-                oggetto_rana.y -= SPOSTAMENTO_RANA;
+            if (rana.y > miny + 5)
+                rana.y -= SPOSTAMENTO_RANA;
             break;
         case KEY_DOWN:
-            if (oggetto_rana.y < maxy - 2)
-                oggetto_rana.y += SPOSTAMENTO_RANA;
+            if (rana.y < maxy - 2)
+                rana.y += SPOSTAMENTO_RANA;
             break;
         case KEY_LEFT:
-            if (oggetto_rana.x > minx)
-                oggetto_rana.x -= SPOSTAMENTO_RANA;
+            if (rana.x > minx)
+                rana.x -= SPOSTAMENTO_RANA;
             break;
         case KEY_RIGHT:
-            if (oggetto_rana.x < maxx - 3)
-                oggetto_rana.x += SPOSTAMENTO_RANA;
+            if (rana.x < maxx - 3)
+                rana.x += SPOSTAMENTO_RANA;
+            break;
+        case KEY_SPACE:
+            rana.ha_sparato = true;
+            usleep(1000000);
+            rana.ha_sparato = false;
             break;
         }
         // Scrittura nella pipe delle informazioni della rana
-        if (write(pipeout, &oggetto_rana, sizeof(elementoGioco)) == -1) {
-    perror("Errore nella scrittura sulla pipe");
-    _exit(1);
-}
-
+        if (write(pipeout, &rana, sizeof(elementoGioco)) == -1)
+        {
+            perror("Errore nella scrittura sulla pipe");
+            _exit(1);
+        }
     }
 
     _exit(1);

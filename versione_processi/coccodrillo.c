@@ -9,8 +9,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
     coccodrillo.pid_oggetto = getpid();
     coccodrillo.direzione = flusso.direzione;
     coccodrillo.velocita = flusso.velocita;
-
-    bool status_flag = true;
+    coccodrillo.ha_sparato = false;
 
     if (coccodrillo.direzione == DESTRA)
     {
@@ -22,25 +21,25 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
         coccodrillo.x = maxx;
     }
 
-    while (status_flag)
+    while (true)
     {
 
         switch (coccodrillo.direzione)
         {
         case DESTRA:
             coccodrillo.x += 1;
-            if (coccodrillo.x > maxx + 1)
-            {
-                coccodrillo.x = minx - 2;
-            }
+            // if (coccodrillo.x > maxx + 2)
+            // {
+            //     coccodrillo.x = minx - 2;
+            // }
 
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            if (coccodrillo.x < minx - 3)
-            {
-                coccodrillo.x = maxx;
-            }
+            // if (coccodrillo.x < minx - 4)
+            // {
+            //     coccodrillo.x = maxx;
+            // }
 
             break;
 
