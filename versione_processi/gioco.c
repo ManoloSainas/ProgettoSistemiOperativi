@@ -79,8 +79,9 @@ void avviaGioco()
                 case 0:
                     close(filedes[LETTURA]);
                     srand(time(NULL) + i);
-                    sleep(1);
-                    usleep(5000000 + (rand() % 10000000) * j); // Random delay between 2 and 5 seconds
+                    int valoreRandom = (rand() % 5 + 1) * (j + 3);
+
+                    usleep(1000000 * valoreRandom); // Random delay between 2 and 5 seconds
                     coccodrillo(filedes[SCRITTURA], i, j, flussi[i]);
                     _exit(0);
                     break;
