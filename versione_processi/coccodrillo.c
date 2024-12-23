@@ -1,6 +1,6 @@
 #include "frogger.h"
 
-void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
+void coccodrillo(int pipeout,int pipein ,int riga, int id_coccodrillo, corrente flusso)
 {
 
     elementoGioco coccodrillo;
@@ -9,8 +9,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
     coccodrillo.pid_oggetto = getpid();
     coccodrillo.direzione = flusso.direzione;
     coccodrillo.velocita = flusso.velocita;
-    coccodrillo.ha_sparato = false;
-
+    
     if (coccodrillo.direzione == DESTRA)
     {
 
@@ -28,18 +27,20 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
         {
         case DESTRA:
             coccodrillo.x += 1;
-            // if (coccodrillo.x > maxx + 2)
-            // {
-            //     coccodrillo.x = minx - 2;
-            // }
+             if (coccodrillo.x > maxx + 2)
+             {
+                 coccodrillo.x = minx - 2;
+                 sleep(1);
+             }
 
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            // if (coccodrillo.x < minx - 4)
-            // {
-            //     coccodrillo.x = maxx;
-            // }
+             if (coccodrillo.x < minx - 4)
+             {
+                 coccodrillo.x = maxx;
+                 sleep(1);
+             }
 
             break;
 
@@ -55,7 +56,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
         }
 
         // velocita del coccodrillo 2s- velocita flusso*10000
-        usleep(1000000 - coccodrillo.velocita * 10000);
+        usleep(500000 - coccodrillo.velocita * 10000);
     }
     // terminazione processo se il coccodrillo esce dallo schermo
 }

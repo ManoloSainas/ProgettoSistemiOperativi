@@ -9,7 +9,7 @@ char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 
 void graficaGioco()
 {
-
+       
     // Pulizia dello sfondo
     wattron(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
     for (int i = 1; i < maxx - 1; i++)
@@ -58,7 +58,9 @@ void graficaGioco()
     mvwprintw(gioco, 6, 59, "  ");
 
     wattroff(gioco, COLOR_PAIR(COLORE_TANE));
-
+     mvwprintw(gioco,1,2,"VITE: ");
+     mvwprintw(gioco,1,maxx/2 -10,"TEMPO ");
+     mvwprintw(gioco,1, maxx - 20,"SCORE: ");
     // refresh della finestra
     wrefresh(gioco);
 }
@@ -92,7 +94,7 @@ void stampaSprite(elementoGioco elemento)
             mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteRana);
             wattroff(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
             break;
-        }
+        }break;
 
     case COCCODRILLO:
         lunghezza = 4;
@@ -151,7 +153,12 @@ void stampaSprite(elementoGioco elemento)
         wattroff(gioco, COLOR_PAIR(COLORE_COCCODRILLO_SPARO));
 
         break;
-    case GRANATA_RANA:
+    case GRANATA_DESTRA_RANA:
+        wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
+        mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteProiettileRana);
+        wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
+        break;
+    case GRANATA_SINISTRA_RANA:
         wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
         mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteProiettileRana);
         wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
@@ -215,7 +222,29 @@ void cancellaSprite(elementoGioco elemento)
         }
         wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
         break;
-    case GRANATA_RANA:
+    case GRANATA_DESTRA_RANA:
+        if (elemento.y >= maxy - 1 || elemento.y < miny + 7)
+            wattron(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
+        if (elemento.y < maxy - 1 || elemento.y > miny + 8)
+            wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
+        if (elemento.y < miny + 6)
+            wattron(gioco, COLOR_PAIR(SFONDO_ERBA));
+        if (elemento.direzione == SINISTRA)
+        {
+            mvwprintw(gioco, elemento.y, elemento.x + 1, "%c", ' ');
+        }
+        if (elemento.direzione == DESTRA)
+        {
+            mvwprintw(gioco, elemento.y, elemento.x - 1, "%c", ' ');
+        }
+        if (elemento.y >= maxy - 2)
+            wattroff(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
+        if (elemento.y < maxy - 2 || elemento.y > miny + 2)
+            wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
+        if (elemento.y < miny + 2)
+            wattroff(gioco, COLOR_PAIR(SFONDO_ERBA));
+        break;
+    case GRANATA_SINISTRA_RANA:
         if (elemento.y >= maxy - 1 || elemento.y < miny + 7)
             wattron(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
         if (elemento.y < maxy - 1 || elemento.y > miny + 8)
