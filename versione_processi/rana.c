@@ -1,6 +1,5 @@
 #include "frogger.h"
 
-
 void rana(int pipeout, int pipein)
 {
 
@@ -69,7 +68,8 @@ void rana(int pipeout, int pipein)
                     _exit(1);
                 case 0:
                     // Processo proiettile
-                   granateRana(pipeout, rana.y, rana.x);
+                    granataSinistraRana(pipeout, rana.y, rana.x);
+                    granataDestraRana(pipeout, rana.y, rana.x);
                     break;
                 default:
                     rana.proiettili = false;
@@ -81,24 +81,23 @@ void rana(int pipeout, int pipein)
                 }
             }
         }
-      
-       
+
         // Scrittura nella pipe delle informazioni della rana
         if (write(pipeout, &rana, sizeof(elementoGioco)) == -1)
         {
             perror("Errore nella scrittura sulla pipe");
             _exit(1);
         }
-if (read(pipein, &danno, sizeof(danno)) > 0){
-        if(!danno){
-            wgetch(gioco);
-            rana.x = 36;
-            rana.y = 16;
-            usleep(100000);
+        if (read(pipein, &danno, sizeof(danno)) > 0)
+        {
+            if (!danno)
+            {
+                wgetch(gioco);
+                rana.x = 36;
+                rana.y = 16;
+                usleep(100000);
+            }
         }
-    }
-
-
     }
 
     _exit(1);
