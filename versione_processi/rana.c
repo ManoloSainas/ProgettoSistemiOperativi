@@ -1,6 +1,7 @@
 #include "frogger.h"
 
-void rana(int pipeout, int pipein)
+
+void rana(int pipeout, int pipein, corrente flussi[])
 {
 
     // gestione tempo sparo
@@ -22,8 +23,18 @@ void rana(int pipeout, int pipein)
     rana.velocita = 0;
     rana.proiettili = TRUE;
     bool danno;
+    clock_t start_m, stop_m;
+    long int x;
+    double duration;
+
+    start_m = clock();
+
+
     while (1)
     {
+        rana.direzione=flussi[16-rana.y].direzione;
+        rana.velocita=flussi[16-rana.y].velocita;
+
         if (primoSparo)
         {
             gettimeofday(&end, NULL);
@@ -68,8 +79,7 @@ void rana(int pipeout, int pipein)
                     _exit(1);
                 case 0:
                     // Processo proiettile
-                    granataSinistraRana(pipeout, rana.y, rana.x);
-                    granataDestraRana(pipeout, rana.y, rana.x);
+                   granateRana(pipeout, rana.y, rana.x);
                     break;
                 default:
                     rana.proiettili = false;
@@ -81,6 +91,21 @@ void rana(int pipeout, int pipein)
                 }
             }
         }
+      
+      if(!danno){
+        sleep(1);
+        danno=true;
+      }
+       duration = ( double ) ( stop_m - start_m ) / CLOCKS_PER_SEC;
+        stop_m = clock();  // stop timer movimento
+
+       if(duration >= (double)(500000-rana.velocita)/2500000){
+       
+        if(rana.direzione==DESTRA) {rana.x++;}
+        if(rana.direzione==SINISTRA){ rana.x--;}
+        start_m=clock();
+        
+       }
 
         // Scrittura nella pipe delle informazioni della rana
         if (write(pipeout, &rana, sizeof(elementoGioco)) == -1)
@@ -88,16 +113,17 @@ void rana(int pipeout, int pipein)
             perror("Errore nella scrittura sulla pipe");
             _exit(1);
         }
-        if (read(pipein, &danno, sizeof(danno)) > 0)
-        {
-            if (!danno)
-            {
-                wgetch(gioco);
-                rana.x = 36;
-                rana.y = 16;
-                usleep(100000);
-            }
+if (read(pipein, &danno, sizeof(danno)) > 0){
+       if(!danno){
+            wgetch(gioco);
+            rana.x = 36;
+            rana.y = 16;
+            danno=true;
         }
+    }
+    
+
+
     }
 
     _exit(1);

@@ -56,7 +56,7 @@ void coccodrillo(int pipeout,int pipein ,int riga, int id_coccodrillo, corrente 
         }
 
         // velocita del coccodrillo 2s- velocita flusso*10000
-        usleep(500000 - coccodrillo.velocita * 10000);
+        usleep(500000 - coccodrillo.velocita );
     }
     // terminazione processo se il coccodrillo esce dallo schermo
 }
