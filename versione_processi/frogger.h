@@ -22,7 +22,7 @@
 #define NUM_FLUSSI_FIUME 8
 #define maxy  18
 #define maxx 72
-#define MAXCOCCODRILLI 45
+#define MAXCOCCODRILLI 36
 // Dimensione Sprite
 #define RIGHE_SPRITE_RANA 1
 #define COLONNE_SPRITE_RANA 2
@@ -87,6 +87,7 @@ typedef enum tipoOggetto
 {
     RANA,
     COCCODRILLO,
+    GRANATA,
     GRANATA_SINISTRA_RANA,
     GRANATA_DESTRA_RANA,
     PROIETTILE_COCCODRILLO
@@ -120,6 +121,12 @@ int pid;
 DirezioneFlusso direzione;
 }posizione;
 
+typedef struct posizioneTane{
+    int x;
+    int x2;
+    int y;
+}posizioneTane;
+
 typedef struct corrente
 {
     DirezioneFlusso direzione;
@@ -141,21 +148,30 @@ extern int minx,
 // Schermo ncurses
 extern WINDOW *gioco;
 extern char campo[18][72];
+extern bool tane[5];
+extern posizioneTane posTane[5];
+extern int viteRana;
+
 
 void inizializzazioneSchermo();
 void graficaGioco();
-void avviaGioco();
+void avviaGioco(int vita, bool tana_status[]);
 
 void stampaSprite(elementoGioco elemento);
 void cancellaSprite(elementoGioco elemento);
 
 void rana(int pipeout,int pipein, corrente flussi[]);
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso);
-void granateRana(int pipeput, int pos_ranay, int pos_ranax);
+void granataSinistraRana(int pipeput, int pos_ranay, int pos_ranax);
+void granataDestraRana(int pipeout, int pos_ranay, int pos_ranax);
+void proiettile(int pipeout, int x, int y,int velocita,DirezioneFlusso direzione ,char tipo);
 
-void controlloGioco(int pipein, int pipeRana, int pipeCocco);
+
+void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[]);
 void terminaGioco();
 void chiudiProcessi();
 void inizializzazionePipe(int filedes[]);
 
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
+
+bool collisioneTane(int ranaX, int ranaY);

@@ -163,6 +163,13 @@ void stampaSprite(elementoGioco elemento)
         mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteProiettileRana);
         wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
         break;
+    case GRANATA:
+    wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
+        
+        mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteProiettileRana);
+
+        wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
+        break;
     default:
         break;
     }
