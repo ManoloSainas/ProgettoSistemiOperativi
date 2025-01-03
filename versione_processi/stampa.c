@@ -9,7 +9,7 @@ char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 
 void graficaGioco()
 {
-       
+
     // Pulizia dello sfondo
     wattron(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
     for (int i = 1; i < maxx - 1; i++)
@@ -58,9 +58,9 @@ void graficaGioco()
     mvwprintw(gioco, 6, 59, "  ");
 
     wattroff(gioco, COLOR_PAIR(COLORE_TANE));
-     mvwprintw(gioco,1,2,"VITE: ");
-     mvwprintw(gioco,1,maxx/2 -10,"TEMPO ");
-     mvwprintw(gioco,1, maxx - 20,"SCORE: ");
+    mvwprintw(gioco, 1, 2, "VITE: ");
+    mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO ");
+    mvwprintw(gioco, 1, maxx - 20, "SCORE: ");
     // refresh della finestra
     wrefresh(gioco);
 }
@@ -94,7 +94,8 @@ void stampaSprite(elementoGioco elemento)
             mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteRana);
             wattroff(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
             break;
-        }break;
+        }
+        break;
 
     case COCCODRILLO:
         lunghezza = 4;
@@ -164,8 +165,8 @@ void stampaSprite(elementoGioco elemento)
         wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
         break;
     case GRANATA:
-    wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
-        
+        wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
+
         mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteProiettileRana);
 
         wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));

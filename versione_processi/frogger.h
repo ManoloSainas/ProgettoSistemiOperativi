@@ -20,7 +20,7 @@
 #define NUM_TANE 5
 #define NUM_MIN_COCCODRILLI_FLUSSO 5
 #define NUM_FLUSSI_FIUME 8
-#define maxy  18
+#define maxy 18
 #define maxx 72
 #define MAXCOCCODRILLI 36
 // Dimensione Sprite
@@ -45,7 +45,6 @@
 // Gestione proiettili
 #define RICARICA_PROIETTILI 9000
 #define SPEED_PROIETTILI 60000
-
 
 // Colori standard
 #define COLORE_STANDARD 1
@@ -114,25 +113,26 @@ typedef struct elementoGioco
     // statusOggetto status;
 } elementoGioco;
 
-typedef struct posizione{
-int x;
-int y;
-int pid;
-DirezioneFlusso direzione;
-}posizione;
+typedef struct posizione
+{
+    int x;
+    int y;
+    int pid;
+    DirezioneFlusso direzione;
+} posizione;
 
-typedef struct posizioneTane{
+typedef struct posizioneTane
+{
     int x;
     int x2;
     int y;
-}posizioneTane;
+} posizioneTane;
 
 typedef struct corrente
 {
     DirezioneFlusso direzione;
     int velocita;
 } corrente;
-
 
 // Tipologia per distinguere le modalità di utilizzo della pipe
 typedef enum tipoDescrittore
@@ -152,7 +152,6 @@ extern bool tane[5];
 extern posizioneTane posTane[5];
 extern int viteRana;
 
-
 void inizializzazioneSchermo();
 void graficaGioco();
 void avviaGioco(int vita, bool tana_status[]);
@@ -160,12 +159,11 @@ void avviaGioco(int vita, bool tana_status[]);
 void stampaSprite(elementoGioco elemento);
 void cancellaSprite(elementoGioco elemento);
 
-void rana(int pipeout,int pipein, corrente flussi[]);
+void rana(int pipeout, int pipein, corrente flussi[]);
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso);
 void granataSinistraRana(int pipeput, int pos_ranay, int pos_ranax);
 void granataDestraRana(int pipeout, int pos_ranay, int pos_ranax);
-void proiettile(int pipeout, int x, int y,int velocita,DirezioneFlusso direzione ,char tipo);
-
+void proiettile(int pipeout, int x, int y, int velocita, DirezioneFlusso direzione, char tipo);
 
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[]);
 void terminaGioco();

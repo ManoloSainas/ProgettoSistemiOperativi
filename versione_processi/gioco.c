@@ -16,8 +16,8 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 
     flussi[NUM_FLUSSI_FIUME + 2].velocita = 0;
     flussi[NUM_FLUSSI_FIUME + 1].velocita = 0;
-     flussi[1].velocita = rand() % (350000) + 100000;
-    
+    flussi[1].velocita = rand() % (350000) + 100000;
+
     for (int i = 2; i <= NUM_FLUSSI_FIUME; i++)
     {
         if (flussi[i - 1].direzione == DESTRA)
@@ -38,18 +38,17 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
     }
 }
 
-
-
 void avviaGioco(int vita, bool tana_status[])
 {
 
     int filedes[2], pipeRana[2], pipeCocco[2];
     int pid_gioco;
-    int coccodrilli_flusso[NUM_FLUSSI_FIUME], tot_coc=0;
+    int coccodrilli_flusso[NUM_FLUSSI_FIUME], tot_coc = 0;
     corrente flussi[NUM_FLUSSI_FIUME + 3];
 
-    for(int i=0; i<NUM_FLUSSI_FIUME; i++){
-        tot_coc+=coccodrilli_flusso[i];
+    for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
+    {
+        tot_coc += coccodrilli_flusso[i];
     }
 
     graficaGioco();
@@ -69,13 +68,13 @@ void avviaGioco(int vita, bool tana_status[])
     case 0:
         close(filedes[LETTURA]);
         close(pipeRana[SCRITTURA]);
-        rana(filedes[SCRITTURA], pipeRana[LETTURA],flussi);
+        rana(filedes[SCRITTURA], pipeRana[LETTURA], flussi);
         _exit(0);
         break;
     default:
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
-            for (int j = 1; j <= MAXCOCCODRILLI/NUM_FLUSSI_FIUME; j++)
+            for (int j = 1; j <= MAXCOCCODRILLI / NUM_FLUSSI_FIUME; j++)
             {
                 pid_gioco = fork();
                 switch (pid_gioco)
@@ -87,9 +86,9 @@ void avviaGioco(int vita, bool tana_status[])
                 case 0:
                     close(pipeCocco[SCRITTURA]);
                     close(filedes[LETTURA]);
-                    srand(time(NULL)+i );
-                    j == 1 ? usleep(3000000 - flussi[i].velocita + (rand() % 6000000)) : usleep((3000000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j );
-                    coccodrillo(filedes[SCRITTURA], pipeCocco[LETTURA],i, j, flussi[i]);
+                    srand(time(NULL) + i);
+                    j == 1 ? usleep(3000000 - flussi[i].velocita + (rand() % 6000000)) : usleep((3000000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j);
+                    coccodrillo(filedes[SCRITTURA], pipeCocco[LETTURA], i, j, flussi[i]);
                     _exit(0);
                     break;
                 default:
@@ -97,11 +96,11 @@ void avviaGioco(int vita, bool tana_status[])
                 }
             }
         }
-            
+
         close(filedes[SCRITTURA]);
         close(pipeRana[LETTURA]);
         close(pipeCocco[LETTURA]);
-        controlloGioco(filedes[LETTURA],pipeRana[SCRITTURA], pipeCocco[SCRITTURA], vita, tana_status);
+        controlloGioco(filedes[LETTURA], pipeRana[SCRITTURA], pipeCocco[SCRITTURA], vita, tana_status);
 
         break;
     }
@@ -116,51 +115,58 @@ void terminaGioco()
     clear();
     refresh();
     delwin(gioco); // Delete the window
-    endwin();      // End ncurses 
+    endwin();      // End ncurses
 }
 
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[])
 {
     posizione pos_r, pos_c[MAXCOCCODRILLI];
-    int score=0;
+    int score = 0;
     elementoGioco valoreLetto;
     elementoGioco rana, coccodrillo, granataSinistra, granataDestra, granata;
     bool danno;
-    pos_r.y=16;
-    pos_r.x=36;
-    for(int i=0;i<MAXCOCCODRILLI;i++){
-        pos_c[i].pid=-1;
+    pos_r.y = 16;
+    pos_r.x = 36;
+    for (int i = 0; i < MAXCOCCODRILLI; i++)
+    {
+        pos_c[i].pid = -1;
     }
-    mvwprintw(gioco,1,7,"%d",vita);
-        
-    mvwprintw(gioco,1,maxx - 14,"%d",score);
-    danno=true;
+    mvwprintw(gioco, 1, 7, "%d", vita);
+
+    mvwprintw(gioco, 1, maxx - 14, "%d", score);
+    danno = true;
     do
     {
-        danno=false;
-        for(int i=0; i<MAXCOCCODRILLI; i++){
-                if(pos_r.y==pos_c[i].y){
-                    if(pos_c[i].direzione==SINISTRA){
-                        if(pos_r.x>=pos_c[i].x-1 && pos_r.x<=pos_c[i].x+3){
-                            danno=true;
-                            break;
-                        }
-                    }else{
-                        if(pos_r.x<pos_c[i].x+1 && pos_r.x>pos_c[i].x-5){
-                            danno=true;
-                            break;
-                        }
+        danno = false;
+        for (int i = 0; i < MAXCOCCODRILLI; i++)
+        {
+            if (pos_r.y == pos_c[i].y)
+            {
+                if (pos_c[i].direzione == SINISTRA)
+                {
+                    if (pos_r.x >= pos_c[i].x - 1 && pos_r.x <= pos_c[i].x + 3)
+                    {
+                        danno = true;
+                        break;
                     }
                 }
-            } 
-       if(pos_r.y==maxy-2 || pos_r.y==maxy-11 || pos_r.y==maxy-12){
-                danno=true;
-            }       
-        
-       
-      
+                else
+                {
+                    if (pos_r.x < pos_c[i].x + 1 && pos_r.x > pos_c[i].x - 5)
+                    {
+                        danno = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (pos_r.y == maxy - 2 || pos_r.y == maxy - 11 || pos_r.y == maxy - 12)
+        {
+            danno = true;
+        }
 
-        if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0){
+        if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
+        {
             elementoGioco oggettoLetto;
             switch (valoreLetto.tipo)
             {
@@ -186,91 +192,103 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             {
             case RANA:
                 rana = valoreLetto;
-                pos_r.x= rana.x;
-                pos_r.y= rana.y;
-                    if(danno){
-                        if (write(pipeRana, &danno, sizeof(danno)) == -1){
-                                perror("Errore nella scrittura sulla pipe");
-                                _exit(1);                            
-                                }
-                    }else{
-                        
-                                     
-                        if (write(pipeRana, &danno, sizeof(danno)) == -1){
-                                perror("Errore nella scrittura sulla pipe");
-                                _exit(1);                           
-                                }
+                pos_r.x = rana.x;
+                pos_r.y = rana.y;
+                if (danno)
+                {
+                    if (write(pipeRana, &danno, sizeof(danno)) == -1)
+                    {
+                        perror("Errore nella scrittura sulla pipe");
+                        _exit(1);
                     }
+                }
+                else
+                {
+
+                    if (write(pipeRana, &danno, sizeof(danno)) == -1)
+                    {
+                        perror("Errore nella scrittura sulla pipe");
+                        _exit(1);
+                    }
+                }
                 break;
             case COCCODRILLO:
                 coccodrillo = valoreLetto;
-                
-                for (int i = 0; i < MAXCOCCODRILLI; i++) {
-                  if(pos_c[i].pid==coccodrillo.pid_oggetto){
-                        pos_c[i].x=coccodrillo.x;
-                        pos_c[i].y=coccodrillo.y;
-                        break;
-                    }  
-                    if(pos_c[i].pid==-1 ){
-                        pos_c[i].pid=coccodrillo.pid_oggetto;
-                        pos_c[i].x=coccodrillo.x;
-                        pos_c[i].y=coccodrillo.y;
-                        pos_c[i].direzione=coccodrillo.direzione;
+
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    if (pos_c[i].pid == coccodrillo.pid_oggetto)
+                    {
+                        pos_c[i].x = coccodrillo.x;
+                        pos_c[i].y = coccodrillo.y;
                         break;
                     }
-                    
-                } break;
+                    if (pos_c[i].pid == -1)
+                    {
+                        pos_c[i].pid = coccodrillo.pid_oggetto;
+                        pos_c[i].x = coccodrillo.x;
+                        pos_c[i].y = coccodrillo.y;
+                        pos_c[i].direzione = coccodrillo.direzione;
+                        break;
+                    }
+                }
+                break;
 
-             default: break;   
+            default:
+                break;
             }
-            
-            
-            }
-            
-            
-            // graficaGioco();
-
-            stampaSprite(coccodrillo);
-            stampaSprite(rana);
-            stampaSprite(granataSinistra);
-            stampaSprite(granataDestra);
-            stampaSprite(granata); 
-            
-            wrefresh(gioco);
-
-    if(pos_r.x==11 && pos_r.y==6 && tana_status[0]){
-        exit(1);
-    }
-    if(pos_r.x==23 && pos_r.y==6 && tana_status[1]){
-        exit(2);
-    } 
-    if(pos_r.x==35 && pos_r.y==6 && tana_status[2]){
-        exit(3);
-    } 
-    if(pos_r.x==47 && pos_r.y==6 && tana_status[3]){
-        exit(4);
-    } 
-    if(pos_r.x==59 && pos_r.y==6 && tana_status[4]){
-        exit(5);
-    }         
-            if(!danno){
-                chiudiProcessi(rana.pid_oggetto);
-    for(int i=0; i<MAXCOCCODRILLI; i++){
-    chiudiProcessi(pos_c[i].pid, SIGTERM);
-    }
-    chiudiProcessi(granata.pid_oggetto, SIGTERM);
-    exit(0);
         }
 
-        }while(true );
+        // graficaGioco();
 
-    
+        stampaSprite(coccodrillo);
+        stampaSprite(rana);
+        stampaSprite(granataSinistra);
+        stampaSprite(granataDestra);
+        stampaSprite(granata);
+
+        wrefresh(gioco);
+
+        if (pos_r.x == 11 && pos_r.y == 6 && tana_status[0])
+        {
+            exit(1);
+        }
+        if (pos_r.x == 23 && pos_r.y == 6 && tana_status[1])
+        {
+            exit(2);
+        }
+        if (pos_r.x == 35 && pos_r.y == 6 && tana_status[2])
+        {
+            exit(3);
+        }
+        if (pos_r.x == 47 && pos_r.y == 6 && tana_status[3])
+        {
+            exit(4);
+        }
+        if (pos_r.x == 59 && pos_r.y == 6 && tana_status[4])
+        {
+            exit(5);
+        }
+        if (!danno)
+        {
+            chiudiProcessi(rana.pid_oggetto);
+            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            {
+                chiudiProcessi(pos_c[i].pid, SIGTERM);
+            }
+            chiudiProcessi(granata.pid_oggetto, SIGTERM);
+            exit(0);
+        }
+
+    } while (true);
 }
 
-
-bool collisioneTane(int ranaX, int ranaY){
-    for(int i = 0; i < 5; i++){
-        if(ranaX >= posTane[i].x && ranaX <= posTane[i].x2 && ranaY == posTane[i].y){
+bool collisioneTane(int ranaX, int ranaY)
+{
+    for (int i = 0; i < 5; i++)
+    {
+        if (ranaX >= posTane[i].x && ranaX <= posTane[i].x2 && ranaY == posTane[i].y)
+        {
             tane[i] == false ? tane[i] = true : viteRana--;
             return true;
         }

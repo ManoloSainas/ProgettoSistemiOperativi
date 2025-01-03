@@ -1,43 +1,48 @@
 #include "frogger.h"
 
-void proiettile(int pipeout, int x, int y,int velocita,DirezioneFlusso direzione ,char tipo){
-elementoGioco proiettile;
-proiettile.direzione=direzione;
-proiettile.pid_oggetto=getpid();
-if(direzione==DESTRA){
-    proiettile.x=x+1;
-}
-
-switch (tipo)
+void proiettile(int pipeout, int x, int y, int velocita, DirezioneFlusso direzione, char tipo)
 {
-case 'c':
-   proiettile.tipo=PROIETTILE_COCCODRILLO;
-   if(direzione==DESTRA){
-    proiettile.x=x+5;
-}
-if(direzione==SINISTRA){
-    proiettile.x=x-1;
-}
-proiettile.velocita=velocita*2;
+    elementoGioco proiettile;
+    proiettile.direzione = direzione;
+    proiettile.pid_oggetto = getpid();
+    if (direzione == DESTRA)
+    {
+        proiettile.x = x + 1;
+    }
 
-    break;
-case 'r':
-    proiettile.tipo=GRANATA;
-    if(direzione==DESTRA){
-    proiettile.x=x+2;
-}
-if(direzione==SINISTRA){
-    proiettile.x=x-1;
-}
-proiettile.velocita=velocita;
+    switch (tipo)
+    {
+    case 'c':
+        proiettile.tipo = PROIETTILE_COCCODRILLO;
+        if (direzione == DESTRA)
+        {
+            proiettile.x = x + 5;
+        }
+        if (direzione == SINISTRA)
+        {
+            proiettile.x = x - 1;
+        }
+        proiettile.velocita = velocita * 2;
 
-    break;
-default:
-    break;
-}
+        break;
+    case 'r':
+        proiettile.tipo = GRANATA;
+        if (direzione == DESTRA)
+        {
+            proiettile.x = x + 2;
+        }
+        if (direzione == SINISTRA)
+        {
+            proiettile.x = x - 1;
+        }
+        proiettile.velocita = velocita;
 
+        break;
+    default:
+        break;
+    }
 
-write(pipeout, &proiettile, sizeof(elementoGioco));
+    write(pipeout, &proiettile, sizeof(elementoGioco));
 
     while (1)
     {
@@ -49,15 +54,13 @@ write(pipeout, &proiettile, sizeof(elementoGioco));
             break;
         case SINISTRA:
             proiettile.x--;
-        break;
+            break;
         default:
             break;
-        }       
+        }
 
         write(pipeout, &proiettile, sizeof(elementoGioco));
     }
-
-
 }
 
 void granataSinistraRana(int pipeout, int pos_ranay, int pos_ranax)
@@ -67,14 +70,14 @@ void granataSinistraRana(int pipeout, int pos_ranay, int pos_ranax)
 
     // inizializzazione granata sinistra
     granataSinistra.tipo = GRANATA_SINISTRA_RANA;
-    granataSinistra.x = pos_ranax-1;
+    granataSinistra.x = pos_ranax - 1;
     granataSinistra.y = pos_ranay;
     granataSinistra.pid_oggetto = getpid();
     granataSinistra.proiettili = FALSE;
     granataSinistra.velocita = SPEED_PROIETTILI;
     granataSinistra.direzione = SINISTRA;
 
-     write(pipeout, &granataSinistra, sizeof(elementoGioco));
+    write(pipeout, &granataSinistra, sizeof(elementoGioco));
 
     while (1)
     {
