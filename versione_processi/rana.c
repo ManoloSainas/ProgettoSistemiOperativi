@@ -19,7 +19,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
     rana.x = 36;
     rana.y = 16;
     rana.pid_oggetto = getpid();
-    rana.pid_oggetto = pid_rana;
+
     rana.velocita = 0;
     rana.proiettili = TRUE;
     bool danno;

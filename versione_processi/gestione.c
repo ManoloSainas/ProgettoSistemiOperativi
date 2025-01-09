@@ -10,44 +10,32 @@ void inizializzazionePipe(int filedes[])
     }
 }
 
-void chiudiProcessi(elementoGioco *elemento)
+void chiudiProcessi(pid_t pid)
 {
-    if (elemento == NULL)
+    
+    // Verifica che il PID sia valido
+    if(pid!=-500){
+    
+        if (pid <= 0)
     {
-        fprintf(stderr, "Errore: puntatore nullo passato a chiudiProcessi\n");
+        perror("Errore: PID non valido o processo inesistente");
         return;
     }
-    switch (elemento->tipo)
+
+    // Invia il segnale SIGTERM per terminare il processo in modo gentile
+    if (kill(pid, SIGKILL) == -1)  
     {
-    case RANA:
-        if (kill(elemento->pid_oggetto, SIGKILL) == -1)
-        {
-            perror("Errore nel terminare il processo della rana");
-        }
-        waitpid(elemento->pid_oggetto, NULL, 0);
-        break;
-    case COCCODRILLO:
-        if (kill(elemento->pid_oggetto, SIGKILL) == -1)
-        {
-            perror("Errore nel terminare il processo coccodrillo");
-        }
-        waitpid(elemento->pid_oggetto, NULL, 0);
-        break;
-    case GRANATA_DESTRA_RANA:
-        if (kill(elemento->pid_oggetto, SIGKILL) == -1)
-        {
-            perror("Errore nel terminare il processo granata destra");
-        }
-        waitpid(elemento->pid_oggetto, NULL, 0);
-        break;
-    case GRANATA_SINISTRA_RANA:
-        if (kill(elemento->pid_oggetto, SIGKILL) == -1)
-        {
-            perror("Errore nel terminare il processo granata sinistra");
-        }
-        waitpid(elemento->pid_oggetto, NULL, 0);
-        break;
-    default:
-        break;
+        perror("Errore nell'inviare il segnale SIGTERM al processo");
+        return;
     }
+
+
+
+    // Aspetta la terminazione del processo
+    if (waitpid(pid, NULL, 0) == -1)
+    {
+        perror("Errore nell'attendere la terminazione del processo");
+    }
+}
+
 }

@@ -167,7 +167,7 @@ void proiettile(int pipeout, int x, int y, int velocita, DirezioneFlusso direzio
 
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[]);
 void terminaGioco();
-void chiudiProcessi();
+void chiudiProcessi(pid_t pid);
 void inizializzazionePipe(int filedes[]);
 
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);

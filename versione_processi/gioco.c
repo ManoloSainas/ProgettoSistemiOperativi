@@ -124,12 +124,13 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     int score = 0;
     elementoGioco valoreLetto;
     elementoGioco rana, coccodrillo, granataSinistra, granataDestra, granata;
-    bool danno;
+    bool danno, debug_primo_cocco=true;;
     pos_r.y = 16;
     pos_r.x = 36;
+    pid_t primo_cocco;
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {
-        pos_c[i].pid = -1;
+        pos_c[i].pid = -500;
     }
     mvwprintw(gioco, 1, 7, "%d", vita);
 
@@ -139,8 +140,8 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     {
         danno = false;
         for (int i = 0; i < MAXCOCCODRILLI; i++)
-        {
-            if (pos_r.y == pos_c[i].y)
+        { 
+            if (pos_r.y == pos_c[i].y && pos_c[i].pid!=-500)
             {
                 if (pos_c[i].direzione == SINISTRA)
                 {
@@ -214,7 +215,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 break;
             case COCCODRILLO:
                 coccodrillo = valoreLetto;
-
+               
                 for (int i = 0; i < MAXCOCCODRILLI; i++)
                 {
                     if (pos_c[i].pid == coccodrillo.pid_oggetto)
@@ -223,7 +224,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         pos_c[i].y = coccodrillo.y;
                         break;
                     }
-                    if (pos_c[i].pid == -1)
+                    if (pos_c[i].pid == -500)
                     {
                         pos_c[i].pid = coccodrillo.pid_oggetto;
                         pos_c[i].x = coccodrillo.x;
@@ -231,6 +232,8 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         pos_c[i].direzione = coccodrillo.direzione;
                         break;
                     }
+                    
+                  
                 }
                 break;
 
@@ -240,33 +243,65 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
         }
 
         // graficaGioco();
-
+        
         stampaSprite(coccodrillo);
         stampaSprite(rana);
         stampaSprite(granataSinistra);
         stampaSprite(granataDestra);
         stampaSprite(granata);
-
+        //mvwprintw(gioco, 4, 1, "%d", rana.pid_oggetto);
+        /*for(int i =0; i<MAXCOCCODRILLI; i++){
+            if(i<10) mvwprintw(gioco, 1+i, 1, "%d", pos_c[i].pid);
+            if(i>=10 && i<20) mvwprintw(gioco, 1+i - 10, 7, "%d", pos_c[i].pid);
+            if(i>=20 && i<30) mvwprintw(gioco, 1+i - 20, 14, "%d", pos_c[i].pid);
+            if(i>=30 && i<MAXCOCCODRILLI) mvwprintw(gioco, 1+i -30, 21, "%d", pos_c[i].pid);
+        }*/
+        
         wrefresh(gioco);
 
         if (pos_r.x == 11 && pos_r.y == 6 && tana_status[0])
         {
+            chiudiProcessi(rana.pid_oggetto);
+            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            {
+                chiudiProcessi(pos_c[i].pid);
+            }
             exit(1);
         }
         if (pos_r.x == 23 && pos_r.y == 6 && tana_status[1])
         {
+            chiudiProcessi(rana.pid_oggetto);
+            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            {
+                chiudiProcessi(pos_c[i].pid);
+            }
             exit(2);
         }
         if (pos_r.x == 35 && pos_r.y == 6 && tana_status[2])
         {
+            chiudiProcessi(rana.pid_oggetto);
+            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            {
+                chiudiProcessi(pos_c[i].pid);
+            }
             exit(3);
         }
         if (pos_r.x == 47 && pos_r.y == 6 && tana_status[3])
-        {
+        {   
+            chiudiProcessi(rana.pid_oggetto);
+            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            {
+                chiudiProcessi(pos_c[i].pid);
+            }
             exit(4);
         }
         if (pos_r.x == 59 && pos_r.y == 6 && tana_status[4])
         {
+            chiudiProcessi(rana.pid_oggetto);
+            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            {
+                chiudiProcessi(pos_c[i].pid);
+            }
             exit(5);
         }
         if (!danno)
@@ -274,9 +309,8 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             chiudiProcessi(rana.pid_oggetto);
             for (int i = 0; i < MAXCOCCODRILLI; i++)
             {
-                chiudiProcessi(pos_c[i].pid, SIGTERM);
+                chiudiProcessi(pos_c[i].pid);
             }
-            chiudiProcessi(granata.pid_oggetto, SIGTERM);
             exit(0);
         }
 
