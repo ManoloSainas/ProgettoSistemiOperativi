@@ -22,14 +22,12 @@ void chiudiProcessi(pid_t pid)
         return;
     }
 
-    // Invia il segnale SIGTERM per terminare il processo in modo gentile
+    // Invia il segnale SIGKILL per terminare il processo 
     if (kill(pid, SIGKILL) == -1)  
     {
-        perror("Errore nell'inviare il segnale SIGTERM al processo");
+        perror("Errore nell'inviare il segnale SIGKILL al processo");
         return;
     }
-
-
 
     // Aspetta la terminazione del processo
     if (waitpid(pid, NULL, 0) == -1)

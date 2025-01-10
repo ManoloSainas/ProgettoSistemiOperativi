@@ -10,14 +10,16 @@ void inizializzazioneSchermo()
     // Settaggio delle coordinate relative la grandezza dello schermo di gioco
     miny = 1;
     minx = 1;
-
+    
     gioco = newwin(maxy, maxx, miny, minx);
     nodelay(gioco, true);
-    box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno
-
     // Pulizia dello schermo
-    clear();
-    refresh();
+    wclear(gioco);
+    mvwprintw(gioco, 1, 2, "VITE: ");
+    mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO ");
+    mvwprintw(gioco, 1, maxx - 20, "SCORE: ");
+    wrefresh(gioco);
+    
 
     // Inizializzazione dei colori
     init_pair(COLORE_STANDARD, COLOR_WHITE, COLOR_BLACK);
@@ -33,8 +35,14 @@ void inizializzazioneSchermo()
     init_pair(COLORE_RANA_COCCODRILLO, COLOR_RED, COLOR_BLUE);
     init_pair(COLORE_RANA_TANA, COLOR_RED, COLOR_GREEN);
 
+    init_pair(COLORE_GRANATA_ARGINE, COLOR_RED, COLOR_MAGENTA);
+    init_pair(COLORE_GRANATA_ACQUA, COLOR_RED, COLOR_BLUE);
+
+    
+    init_pair(COLORE_PROIETTILE_COCCODRILLO, COLOR_YELLOW, COLOR_BLUE);
+
+
     init_pair(COLORE_COCCODRILLO, COLOR_GREEN, COLOR_BLUE);
-    init_pair(COLORE_COCCODRILLO_SPARO, COLOR_RED, COLOR_BLUE);
     init_pair(SFONDO_MARCIAPIEDE, COLOR_BLACK, COLOR_MAGENTA);
     init_pair(SFONDO_ACQUA, COLOR_BLACK, COLOR_BLUE);
     init_pair(SFONDO_ERBA, COLOR_BLACK, COLOR_MAGENTA);

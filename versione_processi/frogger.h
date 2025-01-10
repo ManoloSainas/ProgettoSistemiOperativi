@@ -4,6 +4,7 @@
 // Librerie per la gestione dei processi e delle pipes
 #include <signal.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 // Librerie per le chiamate a sistema
 #include <sys/types.h>
@@ -22,7 +23,7 @@
 #define NUM_FLUSSI_FIUME 8
 #define maxy 18
 #define maxx 72
-#define MAXCOCCODRILLI 36
+
 // Dimensione Sprite
 #define RIGHE_SPRITE_RANA 1
 #define COLONNE_SPRITE_RANA 2
@@ -43,7 +44,7 @@
 
 #define KEY_SPACE 32 // Valore relativo al carattere spazio
 // Gestione proiettili
-#define RICARICA_PROIETTILI 9000
+#define RICARICA_PROIETTILI 1000
 #define SPEED_PROIETTILI 60000
 
 // Colori standard
@@ -61,15 +62,24 @@
 #define COLORE_RANA_COCCODRILLO 10
 #define COLORE_RANA_TANA 11
 #define COLORE_COCCODRILLO 12
-#define COLORE_COCCODRILLO_SPARO 13
-#define SFONDO_MARCIAPIEDE 14
-#define SFONDO_ACQUA 15
-#define SFONDO_ERBA 16
-#define SFONDO_TANE 17
-#define COLORE_TANE 18
+#define SFONDO_MARCIAPIEDE 13
+#define SFONDO_ACQUA 14
+#define SFONDO_ERBA 15
+#define SFONDO_TANE 16
+#define COLORE_TANE 17
+
+#define COLORE_GRANATA_ARGINE 18
+#define COLORE_GRANATA_ACQUA 19
+
+#define COLORE_PROIETTILE_COCCODRILLO 20
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
+
+// quantità oggetti su schermo
+#define MAXCOCCODRILLI 36
+#define MAXGRANATE 36
+#define MAXPROIETTILI 10
 
 // struttura campo da gioco
 
@@ -109,7 +119,7 @@ typedef struct elementoGioco
     int pid_oggetto;
     int velocita;
     DirezioneFlusso direzione;
-    bool proiettili;
+    pid_t proiettile;
     // statusOggetto status;
 } elementoGioco;
 
@@ -118,6 +128,7 @@ typedef struct posizione
     int x;
     int y;
     int pid;
+    pid_t proiettile;
     DirezioneFlusso direzione;
 } posizione;
 
@@ -161,9 +172,7 @@ void cancellaSprite(elementoGioco elemento);
 
 void rana(int pipeout, int pipein, corrente flussi[]);
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso);
-void granataSinistraRana(int pipeput, int pos_ranay, int pos_ranax);
-void granataDestraRana(int pipeout, int pos_ranay, int pos_ranax);
-void proiettile(int pipeout, int x, int y, int velocita, DirezioneFlusso direzione, char tipo);
+void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo);
 
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[]);
 void terminaGioco();
@@ -172,4 +181,5 @@ void inizializzazionePipe(int filedes[]);
 
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
 
-bool collisioneTane(int ranaX, int ranaY);
+void handler(int sig);
+// bool collisioneTane(int ranaX, int ranaY);
