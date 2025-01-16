@@ -38,7 +38,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
     }
 }
 
-void avviaGioco(int vita, bool tana_status[])
+void avviaGioco(int vita, bool tana_status[], int punteggio)
 {
 
     int filedes[2], pipeRana[2], pipeCocco[2];
@@ -51,7 +51,7 @@ void avviaGioco(int vita, bool tana_status[])
         tot_coc += coccodrilli_flusso[i];
     }
 
-    graficaGioco(tana_status);
+    graficaGioco(tana_status, punteggio, vita);
     gestioneFlussi(flussi, coccodrilli_flusso);
     inizializzazionePipe(filedes);
     inizializzazionePipe(pipeRana);
@@ -146,9 +146,6 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     {
         pos_proiettili[i].pid = -500;
     }
-    mvwprintw(gioco, 1, 9, "%d", vita);
-
-    mvwprintw(gioco, 1, maxx - 14, "%d", score);
 
     do
     {
@@ -363,6 +360,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             chiudiProcessi(rana.pid_oggetto);
             exit(1);
         }
+
         if (pos_r.x == 23 && pos_r.y == 6 && tana_status[1])
         {
             for (int i = 0; i < MAXCOCCODRILLI; i++)

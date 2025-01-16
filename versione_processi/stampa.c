@@ -7,8 +7,14 @@ char spriteCoccodrilloSinistra[COLONNE_SPRITE_COCCODRILLO + 1] = ">===";
 char spriteProiettileCocco[COLONNE_SPRITE_PROIETTILE + 1] = "@";
 char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 
-void graficaGioco(bool tana_status[])
+void graficaGioco(bool tana_status[], int punteggio, int vita)
 {
+
+    // stampa delle vite, del punteggio e del timer
+    wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
+    mvwprintw(gioco, 1, 9, "%d", vita);
+    mvwprintw(gioco, 1, maxx - 12, "%d", punteggio);
+    wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
 
     // Pulizia dello sfondo
     wattron(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
