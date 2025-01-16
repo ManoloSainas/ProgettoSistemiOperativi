@@ -150,33 +150,33 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     do
     {
 
-        danno = false;
-        for (int i = 0; i < MAXCOCCODRILLI; i++)
-        {
-            if (pos_r.y == pos_c[i].y && pos_c[i].pid != -500)
-            {
-                if (pos_c[i].direzione == SINISTRA)
-                {
-                    if (pos_r.x >= pos_c[i].x - 1 && pos_r.x <= pos_c[i].x + 3)
-                    {
-                        danno = true;
-                        break;
-                    }
-                }
-                else
-                {
-                    if (pos_r.x < pos_c[i].x + 1 && pos_r.x > pos_c[i].x - 5)
-                    {
-                        danno = true;
-                        break;
-                    }
-                }
-            }
-        }
-        if (pos_r.y == maxy - 2 || pos_r.y == maxy - 11 || pos_r.y == maxy - 12)
-        {
-            danno = true;
-        }
+        danno = true;
+        // for (int i = 0; i < MAXCOCCODRILLI; i++)
+        // {
+        //     if (pos_r.y == pos_c[i].y && pos_c[i].pid != -500)
+        //     {
+        //         if (pos_c[i].direzione == SINISTRA)
+        //         {
+        //             if (pos_r.x >= pos_c[i].x - 1 && pos_r.x <= pos_c[i].x + 3)
+        //             {
+        //                 danno = true;
+        //                 break;
+        //             }
+        //         }
+        //         else
+        //         {
+        //             if (pos_r.x < pos_c[i].x + 1 && pos_r.x > pos_c[i].x - 5)
+        //             {
+        //                 danno = true;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
+        // if (pos_r.y == maxy - 2 || pos_r.y == maxy - 11 || pos_r.y == maxy - 12)
+        // {
+        //     danno = true;
+        // }
 
         if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
         {
@@ -344,82 +344,174 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
         wrefresh(gioco);
 
-        if (pos_r.x == 11 && pos_r.y == 6 && tana_status[0])
+        if (pos_r.x == 11 && pos_r.y == 6)
         {
-
-            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            if (tana_status[0])
             {
-                kill(pos_c[i].pid, SIGUSR1);
-                chiudiProcessi(pos_c[i].pid);
-            }
-            for (int i = 0; i < MAXGRANATE; i++)
-            {
-                write(pipeRana, &pos_granate[i], sizeof(posizione));
-            }
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
 
-            chiudiProcessi(rana.pid_oggetto);
-            exit(1);
+                chiudiProcessi(rana.pid_oggetto);
+                exit(1);
+            }
+            else
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(6);
+            }
         }
 
-        if (pos_r.x == 23 && pos_r.y == 6 && tana_status[1])
+        if (pos_r.x == 23 && pos_r.y == 6)
         {
-            for (int i = 0; i < MAXCOCCODRILLI; i++)
+            if (tana_status[1])
             {
-                kill(pos_c[i].pid, SIGUSR1);
-                chiudiProcessi(pos_c[i].pid);
-            }
-            for (int i = 0; i < MAXGRANATE; i++)
-            {
-                write(pipeRana, &pos_granate[i], sizeof(posizione));
-            }
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
 
-            chiudiProcessi(rana.pid_oggetto);
-            exit(2);
+                chiudiProcessi(rana.pid_oggetto);
+                exit(2);
+            }
+            else
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(6);
+            }
         }
-        if (pos_r.x == 35 && pos_r.y == 6 && tana_status[2])
-        {
-            for (int i = 0; i < MAXCOCCODRILLI; i++)
-            {
-                kill(pos_c[i].pid, SIGUSR1);
-                chiudiProcessi(pos_c[i].pid);
-            }
-            for (int i = 0; i < MAXGRANATE; i++)
-            {
-                write(pipeRana, &pos_granate[i], sizeof(posizione));
-            }
 
-            chiudiProcessi(rana.pid_oggetto);
-            exit(3);
+        if (pos_r.x == 35 && pos_r.y == 6)
+        {
+            if (tana_status[2])
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(3);
+            }
+            else
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(6);
+            }
         }
-        if (pos_r.x == 47 && pos_r.y == 6 && tana_status[3])
-        {
-            for (int i = 0; i < MAXCOCCODRILLI; i++)
-            {
-                kill(pos_c[i].pid, SIGUSR1);
-                chiudiProcessi(pos_c[i].pid);
-            }
-            for (int i = 0; i < MAXGRANATE; i++)
-            {
-                write(pipeRana, &pos_granate[i], sizeof(posizione));
-            }
 
-            chiudiProcessi(rana.pid_oggetto);
-            exit(4);
+        if (pos_r.x == 47 && pos_r.y == 6)
+        {
+            if (tana_status[3])
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(4);
+            }
+            else
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(6);
+            }
         }
-        if (pos_r.x == 59 && pos_r.y == 6 && tana_status[4])
-        {
-            for (int i = 0; i < MAXCOCCODRILLI; i++)
-            {
-                kill(pos_c[i].pid, SIGUSR1);
-                chiudiProcessi(pos_c[i].pid);
-            }
-            for (int i = 0; i < MAXGRANATE; i++)
-            {
-                write(pipeRana, &pos_granate[i], sizeof(posizione));
-            }
 
-            chiudiProcessi(rana.pid_oggetto);
-            exit(5);
+        if (pos_r.x == 59 && pos_r.y == 6)
+        {
+            if (tana_status[4])
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(5);
+            }
+            else
+            {
+                for (int i = 0; i < MAXCOCCODRILLI; i++)
+                {
+                    kill(pos_c[i].pid, SIGUSR1);
+                    chiudiProcessi(pos_c[i].pid);
+                }
+                for (int i = 0; i < MAXGRANATE; i++)
+                {
+                    write(pipeRana, &pos_granate[i], sizeof(posizione));
+                }
+
+                chiudiProcessi(rana.pid_oggetto);
+                exit(6);
+            }
         }
 
         if (!danno)
