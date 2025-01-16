@@ -13,7 +13,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
     coccodrillo.velocita = flusso.velocita;
     double durata_sparo, start_sparo, fine_sparo;
     pid_sparo = -500;
-
+    signal(SIGUSR1, handler);
     start_sparo = clock();
     if (coccodrillo.direzione == DESTRA)
     {
@@ -30,7 +30,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         coccodrillo.proiettile = pid_sparo;
         fine_sparo = clock();
         durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
-        if (rand() % 100 < 20 && durata_sparo < 2 && (pid_sparo == -500))
+        if (rand() % 100 < 20 && durata_sparo < 1 && (pid_sparo == -500) && coccodrillo.y!=maxy-3)
         {
             pid_sparo = fork();
             if (pid_sparo == 0)
@@ -74,7 +74,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
             _exit(1);
         }
 
-        signal(SIGUSR1, handler);
+        
 
         // velocita del coccodrillo 2s- velocita flusso*10000
         usleep(500000 - coccodrillo.velocita);
