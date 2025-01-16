@@ -10,7 +10,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
     {
         proiettile.x = x + 1;
     }
-  
+
     switch (tipo)
     {
     case 'c':
@@ -23,7 +23,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         {
             proiettile.x = x - 1;
         }
-        proiettile.velocita = 500000-(velocita*250000);
+        proiettile.velocita = 500000 - (velocita * 250000);
 
         break;
     case 'r':

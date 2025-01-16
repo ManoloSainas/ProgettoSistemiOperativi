@@ -10,7 +10,7 @@ void inizializzazioneSchermo()
     // Settaggio delle coordinate relative la grandezza dello schermo di gioco
     miny = 1;
     minx = 1;
-    
+
     gioco = newwin(maxy, maxx, miny, minx);
     nodelay(gioco, true);
     // Pulizia dello schermo
@@ -19,7 +19,6 @@ void inizializzazioneSchermo()
     mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO ");
     mvwprintw(gioco, 1, maxx - 20, "SCORE: ");
     wrefresh(gioco);
-    
 
     // Inizializzazione dei colori
     init_pair(COLORE_STANDARD, COLOR_WHITE, COLOR_BLACK);
@@ -38,9 +37,7 @@ void inizializzazioneSchermo()
     init_pair(COLORE_GRANATA_ARGINE, COLOR_RED, COLOR_MAGENTA);
     init_pair(COLORE_GRANATA_ACQUA, COLOR_RED, COLOR_BLUE);
 
-    
     init_pair(COLORE_PROIETTILE_COCCODRILLO, COLOR_YELLOW, COLOR_BLUE);
-
 
     init_pair(COLORE_COCCODRILLO, COLOR_GREEN, COLOR_BLUE);
     init_pair(SFONDO_MARCIAPIEDE, COLOR_BLACK, COLOR_MAGENTA);

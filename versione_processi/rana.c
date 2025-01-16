@@ -2,14 +2,13 @@
 
 void rana(int pipeout, int pipein, corrente flussi[])
 {
-       fcntl(pipein, F_SETFL, O_NONBLOCK);//pipe in scrittura della rana non bloccante
+    fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura della rana non bloccante
     // gestione tempo sparo
 
     int tempoTrascorso, tempoRicarica = 1; // Adatta la velocità di ricarica dei proiettili a seconda della dimensione dello schermo
 
     tempoTrascorso = tempoRicarica + 1; // si aggiunge uno perchè altrimenti il primo proiettile non verrebbe sparato
 
-    
     bool primoSparo = false; // true se sono state sparate le granate
     keypad(gioco, TRUE);
 
@@ -29,8 +28,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
     start_m = clock();
     start_p = clock();
     pid_t proiettilePid;
-    posizione  dati_p;
- 
+    posizione dati_p;
 
     while (1)
     {
@@ -45,7 +43,6 @@ void rana(int pipeout, int pipein, corrente flussi[])
             puoi_sparare = false;
         }
 
-    
         switch (wgetch(gioco))
         {
         case KEY_UP:
@@ -69,7 +66,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
             if (durata_p > tempoRicarica)
             {
                 puoi_sparare = true;
-                //mvwprintw(gioco, 3, 3, "spara");
+                // mvwprintw(gioco, 3, 3, "spara");
                 switch (fork())
                 {
                 case -1:
@@ -80,13 +77,13 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     _exit(1);
                 case 0:
                     // Processo proiettile
-                   // mvwprintw(gioco, 5, 3, "spara destra");
-                   // wrefresh(gioco);
+                    // mvwprintw(gioco, 5, 3, "spara destra");
+                    // wrefresh(gioco);
                     proiettile(pipeout, rana.y, rana.x, 100000, DESTRA, 'r');
 
                     break;
                 default:
-                
+
                     switch (fork())
                     {
                     case -1:
@@ -95,13 +92,13 @@ void rana(int pipeout, int pipein, corrente flussi[])
                         _exit(1);
                     case 0:
                         // Processo proiettile
-                       // mvwprintw(gioco, 3, maxx - 10, "spara sinistra");
-                       // wrefresh(gioco);
+                        // mvwprintw(gioco, 3, maxx - 10, "spara sinistra");
+                        // wrefresh(gioco);
                         proiettile(pipeout, rana.y, rana.x, 100000, SINISTRA, 'r');
 
                         break;
                     default:
-                        
+
                         start_p = clock();
                         debug_num_spari++;
 
@@ -136,10 +133,10 @@ void rana(int pipeout, int pipein, corrente flussi[])
             perror("Errore nella scrittura sulla pipe");
             _exit(1);
         }
-        if (read(pipein, &dati_p, sizeof(posizione)) > 0){
+        if (read(pipein, &dati_p, sizeof(posizione)) > 0)
+        {
             chiudiProcessi(dati_p.pid);
         }
-        
     }
 
     _exit(1);

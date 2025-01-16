@@ -7,7 +7,7 @@ char spriteCoccodrilloSinistra[COLONNE_SPRITE_COCCODRILLO + 1] = ">===";
 char spriteProiettileCocco[COLONNE_SPRITE_PROIETTILE + 1] = "@";
 char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 
-void graficaGioco()
+void graficaGioco(bool tana_status[])
 {
 
     // Pulizia dello sfondo
@@ -51,14 +51,14 @@ void graficaGioco()
     // Stampa delle tane, equidistanti tra loro, nella riga di coordinate y=maxy-12
     wattron(gioco, COLOR_PAIR(COLORE_TANE));
 
-    mvwprintw(gioco, 6, 11, "  ");
-    mvwprintw(gioco, 6, 23, "  ");
-    mvwprintw(gioco, 6, 35, "  ");
-    mvwprintw(gioco, 6, 47, "  ");
-    mvwprintw(gioco, 6, 59, "  ");
+    tana_status[0] == true ? mvwprintw(gioco, 6, 11, "  ") : mvwprintw(gioco, 6, 11, "XX");
+    tana_status[1] == true ? mvwprintw(gioco, 6, 23, "  ") : mvwprintw(gioco, 6, 23, "XX");
+    tana_status[2] == true ? mvwprintw(gioco, 6, 35, "  ") : mvwprintw(gioco, 6, 35, "XX");
+    tana_status[3] == true ? mvwprintw(gioco, 6, 47, "  ") : mvwprintw(gioco, 6, 47, "XX");
+    tana_status[4] == true ? mvwprintw(gioco, 6, 59, "  ") : mvwprintw(gioco, 6, 59, "XX");
 
     wattroff(gioco, COLOR_PAIR(COLORE_TANE));
-    
+
     // refresh della finestra
     wrefresh(gioco);
 }
@@ -66,7 +66,7 @@ void graficaGioco()
 void stampaSprite(elementoGioco elemento)
 {
     int lunghezza, start_visibile, fine_visibile;
-    
+
     switch (elemento.tipo)
     {
     case RANA:
@@ -152,7 +152,7 @@ void stampaSprite(elementoGioco elemento)
         wattroff(gioco, COLOR_PAIR(COLORE_PROIETTILE_COCCODRILLO));
 
         break;
-        
+
     case GRANATA:
         switch (elemento.y)
         {
@@ -172,7 +172,7 @@ void stampaSprite(elementoGioco elemento)
             wattroff(gioco, COLOR_PAIR(COLORE_GRANATA_ACQUA));
             break;
         }
-        
+
     default:
         break;
     }
@@ -229,7 +229,7 @@ void cancellaSprite(elementoGioco elemento)
         }
         if (elemento.direzione == DESTRA)
         {
-            mvwprintw(gioco, elemento.y, elemento.x-1 , "%c", ' ');
+            mvwprintw(gioco, elemento.y, elemento.x - 1, "%c", ' ');
         }
         wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
         break;
@@ -238,40 +238,45 @@ void cancellaSprite(elementoGioco elemento)
         {
         case (6):
             wattron(gioco, COLOR_PAIR(COLORE_RANA_TANA));
-            if(elemento.direzione==DESTRA){mvwprintw(gioco, elemento.y, elemento.x-1, " ");}
-            
-            if(elemento.direzione==SINISTRA){mvwprintw(gioco, elemento.y, elemento.x+1, " ");}
-            
+            if (elemento.direzione == DESTRA)
+            {
+                mvwprintw(gioco, elemento.y, elemento.x - 1, " ");
+            }
+
+            if (elemento.direzione == SINISTRA)
+            {
+                mvwprintw(gioco, elemento.y, elemento.x + 1, " ");
+            }
+
             wattroff(gioco, COLOR_PAIR(COLORE_RANA_TANA));
             break;
         case (7):
             wattron(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
-            if(elemento.direzione==DESTRA)
-            mvwprintw(gioco, elemento.y, elemento.x-1, " ");
-            if(elemento.direzione==SINISTRA)
-            mvwprintw(gioco, elemento.y, elemento.x+1, " ");
+            if (elemento.direzione == DESTRA)
+                mvwprintw(gioco, elemento.y, elemento.x - 1, " ");
+            if (elemento.direzione == SINISTRA)
+                mvwprintw(gioco, elemento.y, elemento.x + 1, " ");
             wattroff(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
             break;
         case (16):
             wattron(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
-            if(elemento.direzione==DESTRA)
-            mvwprintw(gioco, elemento.y, elemento.x-1, " ");
-            if(elemento.direzione==SINISTRA)
-            mvwprintw(gioco, elemento.y, elemento.x+1, " ");
+            if (elemento.direzione == DESTRA)
+                mvwprintw(gioco, elemento.y, elemento.x - 1, " ");
+            if (elemento.direzione == SINISTRA)
+                mvwprintw(gioco, elemento.y, elemento.x + 1, " ");
             wattroff(gioco, COLOR_PAIR(COLORE_RANA_ARGINE));
             break;
         default:
             wattron(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
-            if(elemento.direzione==DESTRA)
-            mvwprintw(gioco, elemento.y, elemento.x-1, " ");
-            if(elemento.direzione==SINISTRA)
-            mvwprintw(gioco, elemento.y, elemento.x+1, " ");
+            if (elemento.direzione == DESTRA)
+                mvwprintw(gioco, elemento.y, elemento.x - 1, " ");
+            if (elemento.direzione == SINISTRA)
+                mvwprintw(gioco, elemento.y, elemento.x + 1, " ");
             wattroff(gioco, COLOR_PAIR(COLORE_RANA_COCCODRILLO));
             break;
         }
-    
+
     default:
         break;
     }
 }
-

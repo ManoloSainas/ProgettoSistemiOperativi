@@ -12,28 +12,28 @@ void inizializzazionePipe(int filedes[])
 
 void chiudiProcessi(pid_t pid)
 {
-    
+
     // Verifica che il PID sia valido
-    if(pid!=-500){
-    
+    if (pid != -500)
+    {
+
         if (pid <= 0)
-    {
-        perror("Errore: PID non valido o processo inesistente");
-        return;
-    }
+        {
+            perror("Errore: PID non valido o processo inesistente");
+            return;
+        }
 
-    // Invia il segnale SIGKILL per terminare il processo 
-    if (kill(pid, SIGKILL) == -1)  
-    {
-        perror("Errore nell'inviare il segnale SIGKILL al processo");
-        return;
-    }
+        // Invia il segnale SIGKILL per terminare il processo
+        if (kill(pid, SIGKILL) == -1)
+        {
+            perror("Errore nell'inviare il segnale SIGKILL al processo");
+            return;
+        }
 
-    // Aspetta la terminazione del processo
-    if (waitpid(pid, NULL, 0) == -1)
-    {
-        perror("Errore nell'attendere la terminazione del processo");
+        // Aspetta la terminazione del processo
+        if (waitpid(pid, NULL, 0) == -1)
+        {
+            perror("Errore nell'attendere la terminazione del processo");
+        }
     }
-}
-
 }

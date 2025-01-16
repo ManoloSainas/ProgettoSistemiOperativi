@@ -164,7 +164,7 @@ extern posizioneTane posTane[5];
 extern int viteRana;
 
 void inizializzazioneSchermo();
-void graficaGioco();
+void graficaGioco(bool tana_status[]);
 void avviaGioco(int vita, bool tana_status[]);
 
 void stampaSprite(elementoGioco elemento);

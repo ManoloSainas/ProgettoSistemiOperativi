@@ -45,33 +45,33 @@ int main()
                     mvwprintw(gioco, 1, 1, "errore");
                     break;
                 case 6:
-                    //mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
-                    //mvwprintw(gioco, 3, 1, "Vita persa.");
+                    // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
+                    // mvwprintw(gioco, 3, 1, "Vita persa.");
                     vita--;
                     break;
                 case 1:
-                   // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
-                    //mvwprintw(gioco, 3, 1, "tana chiusa 1");
+                    // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
+                    // mvwprintw(gioco, 3, 1, "tana chiusa 1");
                     tana_status[0] = false;
                     break;
                 case 2:
-                   // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
-                    //mvwprintw(gioco, 3, 1, "tana chiusa 2");
+                    // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
+                    // mvwprintw(gioco, 3, 1, "tana chiusa 2");
                     tana_status[1] = false;
                     break;
                 case 3:
-                    //mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
-                    //mvwprintw(gioco, 3, 1, "tana chiusa 3");
+                    // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
+                    // mvwprintw(gioco, 3, 1, "tana chiusa 3");
                     tana_status[2] = false;
                     break;
                 case 4:
-                   // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
+                    // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
                     // mvwprintw(gioco, 3, 1, "tana chiusa 4");
                     tana_status[3] = false;
                     break;
                 case 5:
-                //mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
-                   //mvwprintw(gioco, 3, 1, "tana chiusa 5");
+                    // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
+                    // mvwprintw(gioco, 3, 1, "tana chiusa 5");
                     tana_status[4] = false;
                     break;
                 default:
@@ -79,7 +79,7 @@ int main()
                     break;
                 }
             }
-            
+
             wrefresh(gioco);
         }
     }
