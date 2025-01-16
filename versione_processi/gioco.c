@@ -178,6 +178,11 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             danno = true;
         }
 
+        if (pos_r.x == 0 || pos_r.x == maxx - 2)
+        {
+            danno = false;
+        }
+
         if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
         {
             elementoGioco oggettoLetto;
