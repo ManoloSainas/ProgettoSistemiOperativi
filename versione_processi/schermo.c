@@ -14,11 +14,7 @@ void inizializzazioneSchermo()
     gioco = newwin(maxy, maxx, miny, minx);
     nodelay(gioco, true);
     // Pulizia dello schermo
-    wclear(gioco);
-    mvwprintw(gioco, 1, 2, "VITE: ");
-    mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO ");
-    mvwprintw(gioco, 1, maxx - 20, "SCORE: ");
-    wrefresh(gioco);
+    
 
     // Inizializzazione dei colori
     init_pair(COLORE_STANDARD, COLOR_WHITE, COLOR_BLACK);
@@ -46,3 +42,5 @@ void inizializzazioneSchermo()
     init_pair(SFONDO_TANE, COLOR_BLACK, COLOR_YELLOW);
     init_pair(COLORE_TANE, COLOR_BLACK, COLOR_WHITE);
 }
+
+

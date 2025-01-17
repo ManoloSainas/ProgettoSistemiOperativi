@@ -129,6 +129,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     int score = 0;
     elementoGioco valoreLetto;
     elementoGioco rana, coccodrillo, granata, proiettile;
+    elementoGioco tempG,tempP;
     bool danno, esiste;
     int countG = 0, countP = 0;
     pos_r.y = 16;
@@ -154,7 +155,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     do
     {
 
-        danno = false;
+        danno = true;
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
             if (pos_r.y == pos_c[i].y && pos_c[i].pid != -500)
@@ -288,7 +289,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 for (int i = 0; i < MAXCOCCODRILLI; i++)
                 {
                     if (pos_proiettili[i].pid == proiettile.pid_oggetto && pos_proiettili[i].pid!=-500)
-                    {
+                    {   pos_proiettili[i].pid=proiettile.pid_oggetto;
                         pos_proiettili[i].x = proiettile.x;
                         pos_proiettili[i].y = proiettile.y;
                         esiste=true;
@@ -344,6 +345,43 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             }
         }
 
+/* gestione collisione proiettili con granate*/
+
+        for(int i=0;i<MAXGRANATE;i++){
+            if(pos_granate[i].pid!=-500){
+            for(int y=0; y<MAXCOCCODRILLI; y++){
+                if(pos_granate[i].y==pos_proiettili[y].y && pos_granate[i].x==pos_proiettili[y].x ){
+                    tempG.x=pos_granate[i].x;
+                    pos_granate[i].x=-1;
+                    tempG.y=pos_granate[y].y;
+                    pos_granate[i].y=-1;
+                    tempG.tipo=GRANATA;
+                    tempP.x=pos_proiettili[y].x;
+                    pos_proiettili[y].x=-1;;
+                    tempP.y=pos_proiettili[i].y;
+                    pos_proiettili[y].y=-1;
+                    tempP.tipo=PROIETTILE_COCCODRILLO;
+
+                    mvwprintw(gioco, 5, 5, " esplosione ");
+
+                    cancellaSprite(tempG);
+                    cancellaSprite(tempP);
+                    write(pipeRana,&pos_granate[i], sizeof(posizione));
+                    pos_granate[i].pid=-500;
+                    for(int x=0; x<MAXCOCCODRILLI; x++){
+                        if(pos_c[x].proiettile==pos_proiettili[y].pid){
+                            kill(pos_c[x].pid, SIGUSR1);
+                            pos_proiettili[y].pid=-500;
+                            break;
+                        }
+
+                    }
+                    break;
+                }
+
+            }
+            }
+        }
         
 
 

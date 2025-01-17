@@ -10,6 +10,12 @@ char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 void graficaGioco(bool tana_status[], int punteggio, int vita)
 {
 
+    wclear(gioco);
+    mvwprintw(gioco, 1, 2, "VITE: ");
+    mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO ");
+    mvwprintw(gioco, 1, maxx - 20, "SCORE: ");
+    wrefresh(gioco);
+    
     // stampa delle vite, del punteggio e del timer
     wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
     mvwprintw(gioco, 1, 9, "%d", vita);

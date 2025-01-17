@@ -13,7 +13,9 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
     coccodrillo.velocita = flusso.velocita;
     double durata_sparo, start_sparo, fine_sparo;
     pid_sparo = -500;
+
     signal(SIGUSR1, handler);
+    
     start_sparo = clock();
     if (coccodrillo.direzione == DESTRA)
     {
