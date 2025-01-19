@@ -15,7 +15,7 @@ void graficaGioco(bool tana_status[], int punteggio, int vita)
     mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO ");
     mvwprintw(gioco, 1, maxx - 20, "SCORE: ");
     wrefresh(gioco);
-    
+
     // stampa delle vite, del punteggio e del timer
     wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
     mvwprintw(gioco, 1, 9, "%d", vita);
@@ -291,4 +291,14 @@ void cancellaSprite(elementoGioco elemento)
     default:
         break;
     }
+}
+
+
+void cancellaProiettile(elementoGioco elemento){
+    wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
+            mvwprintw(gioco, elemento.y, elemento.x , "%c", ' ');
+            mvwprintw(gioco, elemento.y, elemento.x-1, "%c", ' ');
+            mvwprintw(gioco, elemento.y, elemento.x+1 , "%c", ' ');
+        wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
+        
 }

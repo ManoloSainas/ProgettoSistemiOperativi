@@ -14,7 +14,7 @@ void chiudiProcessi(pid_t pid)
 {
 
     // Verifica che il PID sia valido
-    if (pid != -500)
+    if (pid != INVALID_PID)
     {
 
         if (pid <= 0)

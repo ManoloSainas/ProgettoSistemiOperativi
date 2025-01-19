@@ -13,7 +13,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
     keypad(gioco, TRUE);
 
     elementoGioco rana;
-    int debug_num_spari = 0;
+    int num_spari = 0;
     rana.tipo = RANA;
     rana.x = 36;
     rana.y = 16;
@@ -63,7 +63,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
             break;
         case KEY_SPACE:
 
-            if (durata_p > tempoRicarica)
+            if (durata_p > tempoRicarica && num_spari<MAXGRANATE)
             {
                 puoi_sparare = true;
                 // mvwprintw(gioco, 3, 3, "spara");
@@ -80,7 +80,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     // mvwprintw(gioco, 5, 3, "spara destra");
                     // wrefresh(gioco);
                     proiettile(pipeout, rana.y, rana.x, 100000, DESTRA, 'r');
-
+                    
                     break;
                 default:
 
@@ -100,7 +100,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     default:
 
                         start_p = clock();
-                        debug_num_spari++;
+                        num_spari+=2;
 
                         break;
                     }
@@ -135,7 +135,8 @@ void rana(int pipeout, int pipein, corrente flussi[])
         }
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
-            chiudiProcessi(dati_p.pid);
+            num_spari--;
+           if(kill(dati_p.pid,0)==0) chiudiProcessi(dati_p.pid);
         }
     }
 

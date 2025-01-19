@@ -72,7 +72,7 @@
 #define COLORE_GRANATA_ACQUA 19
 
 #define COLORE_PROIETTILE_COCCODRILLO 20
-
+#define INVALID_PID -500
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
 
@@ -169,6 +169,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio);
 
 void stampaSprite(elementoGioco elemento);
 void cancellaSprite(elementoGioco elemento);
+void cancellaProiettile(elementoGioco elemento);
 
 void rana(int pipeout, int pipein, corrente flussi[]);
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso);
@@ -177,6 +178,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[]);
 void terminaGioco();
 void chiudiProcessi(pid_t pid);
+void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana);
 void inizializzazionePipe(int filedes[]);
 
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
