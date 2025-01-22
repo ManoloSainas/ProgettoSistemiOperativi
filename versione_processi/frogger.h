@@ -187,4 +187,6 @@ void handler(int sig);
 
 bool schermataFineGioco(bool esitoPartita, int score);
 bool verificaTanaStatus(bool tana_status[]);
-// bool collisioneTane(int ranaX, int ranaY);
+// bool collisioneTane(int ranaX, int ranaY)
+
+void cancellaProiettile(elementoGioco elemento);
