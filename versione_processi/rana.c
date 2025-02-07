@@ -63,7 +63,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
             break;
         case KEY_SPACE:
 
-            if (durata_p > tempoRicarica && num_spari<MAXGRANATE)
+            if (durata_p > tempoRicarica && num_spari < MAXGRANATE)
             {
                 puoi_sparare = true;
                 // mvwprintw(gioco, 3, 3, "spara");
@@ -80,7 +80,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     // mvwprintw(gioco, 5, 3, "spara destra");
                     // wrefresh(gioco);
                     proiettile(pipeout, rana.y, rana.x, 100000, DESTRA, 'r');
-                    
+
                     break;
                 default:
 
@@ -100,7 +100,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     default:
 
                         start_p = clock();
-                        num_spari+=2;
+                        num_spari += 2;
 
                         break;
                     }
@@ -110,11 +110,12 @@ void rana(int pipeout, int pipein, corrente flussi[])
             }
         }
 
+        // LA RANA CADE DAL COCCODRILLO PER COLPA DELL' IF CHE C'È QUI SOTTO
         durata_f = (double)(stop_m - start_m) / CLOCKS_PER_SEC;
         stop_m = clock(); // stop timer movimento
         rana.direzione = flussi[16 - rana.y].direzione;
         rana.velocita = flussi[16 - rana.y].velocita;
-        if (durata_f * 1850000 >= (double)(500000 - rana.velocita))
+        if (durata_f * 100000 >= (double)(500000 - rana.velocita))
         {
             if (rana.direzione == DESTRA)
             {
@@ -136,7 +137,8 @@ void rana(int pipeout, int pipein, corrente flussi[])
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
             num_spari--;
-           if(kill(dati_p.pid,0)==0) chiudiProcessi(dati_p.pid);
+            if (kill(dati_p.pid, 0) == 0)
+                chiudiProcessi(dati_p.pid);
         }
     }
 
