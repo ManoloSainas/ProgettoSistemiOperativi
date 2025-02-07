@@ -1,11 +1,9 @@
 #include "frogger.h"
 
-
-
 pid_t pid_sparo;
 
-void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso) {
-
+void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso)
+{
 
     elementoGioco coccodrillo;
     coccodrillo.tipo = COCCODRILLO;
@@ -25,15 +23,18 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 2) : maxx;
 
-    while (true) {
+    while (true)
+    {
         coccodrillo.proiettile = pid_sparo;
         fine_sparo = clock();
         durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
 
         // Logica di sparo con fork
-        if ((rand() % 100) < 20 && pid_sparo == INVALID_PID) {
+        if ((rand() % 100) < 20 && pid_sparo == INVALID_PID)
+        {
             pid_sparo = fork();
-            if (pid_sparo == 0) {
+            if (pid_sparo == 0)
+            {
                 proiettile(pipeout, coccodrillo.y, coccodrillo.x, coccodrillo.velocita, coccodrillo.direzione, 'c');
                 _exit(0);
             }
@@ -41,36 +42,43 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         }
 
         // Movimento del coccodrillo
-        switch (coccodrillo.direzione) {
-            case DESTRA:
-                coccodrillo.x += 1;
-                if (coccodrillo.x > maxx + 2) {
-                    coccodrillo.x = minx - 2;
-                }
-                break;
-            case SINISTRA:
-                coccodrillo.x -= 1;
-                if (coccodrillo.x < minx - 4) {
-                    coccodrillo.x = maxx;
-                }
-                break;
+        switch (coccodrillo.direzione)
+        {
+        case DESTRA:
+            coccodrillo.x += 1;
+            if (coccodrillo.x > maxx + 2)
+            {
+                coccodrillo.x = minx - 2;
+            }
+            break;
+        case SINISTRA:
+            coccodrillo.x -= 1;
+            if (coccodrillo.x < minx - 4)
+            {
+                coccodrillo.x = maxx;
+            }
+            break;
         }
 
         // Scrive lo stato del coccodrillo nella pipe
-        if (write(pipeout, &coccodrillo, sizeof(elementoGioco)) == -1) {
+        if (write(pipeout, &coccodrillo, sizeof(elementoGioco)) == -1)
+        {
             perror("Errore nella scrittura sulla pipe");
             _exit(1);
         }
 
         // Calcolo del ritardo basato sulla velocità
         int delay = 500000 - coccodrillo.velocita;
-        if (delay < 0) delay = 0;
+        if (delay < 0)
+            delay = 0;
         usleep(delay);
     }
 }
 
-void handler(int sig) {
-    if (sig == SIGUSR1 && pid_sparo > 0) {
+void handler(int sig)
+{
+    if (sig == SIGUSR1 && pid_sparo > 0)
+    {
         chiudiProcessi(pid_sparo);
         pid_sparo = INVALID_PID;
     }

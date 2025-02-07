@@ -16,7 +16,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 
     flussi[NUM_FLUSSI_FIUME + 2].velocita = 0;
     flussi[NUM_FLUSSI_FIUME + 1].velocita = 0;
-    flussi[1].velocita = rand() % (350000) + 100000;
+    flussi[1].velocita = 1;
 
     for (int i = 2; i <= NUM_FLUSSI_FIUME; i++)
     {
