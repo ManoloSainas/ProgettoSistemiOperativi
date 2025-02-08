@@ -43,7 +43,8 @@ void rana(int pipeout, int pipein, corrente flussi[])
             puoi_sparare = false;
         }
 
-        switch (wgetch(gioco))
+        int ch = wgetch(gioco);
+        switch (ch)
         {
         case KEY_UP:
             if (rana.y > miny + 5)
@@ -117,14 +118,25 @@ void rana(int pipeout, int pipein, corrente flussi[])
         rana.velocita = flussi[16 - rana.y].velocita;
         // if (durata_f * 100000 >= (double)(500000 - rana.velocita))
         // {
-        if (rana.direzione == DESTRA)
+
+        // Calcolo del ritardo basato sulla velocità
+        int delay = 500000 - rana.velocita;
+        if (delay < 0)
+            delay = 0;
+
+        if (rana.y < maxy - 2 && rana.y > miny + 6 && ch != KEY_UP && ch != KEY_DOWN)
         {
-            rana.x++;
+            usleep(delay);
+            if (rana.direzione == DESTRA)
+            {
+                rana.x++; // nonostante non ci siano le collisioni con l'acqua, la rana se va sopra perde una vita
+            }
+            if (rana.direzione == SINISTRA)
+            {
+                rana.x--; // nonostante non ci siano le collisioni con l'acqua, la rana se va sopra perde una vita
+            }
         }
-        if (rana.direzione == SINISTRA)
-        {
-            rana.x--;
-        }
+
         // start_m = clock();
         // }
 
