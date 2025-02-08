@@ -110,23 +110,23 @@ void rana(int pipeout, int pipein, corrente flussi[])
             }
         }
 
-        // LA RANA CADE DAL COCCODRILLO PER COLPA DELL' IF CHE C'È QUI SOTTO
-        durata_f = (double)(stop_m - start_m) / CLOCKS_PER_SEC;
-        stop_m = clock(); // stop timer movimento
+        // // LA RANA CADE DAL COCCODRILLO PER COLPA DELL' IF CHE C'È QUI SOTTO
+        // durata_f = (double)(stop_m - start_m) / CLOCKS_PER_SEC;
+        // stop_m = clock(); // stop timer movimento
         rana.direzione = flussi[16 - rana.y].direzione;
         rana.velocita = flussi[16 - rana.y].velocita;
-        if (durata_f * 100000 >= (double)(500000 - rana.velocita))
+        // if (durata_f * 100000 >= (double)(500000 - rana.velocita))
+        // {
+        if (rana.direzione == DESTRA)
         {
-            if (rana.direzione == DESTRA)
-            {
-                rana.x++;
-            }
-            if (rana.direzione == SINISTRA)
-            {
-                rana.x--;
-            }
-            start_m = clock();
+            rana.x++;
         }
+        if (rana.direzione == SINISTRA)
+        {
+            rana.x--;
+        }
+        // start_m = clock();
+        // }
 
         // Scrittura nella pipe delle informazioni della rana
         if (write(pipeout, &rana, sizeof(elementoGioco)) == -1)
