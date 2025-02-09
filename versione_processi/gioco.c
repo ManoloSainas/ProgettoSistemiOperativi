@@ -118,13 +118,6 @@ void terminaGioco()
 
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[])
 {
-    /*
-    elementoGioco granRana;
-    granRana.direzione= DESTRA;
-    granRana.x=5;
-    granRana.y=10;
-    granRana.tipo=GRANATA;*/
-
     posizione pos_r, pos_c[MAXCOCCODRILLI], pos_granate[MAXGRANATE], pos_proiettili[MAXCOCCODRILLI];
     int score = 0;
     elementoGioco valoreLetto;
@@ -154,6 +147,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     do
     {
 
+        granata.pid_oggetto=INVALID_PID;
         danno = true;
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
@@ -242,7 +236,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 esiste = false;
                 for (int i = 0; i < MAXGRANATE; i++)
                 {
-                    if (pos_granate[i].pid == granata.pid_oggetto)
+                    if (pos_granate[i].pid == granata.pid_oggetto && pos_granate[i].pid != INVALID_PID )
                     {
 
                         pos_granate[i].x = granata.x;
@@ -250,6 +244,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         esiste = true;
                         if ((pos_granate[i].direzione == DESTRA && pos_granate[i].x >= maxx) || (pos_granate[i].direzione == SINISTRA && pos_granate[i].x < 0))
                         {
+                            
                             if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
                                 ;
                             countG--;
@@ -323,20 +318,20 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                             }
                             else
                             {
+                                 for (int y = 0; y < MAXCOCCODRILLI; y++)
+                                {
+                                    if (pos_c[y].proiettile == proiettile.pid_oggetto){
+                                        kill(pos_c[y].pid, SIGUSR1);}
+                                }
                                 pos_proiettili[i].pid = INVALID_PID;
                                 pos_proiettili[i].x = -1;
                                 pos_proiettili[i].y = -1;
 
-                                for (int y = 0; y < MAXCOCCODRILLI; y++)
-                                {
-                                    if (pos_c[y].proiettile == proiettile.pid_oggetto)
-                                        kill(pos_c[i].pid, SIGUSR1);
-                                }
+                               
                             }
                         }
                     }
                 }
-
             default:
                 break;
             }
@@ -349,6 +344,8 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             {
                 for (int y = 0; y < MAXCOCCODRILLI; y++)
                 {
+                    if (pos_proiettili[y].pid != INVALID_PID)
+                    { 
                     if (pos_granate[i].x > 0 && pos_proiettili[y].x > 0)
                     {
                         if (pos_granate[i].y == pos_proiettili[y].y && pos_granate[i].x == pos_proiettili[y].x)
@@ -370,7 +367,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
                             countP--;
                             countG--;
-
+                            beep();
                             // Notifica tramite pipe
                             if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
                                 perror("ERRORE PIPE RANA GRANATA");
@@ -383,18 +380,19 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                             {
                                 if (pos_c[j].proiettile == pos_proiettili[y].pid)
                                 {
-                                    mvwprintw(gioco, 3, 1, "sparo");
-                                    if (kill(pos_c[j].pid, 0) == 0)
-                                        kill(pos_c[j].pid, SIGUSR1);
+                                    if (kill(pos_c[j].pid, 0) == 0){
+                                        kill(pos_c[j].pid, SIGUSR1);}
                                     pos_c[j].proiettile = INVALID_PID;
                                     pos_proiettili[y].pid = INVALID_PID;
+                                    cancellaProiettile(tempG);
+                                    cancellaProiettile(tempP);
                                     break;
                                 }
                             }
                             break;
                         }
                     }
-                }
+                }}
             }
         }
 
@@ -404,7 +402,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             stampaSprite(granata);
         if (proiettile.pid_oggetto > 0)
             stampaSprite(proiettile);
-        if (granata.pid_oggetto < 0)
+        if (granata.pid_oggetto > 0)
         {
             cancellaProiettile(tempG);
             tempG.pid_oggetto = INVALID_PID;

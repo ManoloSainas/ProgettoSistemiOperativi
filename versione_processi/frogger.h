@@ -78,7 +78,7 @@
 
 // quantità oggetti su schermo
 #define MAXCOCCODRILLI 36
-#define MAXGRANATE 36
+#define MAXGRANATE 6
 #define MAXPROIETTILI 10
 
 // struttura campo da gioco

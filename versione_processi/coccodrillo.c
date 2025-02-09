@@ -77,7 +77,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
 
 void handler(int sig)
 {
-    if (sig == SIGUSR1 && pid_sparo > 0)
+    if (sig == SIGUSR1)
     {
         chiudiProcessi(pid_sparo);
         pid_sparo = INVALID_PID;

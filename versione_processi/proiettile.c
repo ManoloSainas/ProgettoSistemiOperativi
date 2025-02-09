@@ -2,6 +2,7 @@
 
 void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo)
 {
+    
     elementoGioco proiettile;
     proiettile.direzione = direzione;
     proiettile.pid_oggetto = getpid();
@@ -17,11 +18,11 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         proiettile.tipo = PROIETTILE_COCCODRILLO;
         if (direzione == DESTRA)
         {
-            proiettile.x = x + 5;
+            proiettile.x = x + 4;
         }
         if (direzione == SINISTRA)
         {
-            proiettile.x = x - 1;
+            proiettile.x = x - 2;
         }
         proiettile.velocita = 500000 - (velocita * 250000);
 
@@ -45,6 +46,8 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
 
     write(pipeout, &proiettile, sizeof(elementoGioco));
 
+    
+
     while (1)
     {
         usleep(proiettile.velocita);
@@ -61,6 +64,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         }
 
         write(pipeout, &proiettile, sizeof(elementoGioco));
+        
     }
     _exit(1);
 }
