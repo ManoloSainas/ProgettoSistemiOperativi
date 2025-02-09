@@ -77,7 +77,7 @@
 #define SPOSTAMENTO_RANA 1
 
 // quantità oggetti su schermo
-#define MAXCOCCODRILLI 36
+#define MAXCOCCODRILLI 40
 #define MAXGRANATE 6
 #define MAXPROIETTILI 10
 
