@@ -157,7 +157,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 {
                     if (pos_r.x >= pos_c[i].x - 1 && pos_r.x <= pos_c[i].x + 3)
                     {
-                        danno = false;
+                        danno = true;
                         break;
                     }
                 }
@@ -165,7 +165,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 {
                     if (pos_r.x < pos_c[i].x + 1 && pos_r.x > pos_c[i].x - 5)
                     {
-                        danno = false;
+                        danno = true;
                         break;
                     }
                 }
@@ -283,7 +283,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         pos_proiettili[i].x = proiettile.x;
                         pos_proiettili[i].y = proiettile.y;
                         esiste = true;
-                        if ((pos_proiettili[i].direzione == DESTRA && pos_proiettili[i].x >= maxx) || (pos_proiettili[i].direzione == SINISTRA && pos_proiettili[i].x < -2))
+                        if ((pos_proiettili[i].direzione == DESTRA && pos_proiettili[i].x >= maxx) || (pos_proiettili[i].direzione == SINISTRA && pos_proiettili[i].x < 1))
                         {
 
                             for (int y = 0; y < MAXCOCCODRILLI; y++)
@@ -292,7 +292,6 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                                 {
                                     kill(pos_c[y].pid, SIGUSR1);
                                     countP--;
-
                                     pos_c[y].pid = INVALID_PID;
                                     pos_proiettili[i].pid = INVALID_PID;
                                     pos_proiettili[i].x = -1;
@@ -416,8 +415,6 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             cancellaProiettile(tempP);
             tempP.pid_oggetto = INVALID_PID;
         }
-
-        mvwprintw(gioco, 2, 5, "%d", countP);
 
         wrefresh(gioco);
 
