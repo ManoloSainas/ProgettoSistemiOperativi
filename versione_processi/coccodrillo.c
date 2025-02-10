@@ -30,7 +30,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
 
         // Logica di sparo con fork
-        if ((rand() % 100) < 20 && pid_sparo == INVALID_PID && coccodrillo.y == maxy - 3)
+        if ((rand() % 100) < 20 && pid_sparo == INVALID_PID)
         {
             pid_sparo = fork();
             if (pid_sparo == 0)

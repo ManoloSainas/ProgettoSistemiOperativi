@@ -50,6 +50,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
     while (1)
     {
         usleep(proiettile.velocita);
+
         switch (proiettile.direzione)
         {
         case DESTRA:
