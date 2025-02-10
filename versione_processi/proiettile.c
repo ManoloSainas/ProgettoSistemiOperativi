@@ -6,7 +6,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
     proiettile.direzione = direzione;
     proiettile.pid_oggetto = getpid();
     proiettile.y = y;
-
+    proiettile.proiettile = getppid(); // PID del coccodrillo
     switch (tipo)
     {
     case 'c':

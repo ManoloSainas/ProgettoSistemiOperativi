@@ -21,6 +21,12 @@
 #define NUM_TANE 5
 #define NUM_MIN_COCCODRILLI_FLUSSO 5
 #define NUM_FLUSSI_FIUME 8
+
+// Posizione iniziale rana
+#define RANA_X 36
+#define RANA_Y 16
+
+// Dimensione campo da gioco
 #define maxy 18
 #define maxx 72
 
@@ -37,12 +43,13 @@
 #define COLONNE_SPRITE_PROIETTILE 1
 
 #define RIGHE_SPRITE_GRANATA 1
-#define COLONNE_SPRITE_gRANATA 1
+#define COLONNE_SPRITE_GRANATA 1
 
 // Tempo di gioco
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
 #define KEY_SPACE 32 // Valore relativo al carattere spazio
+
 // Gestione proiettili
 #define RICARICA_PROIETTILI 1000
 #define SPEED_PROIETTILI 60000
@@ -61,7 +68,9 @@
 #define COLORE_RANA_ARGINE 9
 #define COLORE_RANA_COCCODRILLO 10
 #define COLORE_RANA_TANA 11
+
 #define COLORE_COCCODRILLO 12
+
 #define SFONDO_MARCIAPIEDE 13
 #define SFONDO_ACQUA 14
 #define SFONDO_ERBA 15
@@ -72,7 +81,9 @@
 #define COLORE_GRANATA_ACQUA 19
 
 #define COLORE_PROIETTILE_COCCODRILLO 20
-#define INVALID_PID -500
+
+#define INVALID_PID -500 // Valore di default per il PID
+
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
 
@@ -80,8 +91,6 @@
 #define MAXCOCCODRILLI 40
 #define MAXGRANATE 6
 #define MAXPROIETTILI 10
-
-// struttura campo da gioco
 
 // direzione flusso fiume
 typedef enum
@@ -101,14 +110,6 @@ typedef enum tipoOggetto
     GRANATA_DESTRA_RANA,
     PROIETTILE_COCCODRILLO
 } tipoOggetto;
-
-/*typedef enum statusOggetto
-{
-    NON_ATTIVO,
-    ATTIVO,
-    TERMINATO
-} statusOggetto;
-*/
 
 // struttura per rappresentare i vari elementi non statici del gioco
 typedef struct elementoGioco
@@ -135,7 +136,6 @@ typedef struct posizione
 typedef struct posizioneTane
 {
     int x;
-    int x2;
     int y;
 } posizioneTane;
 
@@ -158,14 +158,11 @@ extern int minx,
 
 // Schermo ncurses
 extern WINDOW *gioco;
-extern char campo[18][72];
-extern bool tane[5];
-extern posizioneTane posTane[5];
-extern int viteRana;
+extern posizioneTane posTane[NUM_TANE];
 
 void inizializzazioneSchermo();
-void graficaGioco(bool tana_status[], int punteggio, int vita);
-void avviaGioco(int vita, bool tana_status[], int punteggio);
+void graficaGioco(bool tana_status[], int punteggio, int vite);
+void avviaGioco(int vite, bool tana_status[], int punteggio);
 
 void stampaSprite(elementoGioco elemento);
 void cancellaSprite(elementoGioco elemento);
@@ -175,7 +172,7 @@ void rana(int pipeout, int pipein, corrente flussi[]);
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso);
 void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo);
 
-void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[]);
+void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vite, bool tana_status[]);
 void terminaGioco();
 void chiudiProcessi(pid_t pid);
 void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana);
@@ -187,6 +184,7 @@ void handler(int sig);
 
 bool schermataFineGioco(bool esitoPartita, int score);
 bool verificaTanaStatus(bool tana_status[]);
-// bool collisioneTane(int ranaX, int ranaY)
 
 void cancellaProiettile(elementoGioco elemento);
+
+void chiudiTana(int x);

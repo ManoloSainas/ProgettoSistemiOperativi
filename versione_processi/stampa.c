@@ -1,28 +1,36 @@
 #include "frogger.h"
 
-// dichiarazione sprite
+// dichiarazione sprite dei vari oggetti
 char spriteRana[COLONNE_SPRITE_RANA + 1] = "><";
 char spriteCoccodrilloDestra[COLONNE_SPRITE_COCCODRILLO + 1] = "===<";
 char spriteCoccodrilloSinistra[COLONNE_SPRITE_COCCODRILLO + 1] = ">===";
 char spriteProiettileCocco[COLONNE_SPRITE_PROIETTILE + 1] = "@";
 char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 
-void graficaGioco(bool tana_status[], int punteggio, int vita)
+void chiudiTana(int tana_x)
 {
 
+    mvwprintw(gioco, posTane[0].y, tana_x, "XX");
+}
+
+// Funzione per gestire la grafica del gioco (HUD, sfondo, gestione tane)
+void graficaGioco(bool tana_status[], int punteggio, int vita)
+{
+    // Hud del gioco
     wclear(gioco);
     mvwprintw(gioco, 1, 2, "VITE: ");
-    mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO ");
+    mvwprintw(gioco, 1, maxx / 2 - 10, "TEMPO: ");
     mvwprintw(gioco, 1, maxx - 20, "SCORE: ");
     wrefresh(gioco);
 
     // stampa delle vite, del punteggio e del timer
     wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
     mvwprintw(gioco, 1, 9, "%d", vita);
+    // mvwprintw(gioco, 1, maxx / 2 - 3, "%d", tempoRimanente);
     mvwprintw(gioco, 1, maxx - 12, "%d", punteggio);
     wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
 
-    // Pulizia dello sfondo
+    // stampa dello sfondo del gioco
     wattron(gioco, COLOR_PAIR(SFONDO_MARCIAPIEDE));
     for (int i = 1; i < maxx - 1; i++)
     {
@@ -63,11 +71,11 @@ void graficaGioco(bool tana_status[], int punteggio, int vita)
     // Stampa delle tane, equidistanti tra loro, nella riga di coordinate y=maxy-12
     wattron(gioco, COLOR_PAIR(COLORE_TANE));
 
-    tana_status[0] == true ? mvwprintw(gioco, 6, 11, "  ") : mvwprintw(gioco, 6, 11, "XX");
-    tana_status[1] == true ? mvwprintw(gioco, 6, 23, "  ") : mvwprintw(gioco, 6, 23, "XX");
-    tana_status[2] == true ? mvwprintw(gioco, 6, 35, "  ") : mvwprintw(gioco, 6, 35, "XX");
-    tana_status[3] == true ? mvwprintw(gioco, 6, 47, "  ") : mvwprintw(gioco, 6, 47, "XX");
-    tana_status[4] == true ? mvwprintw(gioco, 6, 59, "  ") : mvwprintw(gioco, 6, 59, "XX");
+    tana_status[0] == true ? mvwprintw(gioco, posTane[0].y, posTane[0].x, "  ") : mvwprintw(gioco, posTane[0].y, posTane[0].x, "XX");
+    tana_status[1] == true ? mvwprintw(gioco, posTane[0].y, posTane[1].x, "  ") : mvwprintw(gioco, posTane[0].y, posTane[1].x, "XX");
+    tana_status[2] == true ? mvwprintw(gioco, posTane[0].y, posTane[2].x, "  ") : mvwprintw(gioco, posTane[0].y, posTane[2].x, "XX");
+    tana_status[3] == true ? mvwprintw(gioco, posTane[0].y, posTane[3].x, "  ") : mvwprintw(gioco, posTane[0].y, posTane[3].x, "XX");
+    tana_status[4] == true ? mvwprintw(gioco, posTane[0].y, posTane[4].x, "  ") : mvwprintw(gioco, posTane[0].y, posTane[4].x, "XX");
 
     wattroff(gioco, COLOR_PAIR(COLORE_TANE));
 
@@ -75,14 +83,16 @@ void graficaGioco(bool tana_status[], int punteggio, int vita)
     wrefresh(gioco);
 }
 
+// stampa dei vari sprite
 void stampaSprite(elementoGioco elemento)
 {
-    int lunghezza, start_visibile, fine_visibile;
 
     switch (elemento.tipo)
     {
     case RANA:
         switch (elemento.y)
+        // se la y è 6 (tana), 7 o 16 allora lo sfondo della rana dev'essere uguale al colore dell'argine
+        // altrimenti vuol dire che la rana è sopra un coccodrillo e cambierà sfondo
         {
         case (6):
             wattron(gioco, COLOR_PAIR(COLORE_RANA_TANA));
@@ -108,13 +118,17 @@ void stampaSprite(elementoGioco elemento)
         break;
 
     case COCCODRILLO:
+        int lunghezza, start_visibile, fine_visibile; // servono per la gestione dello sprite del coccodrillo
+
         lunghezza = COLONNE_SPRITE_COCCODRILLO;
 
         wattron(gioco, COLOR_PAIR(COLORE_COCCODRILLO));
+
+        // coccodrillo che va da destra verso sinistra
         if (elemento.direzione == SINISTRA)
         {
 
-            // Calcola l'inizio e la fine visibili
+            // Calcola l'inizio e la fine visibili e si stampano solo le parti visibili
             start_visibile = (elemento.x < minx + 1) ? (minx)-elemento.x : 0;
             fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx - 1 - elemento.x : lunghezza;
 
@@ -124,11 +138,12 @@ void stampaSprite(elementoGioco elemento)
             }
         }
 
+        // coccodrillo che va da sinistra verso destra
         if (elemento.direzione == DESTRA)
         {
             int start_visibile, fine_visibile;
 
-            // Calcola l'inizio e la fine visibile dello sprite, correggendo per i limiti dello schermo
+            // Calcola l'inizio e la fine visibili e si stampano solo le parti visibili
             start_visibile = (elemento.x < minx) ? minx - elemento.x : 0;
             fine_visibile = (elemento.x + lunghezza > maxx - 1) ? maxx + 2 - elemento.x : lunghezza;
 
@@ -145,7 +160,6 @@ void stampaSprite(elementoGioco elemento)
             }
             else
             {
-
                 if (elemento.x == 1)
                     mvwprintw(gioco, elemento.y, 1, "%s", "<");
                 if (elemento.x == 2)
@@ -162,7 +176,6 @@ void stampaSprite(elementoGioco elemento)
         wattron(gioco, COLOR_PAIR(COLORE_PROIETTILE_COCCODRILLO));
         mvwprintw(gioco, elemento.y, elemento.x, "%s", spriteProiettileCocco);
         wattroff(gioco, COLOR_PAIR(COLORE_PROIETTILE_COCCODRILLO));
-
         break;
 
     case GRANATA:
@@ -188,9 +201,10 @@ void stampaSprite(elementoGioco elemento)
     default:
         break;
     }
-    box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno
+    box(gioco, ACS_VLINE, ACS_HLINE); // Disegna il contorno dell'area di gioco
 }
 
+// funzione per cancellare gli sprite dei vari oggetti
 void cancellaSprite(elementoGioco elemento)
 {
     switch (elemento.tipo)
@@ -251,14 +265,10 @@ void cancellaSprite(elementoGioco elemento)
         case (6):
             wattron(gioco, COLOR_PAIR(COLORE_RANA_TANA));
             if (elemento.direzione == DESTRA)
-            {
                 mvwprintw(gioco, elemento.y, elemento.x - 1, " ");
-            }
 
             if (elemento.direzione == SINISTRA)
-            {
                 mvwprintw(gioco, elemento.y, elemento.x + 1, " ");
-            }
 
             wattroff(gioco, COLOR_PAIR(COLORE_RANA_TANA));
             break;
@@ -293,6 +303,7 @@ void cancellaSprite(elementoGioco elemento)
     }
 }
 
+// funzione per cancellare il proiettile/granata
 void cancellaProiettile(elementoGioco elemento)
 {
     wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));

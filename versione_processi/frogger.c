@@ -3,20 +3,10 @@
 // Definizione delle variabili globali
 int minx, miny;
 WINDOW *gioco;
-// int viteRana = 3;
-
-// bool tane[5] = {false, false, false, false, false};
-
-// posizioneTane posTane[5] = {
-//     {11, 12, 6},
-//     {23, 24, 6},
-//     {35, 36, 6},
-//     {47, 48, 6},
-//     {59, 60, 6}};
 
 bool verificaTanaStatus(bool tana_status[])
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < NUM_TANE; i++)
     {
         if (tana_status[i])
         {
@@ -59,23 +49,25 @@ int main()
 {
     int status;
     pid_t pid;
-    bool tana_status[5];
+    bool tana_status[NUM_TANE];
     bool esitoPartita;
     int punteggio;
-    int vita;
+    int vite;
+
     inizializzazioneSchermo();
     srand(time(NULL));
     do
     {
-        vita = 3;
+        vite = NUM_VITE_RANA;
         punteggio = 0;
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < NUM_TANE; i++)
         {
             tana_status[i] = true;
         }
-        while (vita > 0 && verificaTanaStatus(tana_status))
+        while (vite > 0 && verificaTanaStatus(tana_status))
         {
+
             pid = fork();
             switch (pid)
             {
@@ -84,7 +76,7 @@ int main()
                 _exit(1);
                 break;
             case 0:
-                avviaGioco(vita, tana_status, punteggio);
+                avviaGioco(vite, tana_status, punteggio);
                 break;
             default:
                 waitpid(pid, &status, 0);
@@ -98,39 +90,39 @@ int main()
                         break;
                     case 6:
                         // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
-                        // mvwprintw(gioco, 3, 1, "Vita persa.");
-                        punteggio -= vita * 5;
-                        vita--;
+                        // mvwprintw(gioco, 3, 1, "vite persa.");
+                        punteggio -= vite * 5;
+                        vite--;
                         break;
                     case 1:
                         // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
                         // mvwprintw(gioco, 3, 1, "tana chiusa 1");
                         tana_status[0] = false;
-                        punteggio += vita * 10;
+                        punteggio += vite * 10;
                         break;
                     case 2:
                         // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
                         // mvwprintw(gioco, 3, 1, "tana chiusa 2");
                         tana_status[1] = false;
-                        punteggio += vita * 10;
+                        punteggio += vite * 10;
                         break;
                     case 3:
                         // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
                         // mvwprintw(gioco, 3, 1, "tana chiusa 3");
                         tana_status[2] = false;
-                        punteggio += vita * 10;
+                        punteggio += vite * 10;
                         break;
                     case 4:
                         // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
                         // mvwprintw(gioco, 3, 1, "tana chiusa 4");
                         tana_status[3] = false;
-                        punteggio += vita * 10;
+                        punteggio += vite * 10;
                         break;
                     case 5:
                         // mvwprintw(gioco, 4, 1, "%d", WEXITSTATUS(status));
                         // mvwprintw(gioco, 3, 1, "tana chiusa 5");
                         tana_status[4] = false;
-                        punteggio += vita * 10;
+                        punteggio += vite * 10;
                         break;
                     default:
                         mvwprintw(gioco, 4, 1, "Figlio terminato.");
@@ -142,7 +134,7 @@ int main()
             }
         }
 
-        if (vita > 0)
+        if (vite > 0)
         {
             esitoPartita = true;
         }

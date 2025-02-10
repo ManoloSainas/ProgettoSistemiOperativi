@@ -15,8 +15,8 @@ void rana(int pipeout, int pipein, corrente flussi[])
     elementoGioco rana;
     int num_spari = 0;
     rana.tipo = RANA;
-    rana.x = 36;
-    rana.y = 16;
+    rana.x = RANA_X;
+    rana.y = RANA_Y;
     rana.pid_oggetto = getpid();
 
     rana.velocita = 0;
@@ -149,6 +149,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
         }
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
+            beep();
             if (kill(dati_p.pid, 0) == 0)
             {
                 chiudiProcessi(dati_p.pid);

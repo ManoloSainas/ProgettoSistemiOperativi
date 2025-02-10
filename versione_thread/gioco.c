@@ -123,6 +123,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     elementoGioco valoreLetto;
     elementoGioco rana, coccodrillo, granata, proiettile;
     elementoGioco tempG, tempP;
+
     bool danno, esiste;
     int countG = 0, countP = 0;
     pos_r.y = 16;
@@ -146,9 +147,9 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
     do
     {
-
-        granata.pid_oggetto = INVALID_PID;
-        danno = true;
+        tempP.pid = INVALID_PID;
+        tempG.pid = INVALID_PID;
+        danno = false;
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
             if (pos_r.y == pos_c[i].y && pos_c[i].pid != INVALID_PID)
@@ -268,6 +269,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                             pos_granate[i].direzione = granata.direzione;
                             break;
                         }
+                        if (countG > MAXGRANATE)
                     }
                 }
                 break;
