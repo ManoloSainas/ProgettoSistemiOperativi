@@ -29,7 +29,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
     start_p = clock();
     pid_t proiettilePid;
     posizione dati_p;
-    
+
     while (1)
     {
         primoSparo = true;
@@ -66,7 +66,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
 
             if (num_spari < MAXGRANATE)
             {
-               num_spari++;
+                num_spari++;
                 switch (fork())
                 {
                 case -1:
@@ -80,37 +80,36 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     // mvwprintw(gioco, 5, 3, "spara destra");
                     // wrefresh(gioco);
                     proiettile(pipeout, rana.y, rana.x, 100000, DESTRA, 'r');
-                   
 
                     break;
                 default:
-        if (num_spari < MAXGRANATE)
-            {
-               num_spari++;
-                    switch (fork())
+                    if (num_spari < MAXGRANATE)
                     {
-                    case -1:
-                        perror("Errore nell'esecuzione della fork.");
-                        mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
-                        _exit(1);
-                    case 0:
-                        // Processo proiettile
-                        // mvwprintw(gioco, 3, maxx - 10, "spara sinistra");
-                        // wrefresh(gioco);
-                        proiettile(pipeout, rana.y, rana.x, 100000, SINISTRA, 'r');
+                        num_spari++;
+                        switch (fork())
+                        {
+                        case -1:
+                            perror("Errore nell'esecuzione della fork.");
+                            mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
+                            _exit(1);
+                        case 0:
+                            // Processo proiettile
+                            // mvwprintw(gioco, 3, maxx - 10, "spara sinistra");
+                            // wrefresh(gioco);
+                            proiettile(pipeout, rana.y, rana.x, 100000, SINISTRA, 'r');
 
-                        break;
-                    default:
+                            break;
+                        default:
 
-                        start_p = clock();
-                       
+                            start_p = clock();
 
+                            break;
+                        }
                         break;
                     }
                     break;
                 }
-                break;
-            }}
+            }
         }
 
         // // LA RANA CADE DAL COCCODRILLO PER COLPA DELL' IF CHE C'È QUI SOTTO
@@ -150,10 +149,11 @@ void rana(int pipeout, int pipein, corrente flussi[])
         }
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
-               if(kill(dati_p.pid,0)==0) {
+            if (kill(dati_p.pid, 0) == 0)
+            {
                 chiudiProcessi(dati_p.pid);
-                 num_spari--;}
-                 
+                num_spari--;
+            }
         }
     }
 

@@ -14,7 +14,6 @@ void inizializzazioneSchermo()
     gioco = newwin(maxy, maxx, miny, minx);
     nodelay(gioco, true);
     // Pulizia dello schermo
-    
 
     // Inizializzazione dei colori
     init_pair(COLORE_STANDARD, COLOR_WHITE, COLOR_BLACK);
@@ -42,5 +41,3 @@ void inizializzazioneSchermo()
     init_pair(SFONDO_TANE, COLOR_BLACK, COLOR_YELLOW);
     init_pair(COLORE_TANE, COLOR_BLACK, COLOR_WHITE);
 }
-
-

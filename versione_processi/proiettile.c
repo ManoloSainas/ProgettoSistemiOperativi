@@ -2,7 +2,7 @@
 
 void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo)
 {
-    
+
     elementoGioco proiettile;
     proiettile.direzione = direzione;
     proiettile.pid_oggetto = getpid();
@@ -46,8 +46,6 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
 
     write(pipeout, &proiettile, sizeof(elementoGioco));
 
-    
-
     while (1)
     {
         usleep(proiettile.velocita);
@@ -64,7 +62,6 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         }
 
         write(pipeout, &proiettile, sizeof(elementoGioco));
-        
     }
     _exit(1);
 }

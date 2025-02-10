@@ -14,29 +14,44 @@ WINDOW *gioco;
 //     {47, 48, 6},
 //     {59, 60, 6}};
 
-bool verificaTanaStatus(bool tana_status[]){
-    for(int i = 0; i < 5; i++){
-        if (tana_status[i]){
+bool verificaTanaStatus(bool tana_status[])
+{
+    for (int i = 0; i < 5; i++)
+    {
+        if (tana_status[i])
+        {
             return true;
         }
     }
     return false;
 }
 
-bool schermataFineGioco(bool esitoPartita, int score){
+bool schermataFineGioco(bool esitoPartita, int score)
+{
     int risposta;
 
     wclear(gioco);
-    esitoPartita  ? mvwprintw(gioco, 1, 2, "HAI VINTO!") : mvwprintw(gioco, 1, 2, "HAI PERSO!");
+    esitoPartita ? mvwprintw(gioco, 1, 2, "HAI VINTO!") : mvwprintw(gioco, 1, 2, "HAI PERSO!");
     mvwprintw(gioco, 2, 2, "Score: %d", score);
     mvwprintw(gioco, 4, 2, "Vuoi rigiocare? (y,n)");
     wrefresh(gioco);
 
-    while(true){
-        risposta = wgetch(gioco); 
+    while (true)
+    {
+        risposta = wgetch(gioco);
 
-        if(risposta == 'y' || risposta == 'Y'){wclear(gioco);wrefresh(gioco); return true;}
-        else if (risposta == 'n' || risposta == 'N') {wclear(gioco);wrefresh(gioco);return false;}
+        if (risposta == 'y' || risposta == 'Y')
+        {
+            wclear(gioco);
+            wrefresh(gioco);
+            return true;
+        }
+        else if (risposta == 'n' || risposta == 'N')
+        {
+            wclear(gioco);
+            wrefresh(gioco);
+            return false;
+        }
     }
 }
 
@@ -50,12 +65,14 @@ int main()
     int vita;
     inizializzazioneSchermo();
     srand(time(NULL));
-    do{
+    do
+    {
         vita = 3;
         punteggio = 0;
 
-        for(int i=0;i<5;i++){
-        tana_status[i] = true;
+        for (int i = 0; i < 5; i++)
+        {
+            tana_status[i] = true;
         }
         while (vita > 0 && verificaTanaStatus(tana_status))
         {
@@ -124,9 +141,16 @@ int main()
                 wrefresh(gioco);
             }
         }
-   
-    if(vita > 0){esitoPartita = true;} else {esitoPartita = false;}
-    }while(schermataFineGioco(esitoPartita, punteggio));
+
+        if (vita > 0)
+        {
+            esitoPartita = true;
+        }
+        else
+        {
+            esitoPartita = false;
+        }
+    } while (schermataFineGioco(esitoPartita, punteggio));
     terminaGioco();
     return 0;
 }
