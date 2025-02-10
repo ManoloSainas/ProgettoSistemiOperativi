@@ -364,6 +364,10 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         {
                             countG--;
                             countP--;
+                            elementoGioco granata_eg = {.pid_oggetto = pos_granate[i].pid, .x = pos_granate[i].x, .y = pos_granate[i].y};
+                            cancellaProiettile(granata_eg);
+                            elementoGioco proiettile_eg = {.pid_oggetto = pos_proiettili[j].pid, .x = pos_proiettili[j].x, .y = pos_proiettili[j].y};
+                            cancellaProiettile(proiettile_eg);
                             kill(pos_proiettili[j].proiettile, SIGUSR1);
                             if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
                             {
