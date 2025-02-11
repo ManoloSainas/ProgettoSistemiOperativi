@@ -9,6 +9,9 @@ posizioneTane posTane[NUM_TANE] = {
 
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 {
+    // srand per renderlo davvero random
+    srand(time(NULL));
+
     // inizializzazione flussi del fiume
     flussi[0].direzione = NESSUNA;
     flussi[NUM_FLUSSI_FIUME + 2].direzione = NESSUNA;
@@ -161,7 +164,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
         danno = true; // danno con l'acqua -> false
 
-        // controllo collisione acqua e
+        // controllo collisione acqua
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
             if (pos_r.y == pos_c[i].y && pos_c[i].pid != INVALID_PID)
@@ -484,6 +487,36 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 }
             }
         }
+
+        // reset delle coordinate nel caso il coccodrillo sia uscito fuori dallo schermo
+        for (int i = 0; i < MAXCOCCODRILLI; i++)
+        {
+            if (pos_c[i].x == maxx + 2)
+            {
+                pos_c[i].x = minx - 2;
+                pos_c[i].y = pos_c[i].y;
+                pos_c[i].direzione = SINISTRA;
+
+                if (write(pipeCocco, &pos_c[i], sizeof(posizione)) == -1)
+                {
+                    perror("Errore nella scrittura sulla pipe");
+                    _exit(6);
+                }
+            }
+            if (pos_c[i].x == minx - 4)
+            {
+                pos_c[i].x = maxx;
+                pos_c[i].y = pos_c[i].y;
+                pos_c[i].direzione = DESTRA;
+
+                if (write(pipeCocco, &pos_c[i], sizeof(posizione)) == -1)
+                {
+                    perror("Errore nella scrittura sulla pipe");
+                    _exit(6);
+                }
+            }
+        }
+
         // controllo gestione del danno
         if (!danno)
         {

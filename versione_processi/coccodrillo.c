@@ -21,7 +21,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
     start_sparo = clock();
 
     // Inizializza posizione iniziale del coccodrillo
-    coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 2) : maxx;
+    coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
 
     while (true)
     {
@@ -46,17 +46,17 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         {
         case DESTRA:
             coccodrillo.x += 1;
-            if (coccodrillo.x > maxx + 2)
-            {
-                coccodrillo.x = minx - 2;
-            }
+            // if (coccodrillo.x > maxx + 2)
+            // {
+            //     coccodrillo.x = minx - 2;
+            // }
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            if (coccodrillo.x < minx - 4)
-            {
-                coccodrillo.x = maxx;
-            }
+            // if (coccodrillo.x < minx - 4)
+            // {
+            //     coccodrillo.x = maxx;
+            // }
             break;
         }
 
@@ -72,6 +72,14 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         if (delay < 0)
             delay = 0;
         usleep(delay);
+
+        // // reset delle coordinate nel caso il coccodrillo sia uscito fuori dallo schermo
+        // posizione pos_c;
+        // if (read(pipein, &pos_c, sizeof(posizione)) > 0)
+        // {
+        //     coccodrillo.x = pos_c.x;
+        //     coccodrillo.y = pos_c.y;
+        // }
     }
 }
 
