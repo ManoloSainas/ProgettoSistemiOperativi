@@ -50,6 +50,9 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 
 void avviaGioco(int vita, bool tana_status[], int punteggio)
 {
+
+    int tempoRimanente = TEMPO_TOTALE; // Inizializzazione del tempo rimanente
+
     int filedes[2], pipeRana[2], pipeCocco[2];
     int pid_gioco;
     int coccodrilli_flusso[NUM_FLUSSI_FIUME], tot_coc = 0;
@@ -110,7 +113,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
         close(filedes[SCRITTURA]);
         close(pipeRana[LETTURA]);
         close(pipeCocco[LETTURA]);
-        controlloGioco(filedes[LETTURA], pipeRana[SCRITTURA], pipeCocco[SCRITTURA], vita, tana_status);
+        controlloGioco(filedes[LETTURA], pipeRana[SCRITTURA], pipeCocco[SCRITTURA], vita, tana_status, tempoRimanente);
 
         break;
     }
@@ -126,8 +129,10 @@ void terminaGioco()
     endwin();      // End ncurses
 }
 
-void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[])
+void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[], int tempoRimanente)
 {
+
+    time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
 
     posizione pos_r, pos_c[MAXCOCCODRILLI], pos_granate[MAXGRANATE], pos_proiettili[MAXCOCCODRILLI], t_posg;
     int score = 0;
@@ -162,6 +167,25 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
     do
     {
+
+        // Aggiorna il timer e lo stampa
+        time_t tempoAttuale = time(NULL);
+        if (difftime(tempoAttuale, inizioTempo) >= 1) // se un secondo è passato
+        {
+            tempoRimanente--;           // Decrementa il timer
+            inizioTempo = tempoAttuale; // Update the start time
+        }
+
+        wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
+        mvwprintw(gioco, 1, maxx / 2 - 2, "%2d", tempoRimanente); // Stampa il timer
+        wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
+
+        // se finisce il tempo il giocatore perde una vita e finisce la manche
+        if (tempoRimanente == 0)
+        {
+            chiusuraFineManche(pos_c, pos_granate, pipeRana, rana.pid_oggetto);
+            exit(6);
+        }
 
         danno = false; // danno con l'acqua -> false
 
