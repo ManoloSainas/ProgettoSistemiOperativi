@@ -35,17 +35,17 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         fine_sparo = clock();
         durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
 
-        // // Logica di sparo con fork
-        // if ((rand() % 100) < 20 && pid_sparo == INVALID_PID)
-        // {
-        //     pid_sparo = fork();
-        //     if (pid_sparo == 0)
-        //     {
-        //         proiettile(pipeout, coccodrillo.y, coccodrillo.x, coccodrillo.velocita, coccodrillo.direzione, 'c');
-        //         _exit(0);
-        //     }
-        //     start_sparo = clock();
-        // }
+        // Logica di sparo con fork
+        if ((1 + rand() % 1000) < 100 && pid_sparo == INVALID_PID)
+        {
+            pid_sparo = fork();
+            if (pid_sparo == 0)
+            {
+                proiettile(pipeout, coccodrillo.y, coccodrillo.x, SPEED_PROIETTILI, coccodrillo.direzione, 'c');
+                _exit(0);
+            }
+            start_sparo = clock();
+        }
 
         // Movimento del coccodrillo
         switch (coccodrillo.direzione)

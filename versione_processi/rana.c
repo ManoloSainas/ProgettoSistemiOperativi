@@ -64,7 +64,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
             break;
         case KEY_SPACE:
 
-            if (num_spari < MAXGRANATE)
+            if (num_spari <= MAXGRANATE - 2)
             {
                 num_spari++;
                 switch (fork())
@@ -150,11 +150,11 @@ void rana(int pipeout, int pipein, corrente flussi[])
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
             beep();
+            num_spari--;
             if (kill(dati_p.pid, 0) == 0)
             {
                 chiudiProcessi(dati_p.pid);
-                num_spari--;
-            }
+                        }
         }
     }
 

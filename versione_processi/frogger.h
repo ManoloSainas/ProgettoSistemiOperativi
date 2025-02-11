@@ -52,7 +52,7 @@
 
 // Gestione proiettili
 #define RICARICA_PROIETTILI 1000
-#define SPEED_PROIETTILI 60000
+#define SPEED_PROIETTILI 200000
 
 // Colori standard
 #define COLORE_STANDARD 1
@@ -89,8 +89,7 @@
 
 // quantità oggetti su schermo
 #define MAXCOCCODRILLI 40
-#define MAXGRANATE 6
-#define MAXPROIETTILI 10
+#define MAXGRANATE 10
 
 // direzione flusso fiume
 typedef enum
@@ -186,5 +185,3 @@ bool schermataFineGioco(bool esitoPartita, int score);
 bool verificaTanaStatus(bool tana_status[]);
 
 void cancellaProiettile(elementoGioco elemento);
-
-void chiudiTana(int x);

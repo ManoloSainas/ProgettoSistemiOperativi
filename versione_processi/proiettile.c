@@ -11,6 +11,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
     {
     case 'c':
         proiettile.tipo = PROIETTILE_COCCODRILLO;
+
         if (direzione == DESTRA)
         {
             proiettile.x = x + COLONNE_SPRITE_COCCODRILLO;
@@ -19,7 +20,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         {
             proiettile.x = x - 1;
         }
-        proiettile.velocita = 500000 - (velocita * 250000);
+        proiettile.velocita = velocita;
 
         // Evita di far spawnare il proiettile dentro il coccodrillo
         if (proiettile.x >= x - 1 && proiettile.x < x + COLONNE_SPRITE_COCCODRILLO + 1)
