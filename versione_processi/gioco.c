@@ -7,8 +7,6 @@ posizioneTane posTane[NUM_TANE] = {
     {47, 6},
     {59, 6}};
 
-int tempoRimanente = 15;
-
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 {
     // srand per renderlo davvero random
