@@ -1,10 +1,13 @@
 #include "frogger.h"
 
 pid_t pid_sparo;
+bool flag_muro;
 
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso)
 {
 
+    fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura della rana non bloccante
+    posizione pos_c;
     elementoGioco coccodrillo;
     coccodrillo.tipo = COCCODRILLO;
     coccodrillo.y = maxy - riga - 2;
@@ -15,8 +18,10 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
 
     double durata_sparo, start_sparo, fine_sparo;
     pid_sparo = INVALID_PID;
+    flag_muro = false;
 
     signal(SIGUSR1, handler);
+    signal(SIGUSR2, handler);
 
     start_sparo = clock();
 
@@ -47,17 +52,9 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         {
         case DESTRA:
             coccodrillo.x += 1;
-            // if (coccodrillo.x > maxx + 2)
-            // {
-            //     coccodrillo.x = minx - 2;
-            // }
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            // if (coccodrillo.x < minx - 4)
-            // {
-            //     coccodrillo.x = maxx;
-            // }
             break;
         }
 
@@ -74,13 +71,20 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
             delay = 0;
         usleep(delay);
 
-        // // reset delle coordinate nel caso il coccodrillo sia uscito fuori dallo schermo
-        // posizione pos_c;
-        // if (read(pipein, &pos_c, sizeof(posizione)) > 0)
-        // {
-        //     coccodrillo.x = pos_c.x;
-        //     coccodrillo.y = pos_c.y;
-        // }
+        // reset delle coordinate nel caso il coccodrillo sia uscito fuori dallo schermo
+
+        if (flag_muro)
+        {
+            beep();
+            if (coccodrillo.direzione == DESTRA)
+                coccodrillo.x = minx - 2;
+
+            if (coccodrillo.direzione == SINISTRA)
+                coccodrillo.x = maxx;
+
+            flag_muro = false;
+            usleep(delay);
+        }
     }
 }
 
@@ -90,5 +94,10 @@ void handler(int sig)
     {
         chiudiProcessi(pid_sparo);
         pid_sparo = INVALID_PID;
+    }
+    if (sig == SIGUSR2)
+    {
+        beep();
+        flag_muro = true;
     }
 }

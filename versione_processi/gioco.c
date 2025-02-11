@@ -26,7 +26,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 
     flussi[NUM_FLUSSI_FIUME + 2].velocita = 0;
     flussi[NUM_FLUSSI_FIUME + 1].velocita = 0;
-    flussi[1].velocita = 10000 + rand() % (400000) + 1;
+    flussi[1].velocita = 15000 + rand() % (100000) + 1;
 
     for (int i = 2; i <= NUM_FLUSSI_FIUME; i++)
     {
@@ -39,7 +39,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
             flussi[i].direzione = DESTRA;
         }
         // flussi[i].velocita = rand() % (100) + 1;
-        flussi[i].velocita = 10000 + rand() % (400000) + 1;
+        flussi[i].velocita = 15000 + rand() % (100000) + 1;
     }
     // inizializazione numero di coccodrilli per flusso
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
@@ -51,6 +51,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 void avviaGioco(int vita, bool tana_status[], int punteggio)
 {
 
+    srand(time(NULL));
     int tempoRimanente = TEMPO_TOTALE; // Inizializzazione del tempo rimanente
 
     int filedes[2], pipeRana[2], pipeCocco[2];
@@ -101,7 +102,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                     close(pipeCocco[SCRITTURA]);
                     close(filedes[LETTURA]);
                     srand(time(NULL) + i);
-                    usleep((3000000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j);
+                    usleep((2000000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j);
                     coccodrillo(filedes[SCRITTURA], pipeCocco[LETTURA], i, j, flussi[i]);
                     _exit(0);
                     break;
@@ -134,6 +135,8 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 {
 
     time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
+
+    int countC_primariga;
 
     posizione pos_r, pos_c[MAXCOCCODRILLI], pos_granate[MAXGRANATE], pos_proiettili[MAXCOCCODRILLI], t_posg;
     int score = 0;
@@ -265,6 +268,13 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         pos_c[i].x = coccodrillo.x;
                         pos_c[i].y = coccodrillo.y;
                         pos_c[i].proiettile = coccodrillo.proiettile;
+
+                        // collisione coccodrilli pareti
+                        if ((pos_c[i].x == maxx + 2 && pos_c[i].direzione == DESTRA) || (pos_c[i].x == minx - 4 && pos_c[i].direzione == SINISTRA))
+                        {
+                            kill(pos_c[i].pid, SIGUSR2);
+                        }
+
                         break;
                     }
                     if (pos_c[i].pid == INVALID_PID)
@@ -519,37 +529,10 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             }
         }
 
-        // reset delle coordinate nel caso il coccodrillo sia uscito fuori dallo schermo
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
-            if (pos_c[i].x == maxx + 2)
-            {
-                pos_c[i].x = minx - 2;
-                pos_c[i].y = pos_c[i].y;
-                pos_c[i].direzione = SINISTRA;
-                // pos_c[i].proiettile = INVALID_PID;
-                // pos_c[i].pid = pos_c[i].pid;
-
-                if (write(pipeCocco, &pos_c[i], sizeof(posizione)) == -1)
-                {
-                    perror("Errore nella scrittura sulla pipe");
-                    _exit(6);
-                }
-            }
-            if (pos_c[i].x == minx - 4)
-            {
-                pos_c[i].x = maxx;
-                pos_c[i].y = pos_c[i].y;
-                pos_c[i].direzione = DESTRA;
-                // pos_c[i].proiettile = INVALID_PID;
-                // pos_c[i].pid = pos_c[i].pid;
-
-                if (write(pipeCocco, &pos_c[i], sizeof(posizione)) == -1)
-                {
-                    perror("Errore nella scrittura sulla pipe");
-                    _exit(6);
-                }
-            }
+            if (pos_c[i].y == 1 && pos_c[i].pid == coccodrillo.pid_oggetto)
+                countC_primariga++;
         }
 
         // controllo gestione del danno
