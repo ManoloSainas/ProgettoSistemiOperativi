@@ -25,7 +25,8 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
 
     while (true)
     {
-        coccodrillo.proiettile = pid_sparo;
+
+                coccodrillo.proiettile = pid_sparo;
         fine_sparo = clock();
         durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
 
@@ -46,17 +47,17 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         {
         case DESTRA:
             coccodrillo.x += 1;
-            // if (coccodrillo.x > maxx + 2)
-            // {
-            //     coccodrillo.x = minx - 2;
-            // }
+            if (coccodrillo.x > maxx + 2)
+            {
+                coccodrillo.x = minx - 2;
+            }
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            // if (coccodrillo.x < minx - 4)
-            // {
-            //     coccodrillo.x = maxx;
-            // }
+            if (coccodrillo.x < minx - 4)
+            {
+                coccodrillo.x = maxx;
+            }
             break;
         }
 
