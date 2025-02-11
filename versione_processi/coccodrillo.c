@@ -26,38 +26,38 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
     while (true)
     {
 
-                coccodrillo.proiettile = pid_sparo;
+        coccodrillo.proiettile = pid_sparo;
         fine_sparo = clock();
         durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
 
-        // Logica di sparo con fork
-        if ((rand() % 100) < 20 && pid_sparo == INVALID_PID)
-        {
-            pid_sparo = fork();
-            if (pid_sparo == 0)
-            {
-                proiettile(pipeout, coccodrillo.y, coccodrillo.x, coccodrillo.velocita, coccodrillo.direzione, 'c');
-                _exit(0);
-            }
-            start_sparo = clock();
-        }
+        // // Logica di sparo con fork
+        // if ((rand() % 100) < 20 && pid_sparo == INVALID_PID)
+        // {
+        //     pid_sparo = fork();
+        //     if (pid_sparo == 0)
+        //     {
+        //         proiettile(pipeout, coccodrillo.y, coccodrillo.x, coccodrillo.velocita, coccodrillo.direzione, 'c');
+        //         _exit(0);
+        //     }
+        //     start_sparo = clock();
+        // }
 
         // Movimento del coccodrillo
         switch (coccodrillo.direzione)
         {
         case DESTRA:
             coccodrillo.x += 1;
-            if (coccodrillo.x > maxx + 2)
-            {
-                coccodrillo.x = minx - 2;
-            }
+            // if (coccodrillo.x > maxx + 2)
+            // {
+            //     coccodrillo.x = minx - 2;
+            // }
             break;
         case SINISTRA:
             coccodrillo.x -= 1;
-            if (coccodrillo.x < minx - 4)
-            {
-                coccodrillo.x = maxx;
-            }
+            // if (coccodrillo.x < minx - 4)
+            // {
+            //     coccodrillo.x = maxx;
+            // }
             break;
         }
 

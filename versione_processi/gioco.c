@@ -7,6 +7,8 @@ posizioneTane posTane[NUM_TANE] = {
     {47, 6},
     {59, 6}};
 
+int tempoRimanente = 15;
+
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 {
     // srand per renderlo davvero random
@@ -44,13 +46,12 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
     // inizializazione numero di coccodrilli per flusso
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
     {
-        coccodrilli_flusso[i] = rand() % (15 + 1 - 5) + 5;
+        coccodrilli_flusso[i] = 5;
     }
 }
 
 void avviaGioco(int vita, bool tana_status[], int punteggio)
 {
-
     int filedes[2], pipeRana[2], pipeCocco[2];
     int pid_gioco;
     int coccodrilli_flusso[NUM_FLUSSI_FIUME], tot_coc = 0;
@@ -58,6 +59,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
 
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
     {
+        coccodrilli_flusso[i] = 5; // Creazione di 5 coccodrilli per flusso
         tot_coc += coccodrilli_flusso[i];
     }
 
@@ -84,7 +86,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
     default:
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
-            for (int j = 1; j <= MAXCOCCODRILLI / NUM_FLUSSI_FIUME; j++)
+            for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
             {
                 pid_gioco = fork();
                 switch (pid_gioco)
@@ -128,6 +130,7 @@ void terminaGioco()
 
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[])
 {
+
     posizione pos_r, pos_c[MAXCOCCODRILLI], pos_granate[MAXGRANATE], pos_proiettili[MAXCOCCODRILLI], t_posg;
     int score = 0;
     elementoGioco valoreLetto;
@@ -162,9 +165,12 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
     do
     {
 
-        danno = true; // danno con l'acqua -> false
+        danno = false; // danno con l'acqua -> false
 
         // controllo collisione acqua
+
+        // DOPO IL 40ESIMO COCCODRILLO LA RANA NON PUÒ PIÙ SALIRE E COLPISCE L'ACQUA
+
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
             if (pos_r.y == pos_c[i].y && pos_c[i].pid != INVALID_PID)
@@ -187,6 +193,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 }
             }
         }
+
         if (pos_r.y == maxy - 2 || pos_r.y == maxy - 11 || pos_r.y == maxy - 12)
         {
             danno = true;
@@ -247,6 +254,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         break;
                     }
                 }
+
                 break;
             case GRANATA:
                 esiste = false;
@@ -496,6 +504,8 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 pos_c[i].x = minx - 2;
                 pos_c[i].y = pos_c[i].y;
                 pos_c[i].direzione = SINISTRA;
+                // pos_c[i].proiettile = INVALID_PID;
+                // pos_c[i].pid = pos_c[i].pid;
 
                 if (write(pipeCocco, &pos_c[i], sizeof(posizione)) == -1)
                 {
@@ -508,6 +518,8 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                 pos_c[i].x = maxx;
                 pos_c[i].y = pos_c[i].y;
                 pos_c[i].direzione = DESTRA;
+                // pos_c[i].proiettile = INVALID_PID;
+                // pos_c[i].pid = pos_c[i].pid;
 
                 if (write(pipeCocco, &pos_c[i], sizeof(posizione)) == -1)
                 {

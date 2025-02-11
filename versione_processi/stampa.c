@@ -7,12 +7,6 @@ char spriteCoccodrilloSinistra[COLONNE_SPRITE_COCCODRILLO + 1] = ">===";
 char spriteProiettileCocco[COLONNE_SPRITE_PROIETTILE + 1] = "@";
 char spriteProiettileRana[COLONNE_SPRITE_PROIETTILE + 1] = "-";
 
-void chiudiTana(int tana_x)
-{
-
-    mvwprintw(gioco, posTane[0].y, tana_x, "XX");
-}
-
 // Funzione per gestire la grafica del gioco (HUD, sfondo, gestione tane)
 void graficaGioco(bool tana_status[], int punteggio, int vita)
 {
