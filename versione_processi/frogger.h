@@ -46,7 +46,7 @@
 #define COLONNE_SPRITE_GRANATA 1
 
 // Tempo di gioco
-#define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
+#define TEMPO_TOTALE 90; // Tempo totale di gioco (per round)
 
 #define KEY_SPACE 32 // Valore relativo al carattere spazio
 
