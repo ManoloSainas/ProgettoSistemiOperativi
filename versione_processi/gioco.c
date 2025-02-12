@@ -409,10 +409,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                             proiettile_eg.x = pos_proiettili[j].x;
                             proiettile_eg.y = pos_proiettili[j].y;
 
-                            cancellaSprite(granata_eg);
-                            cancellaSprite(proiettile_eg);
-
-                            kill(pos_proiettili[j].proiettile, SIGUSR1);
+                                                kill(pos_proiettili[j].proiettile, SIGUSR1);
                             if (kill(pos_granate[i].pid, SIGKILL) < 0)
                             {
                                 perror("errore eliminazione processo granata");
