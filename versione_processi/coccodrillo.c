@@ -51,10 +51,10 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         switch (coccodrillo.direzione)
         {
         case DESTRA:
-            coccodrillo.x += 1;
+            coccodrillo.x += SPOSTAMENTO_COCCODRILLO;
             break;
         case SINISTRA:
-            coccodrillo.x -= 1;
+            coccodrillo.x -= SPOSTAMENTO_COCCODRILLO;
             break;
         }
 

@@ -55,10 +55,10 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         switch (proiettile.direzione)
         {
         case DESTRA:
-            proiettile.x++;
+            proiettile.x += SPOSTAMENTO_PROIETTILE;
             break;
         case SINISTRA:
-            proiettile.x--;
+            proiettile.x -= SPOSTAMENTO_PROIETTILE;
             break;
         default:
             break;

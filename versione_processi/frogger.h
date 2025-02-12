@@ -93,6 +93,8 @@
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
+#define SPOSTAMENTO_COCCODRILLO 1
+#define SPOSTAMENTO_PROIETTILE 1
 
 // direzione flusso fiume
 typedef enum
