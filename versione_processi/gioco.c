@@ -152,6 +152,10 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
     granata.pid_oggetto = INVALID_PID;
     proiettile.pid_oggetto = INVALID_PID;
 
+    // reset di granata_eg e di proiettile_eg
+    granata_eg.pid_oggetto = INVALID_PID;
+    proiettile_eg.pid_oggetto = INVALID_PID;
+
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {
         pos_c[i].pid = INVALID_PID;
@@ -405,12 +409,26 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             granata_eg.pid_oggetto = pos_granate[i].pid;
                             granata_eg.x = pos_granate[i].x;
                             granata_eg.y = pos_granate[i].y;
+                            t_posg = pos_granate[i];
 
                             proiettile_eg.pid_oggetto = pos_proiettili[j].pid;
                             proiettile_eg.x = pos_proiettili[j].x;
                             proiettile_eg.y = pos_proiettili[j].y;
-                            t_posg = pos_granate[i];
-                            kill(pos_proiettili[j].proiettile, SIGUSR1);
+
+                            cancellaProiettile(granata_eg);
+                            cancellaProiettile(proiettile_eg);
+                            wrefresh(gioco);
+
+                            pos_granate[i].pid = INVALID_PID;
+                            pos_proiettili[j].pid = INVALID_PID;
+                            granata_eg.pid_oggetto = INVALID_PID;
+                            proiettile_eg.pid_oggetto = INVALID_PID;
+
+                            countP--;
+                            countG--;
+
+                            if (pos_proiettili[j].proiettile != INVALID_PID)
+                                kill(pos_proiettili[j].proiettile, SIGUSR1);
                             if (t_posg.pid != INVALID_PID)
                             {
                                 if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
@@ -419,13 +437,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                                     _exit(6);
                                 }
                                 waitpid(t_posg.pid, NULL, 0);
-                                countG--;
                             }
-                            valoreLetto.pid_oggetto = INVALID_PID;
-                            pos_granate[i].pid = INVALID_PID;
-                            pos_proiettili[j].pid = INVALID_PID;
-
-                            countP--;
                             break;
                         }
                     }
