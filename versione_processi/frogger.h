@@ -1,3 +1,4 @@
+// #define _POSIX_C_SOURCE 199309L
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -33,7 +34,7 @@
 #define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
 // Gestione proiettili
-#define RICARICA_PROIETTILI 1000
+#define RICARICA_PROIETTILI 1
 #define SPEED_PROIETTILI 200000
 #define SPEED_GRANATE 100000
 
@@ -174,13 +175,13 @@ void cancellaSprite(elementoGioco elemento);
 void cancellaProiettile(elementoGioco elemento);
 
 void rana(int pipeout, int pipein, corrente flussi[]);
-void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso);
+void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso);
 void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo);
 
-void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vite, bool tana_status[], int tempoRimanente);
+void controlloGioco(int pipein, int pipeRana, int vite, bool tana_status[], int tempoRimanente);
 void terminaGioco();
 void chiudiProcessi(pid_t pid);
-void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana);
+void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein);
 void inizializzazionePipe(int filedes[]);
 
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);

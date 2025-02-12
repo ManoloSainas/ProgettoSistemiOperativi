@@ -178,7 +178,7 @@ void rana(int pipeout, int pipein, corrente flussi[]);
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso);
 void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo);
 
-void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[]);
+void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[]);
 void terminaGioco();
 void chiudiProcessi(pid_t pid);
 void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana);

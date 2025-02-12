@@ -2,11 +2,11 @@
 
 pid_t pid_sparo;
 bool flag_muro;
+double start_sparo;
 
-void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso)
+void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
 {
 
-    fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura del coccodrillo non bloccante
     posizione pos_c;
     elementoGioco coccodrillo;
     coccodrillo.tipo = COCCODRILLO;
@@ -16,7 +16,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
     coccodrillo.velocita = flusso.velocita;
     coccodrillo.proiettile = INVALID_PID;
 
-    double durata_sparo, start_sparo, fine_sparo;
+    double durata_sparo, fine_sparo;
     pid_sparo = INVALID_PID;
     flag_muro = false;
 
@@ -36,7 +36,7 @@ void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente
         durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
 
         // Logica di sparo con fork
-        if ((1 + rand() % 1000) < 100 && pid_sparo == INVALID_PID)
+        if ((1 + rand() % 1000) < 50 && pid_sparo == INVALID_PID)
         {
             pid_sparo = fork();
             if (pid_sparo == 0)
@@ -94,6 +94,7 @@ void handler(int sig)
     {
         chiudiProcessi(pid_sparo);
         pid_sparo = INVALID_PID;
+        start_sparo = clock();
     }
     if (sig == SIGUSR2)
     {

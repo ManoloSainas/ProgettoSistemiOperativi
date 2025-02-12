@@ -41,7 +41,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 void avviaGioco(int vita, bool tana_status[], int punteggio)
 {
 
-    int filedes[2], pipeRana[2], pipeCocco[2];
+    int filedes[2], pipeRana[2];
     int pid_gioco;
     int coccodrilli_flusso[NUM_FLUSSI_FIUME], tot_coc = 0;
     corrente flussi[NUM_FLUSSI_FIUME + 3];
@@ -55,7 +55,6 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
     gestioneFlussi(flussi, coccodrilli_flusso);
     inizializzazionePipe(filedes);
     inizializzazionePipe(pipeRana);
-    inizializzazionePipe(pipeCocco);
 
     pid_gioco = fork();
 
@@ -84,11 +83,10 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                     _exit(1);
                     break;
                 case 0:
-                    close(pipeCocco[SCRITTURA]);
                     close(filedes[LETTURA]);
                     srand(time(NULL) + i);
                     usleep((3000000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j);
-                    coccodrillo(filedes[SCRITTURA], pipeCocco[LETTURA], i, j, flussi[i]);
+                    coccodrillo(filedes[SCRITTURA], i, j, flussi[i]);
                     _exit(0);
                     break;
                 default:
@@ -99,8 +97,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
 
         close(filedes[SCRITTURA]);
         close(pipeRana[LETTURA]);
-        close(pipeCocco[LETTURA]);
-        controlloGioco(filedes[LETTURA], pipeRana[SCRITTURA], pipeCocco[SCRITTURA], vita, tana_status);
+        controlloGioco(filedes[LETTURA], pipeRana[SCRITTURA], vita, tana_status);
 
         break;
     }
@@ -116,7 +113,7 @@ void terminaGioco()
     endwin();      // End ncurses
 }
 
-void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[])
+void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[])
 {
     posizione pos_r, pos_c[MAXCOCCODRILLI], pos_granate[MAXGRANATE], pos_proiettili[MAXCOCCODRILLI];
     int score = 0;
@@ -147,8 +144,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
     do
     {
-        tempP.pid = INVALID_PID;
-        tempG.pid = INVALID_PID;
+
         danno = false;
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
@@ -247,7 +243,10 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                         {
 
                             if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
-                                ;
+                            {
+                                perror("ERRORE PIPE RANA GRANATA");
+                                _exit(6);
+                            };
                             countG--;
                             pos_granate[i].pid = INVALID_PID;
                             pos_granate[i].x = -1;

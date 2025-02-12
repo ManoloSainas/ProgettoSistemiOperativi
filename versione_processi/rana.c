@@ -96,7 +96,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                             // Processo proiettile
                             // mvwprintw(gioco, 3, maxx - 10, "spara sinistra");
                             // wrefresh(gioco);
-                            proiettile(pipeout, rana.y, rana.x, SPEED_PROIETTILI, SINISTRA, 'r');
+                            proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, SINISTRA, 'r');
 
                             break;
                         default:
@@ -150,10 +150,10 @@ void rana(int pipeout, int pipein, corrente flussi[])
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
             beep();
-            num_spari--;
             if (kill(dati_p.pid, 0) == 0)
             {
                 chiudiProcessi(dati_p.pid);
+                num_spari--;
             }
         }
     }
