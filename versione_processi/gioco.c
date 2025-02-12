@@ -96,9 +96,9 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
         _exit(0);
         break;
     default:
-        for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
+        for (int i = 1; i <= 1; i++)
         {
-            for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
+            for (int j = 1; j <= 1; j++)
             // coccodrilli_flusso[i - 1]
             {
                 pid_gioco = fork();
@@ -172,6 +172,15 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 
     do
     {
+        if (granata_eg.pid_oggetto > 0)
+        {
+            cancellaProiettile(granata_eg);
+        }
+        if (granata_eg.pid_oggetto > 0)
+        {
+            cancellaProiettile(proiettile_eg);
+        }
+
         granata_eg.pid_oggetto = INVALID_PID;
         proiettile_eg.pid_oggetto = INVALID_PID;
 
@@ -290,15 +299,17 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                     if (pos_granate[i].pid == granata.pid_oggetto)
                     {
                         pos_granate[i].x = granata.x;
-                        if ((granata.x > maxx && granata.direzione == DESTRA) || (granata.x == 0 && granata.direzione == SINISTRA))
+                        if ((pos_granate[i].x > maxx && pos_granate[i].direzione == DESTRA) || (pos_granate[i].x == 0 && pos_granate[i].direzione == SINISTRA))
                         {
-                            if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
-                            {
-                                perror("Errore nella scrittura sulla pipe");
-                                _exit(6);
-                            }
-                            pos_granate[i].pid = INVALID_PID;
+                            // if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
+                            // {
+                            //     perror("Errore nella scrittura sulla pipe");
+                            //     _exit(6);
+                            // }
+                            kill(pos_granate[i].pid, SIGKILL);
+                            waitpid(pos_granate[i].pid, NULL, 0);
 
+                            pos_granate[i].pid = INVALID_PID;
                             countG--;
                         }
 
@@ -325,11 +336,13 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         else
                         {
                             t_posg.pid = granata.pid_oggetto;
-                            if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
-                            {
-                                perror("Errore nella scrittura sulla pipe");
-                                _exit(6);
-                            }
+                            kill(granata.pid_oggetto, SIGKILL);
+                            waitpid(granata.pid_oggetto, NULL, 0);
+                            // if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
+                            // {
+                            //     perror("Errore nella scrittura sulla pipe");
+                            //     _exit(6);
+                            // }
                             break;
                         }
                     }
@@ -352,6 +365,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             pos_proiettili[i].pid = INVALID_PID;
                             countP--;
                         }
+
                         esiste = true;
                         break;
                     }
@@ -412,6 +426,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                                 perror("Errore nella scrittura sulla pipe");
                                 _exit(6);
                             }
+                            waitpid(t_posg.pid, NULL, 0);
                             countG--;
                             countP--;
                             valoreLetto.pid_oggetto = INVALID_PID;
@@ -452,9 +467,12 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                 countG++;
         }
 
+        mvwprintw(gioco, 2, 3, "pid_proiettile:  %6d", pos_proiettili[0].pid);
+        mvwprintw(gioco, 3, 3, "pid_granata s?:  %6d", pos_granate[0].pid);
+        mvwprintw(gioco, 4, 3, "pid_granata d?:  %6d", pos_granate[1].pid);
         // utile per debug, stampa il numero di granate e proiettili presenti
-        mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
-        mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
+        // mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
+        // mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
         wrefresh(gioco);
 
         // controllo interazione tane

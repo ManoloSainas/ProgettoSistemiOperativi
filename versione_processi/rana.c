@@ -150,11 +150,8 @@ void rana(int pipeout, int pipein, corrente flussi[])
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
             beep();
-            if (kill(dati_p.pid, 0) == 0)
-            {
-                chiudiProcessi(dati_p.pid);
-                num_spari--;
-            }
+            chiudiProcessi(dati_p.pid);
+            num_spari--;
         }
     }
 
