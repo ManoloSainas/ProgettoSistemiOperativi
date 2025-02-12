@@ -24,7 +24,7 @@
 
 // quantità oggetti su schermo
 #define MAXCOCCODRILLI 40
-#define MAXGRANATE 10
+#define MAXGRANATE 1000
 
 // velocità flusso fiume
 #define VELOCITA_FLUSSO 20000

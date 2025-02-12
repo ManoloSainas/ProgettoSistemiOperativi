@@ -302,6 +302,5 @@ void cancellaProiettile(elementoGioco elemento)
 {
     wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
     mvwprintw(gioco, elemento.y, elemento.x, " ");
-
     wattroff(gioco, COLOR_PAIR(SFONDO_ACQUA));
 }

@@ -197,7 +197,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             exit(6);
         }
 
-                danno = true; // danno con l'acqua -> false
+        danno = true; // danno con l'acqua -> false
 
         // controllo collisione acqua
 
@@ -408,6 +408,9 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                             proiettile_eg.pid_oggetto = pos_proiettili[j].pid;
                             proiettile_eg.x = pos_proiettili[j].x;
                             proiettile_eg.y = pos_proiettili[j].y;
+
+                            cancellaSprite(granata_eg);
+                            cancellaSprite(proiettile_eg);
 
                             kill(pos_proiettili[j].proiettile, SIGUSR1);
                             if (kill(pos_granate[i].pid, SIGKILL) < 0)
