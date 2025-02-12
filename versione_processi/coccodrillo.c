@@ -6,7 +6,7 @@ bool flag_muro;
 void coccodrillo(int pipeout, int pipein, int riga, int id_coccodrillo, corrente flusso)
 {
 
-    fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura della rana non bloccante
+    fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura del coccodrillo non bloccante
     posizione pos_c;
     elementoGioco coccodrillo;
     coccodrillo.tipo = COCCODRILLO;

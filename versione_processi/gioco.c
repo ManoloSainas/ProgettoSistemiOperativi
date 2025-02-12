@@ -1,5 +1,6 @@
 #include "frogger.h"
 
+// x e y delle tane
 posizioneTane posTane[NUM_TANE] = {
     {11, 6},
     {23, 6},
@@ -54,7 +55,8 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
 {
 
     srand(time(NULL));
-    int tempoRimanente = TEMPO_TOTALE; // Inizializzazione del tempo rimanente
+    int randomValue = rand() % 1000000; // valore random per la generazione di numeri casuali
+    int tempoRimanente = TEMPO_TOTALE;  // Inizializzazione del tempo rimanente
 
     int filedes[2], pipeRana[2], pipeCocco[2];
     int pid_gioco;
@@ -103,8 +105,16 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                 case 0:
                     close(pipeCocco[SCRITTURA]);
                     close(filedes[LETTURA]);
-                    srand(time(NULL) + i + j);
-                    usleep((2000000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j);
+
+                    // NON FUNZIONA IL TIMING DELLO SPAWNING DEI COCCODRILLI
+                    srand(time(NULL) + randomValue);
+                    if (rand() % 3 == 0)
+                        randomValue = (3000000 + rand() % 1000000); // da 3 a 4 secondi
+                    else if (rand() % 3 == 1)
+                        randomValue = (5000000 + rand() % 1000000); // da 5 a 6 secondi
+                    else
+                        randomValue = (7000000 + rand() % 1000000); // da 7 a 8 secondi
+                    usleep(randomValue + rand() % randomValue);
                     coccodrillo(filedes[SCRITTURA], pipeCocco[LETTURA], i, j, flussi[i]);
                     _exit(0);
                     break;
