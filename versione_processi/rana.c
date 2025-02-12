@@ -77,8 +77,6 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     _exit(1);
                 case 0:
                     // Processo proiettile
-                    // mvwprintw(gioco, 5, 3, "spara destra");
-                    // wrefresh(gioco);
                     proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, DESTRA, 'r');
 
                     break;
@@ -94,8 +92,6 @@ void rana(int pipeout, int pipein, corrente flussi[])
                             _exit(1);
                         case 0:
                             // Processo proiettile
-                            // mvwprintw(gioco, 3, maxx - 10, "spara sinistra");
-                            // wrefresh(gioco);
                             proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, SINISTRA, 'r');
 
                             break;
@@ -112,13 +108,8 @@ void rana(int pipeout, int pipein, corrente flussi[])
             }
         }
 
-        // // LA RANA CADE DAL COCCODRILLO PER COLPA DELL' IF CHE C'È QUI SOTTO
-        // durata_f = (double)(stop_m - start_m) / CLOCKS_PER_SEC;
-        // stop_m = clock(); // stop timer movimento
         rana.direzione = flussi[16 - rana.y].direzione;
         rana.velocita = flussi[16 - rana.y].velocita;
-        // if (durata_f * 100000 >= (double)(500000 - rana.velocita))
-        // {
 
         // Calcolo del ritardo basato sulla velocità
         int delay = 500000 - rana.velocita;
@@ -130,16 +121,13 @@ void rana(int pipeout, int pipein, corrente flussi[])
             usleep(delay);
             if (rana.direzione == DESTRA)
             {
-                rana.x++; // nonostante non ci siano le collisioni con l'acqua, la rana se va sopra perde una vita
+                rana.x++;
             }
             if (rana.direzione == SINISTRA)
             {
-                rana.x--; // nonostante non ci siano le collisioni con l'acqua, la rana se va sopra perde una vita
+                rana.x--;
             }
         }
-
-        // start_m = clock();
-        // }
 
         // Scrittura nella pipe delle informazioni della rana
         if (write(pipeout, &rana, sizeof(elementoGioco)) == -1)

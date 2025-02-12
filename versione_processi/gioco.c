@@ -291,13 +291,16 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         pos_granate[i].direzione = granata.direzione;
                         if ((pos_granate[i].x == maxx && pos_granate[i].direzione == DESTRA) || (pos_granate[i].x == 0 && pos_granate[i].direzione == SINISTRA))
                         {
-                            if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
+                            if (pos_granate[i].pid != INVALID_PID)
                             {
-                                perror("Errore nella scrittura sulla pipe");
-                                _exit(6);
+                                if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
+                                {
+                                    perror("Errore nella scrittura sulla pipe");
+                                    _exit(6);
+                                }
+                                pos_granate[i].pid = INVALID_PID;
+                                countG--;
                             }
-                            pos_granate[i].pid = INVALID_PID;
-                            countG--;
                         }
 
                         esiste = true;
@@ -323,12 +326,16 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         else
                         {
                             t_posg.pid = granata.pid_oggetto;
-                            countG--;
-                            if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
+                            if (t_posg.pid != INVALID_PID)
                             {
-                                perror("Errore nella scrittura sulla pipe");
-                                _exit(6);
+                                if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
+                                {
+                                    perror("Errore nella scrittura sulla pipe");
+                                    _exit(6);
+                                }
+                                countG--;
                             }
+
                             break;
                         }
                     }
@@ -406,18 +413,21 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             proiettile_eg.y = pos_proiettili[j].y;
                             t_posg = pos_granate[i];
                             kill(pos_proiettili[j].proiettile, SIGUSR1);
-
-                            if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
+                            if (t_posg.pid != INVALID_PID)
                             {
-                                perror("Errore nella scrittura sulla pipe");
-                                _exit(6);
+                                if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
+                                {
+                                    perror("Errore nella scrittura sulla pipe");
+                                    _exit(6);
+                                }
+                                waitpid(t_posg.pid, NULL, 0);
+                                countG--;
                             }
-                            waitpid(t_posg.pid, NULL, 0);
-                            countG--;
-                            countP--;
                             valoreLetto.pid_oggetto = INVALID_PID;
                             pos_granate[i].pid = INVALID_PID;
                             pos_proiettili[j].pid = INVALID_PID;
+
+                            countP--;
                             break;
                         }
                     }
@@ -542,21 +552,29 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 
 void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein)
 {
-
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {
-        kill(pos_c[i].pid, SIGUSR1);
-        chiudiProcessi(pos_c[i].pid);
+        if (pos_c[i].pid != INVALID_PID)
+        {
+            kill(pos_c[i].pid, SIGUSR1);
+            chiudiProcessi(pos_c[i].pid);
+        }
     }
     for (int i = 0; i < MAXGRANATE; i++)
     {
-        if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
+        if (pos_granate[i].pid != INVALID_PID)
         {
-            perror("Errore nella scrittura sulla pipe");
-            _exit(6);
+            if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
+            {
+                perror("Errore nella scrittura sulla pipe");
+                _exit(6);
+            }
         }
     }
-    chiudiProcessi(pid_rana);
+    if (pid_rana != INVALID_PID)
+    {
+        chiudiProcessi(pid_rana);
+    }
     close(pipeRana);
     close(pipein);
 }
