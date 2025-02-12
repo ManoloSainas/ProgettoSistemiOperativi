@@ -19,8 +19,22 @@
 // Numero dati
 #define NUM_VITE_RANA 3
 #define NUM_TANE 5
-#define NUM_COCCODRILLI_FLUSSO 3
+#define NUM_COCCODRILLI_FLUSSO 4
 #define NUM_FLUSSI_FIUME 8
+
+// quantità oggetti su schermo
+#define MAXCOCCODRILLI 40
+#define MAXGRANATE 10
+
+// velocità flusso fiume
+#define VELOCITA_FLUSSO 50000
+
+// Tempo di gioco
+#define TEMPO_TOTALE 90; // Tempo totale di gioco (per round)
+
+// Gestione proiettili
+#define RICARICA_PROIETTILI 1000
+#define SPEED_PROIETTILI 80000
 
 // Posizione iniziale rana
 #define RANA_X 36
@@ -45,14 +59,7 @@
 #define RIGHE_SPRITE_GRANATA 1
 #define COLONNE_SPRITE_GRANATA 1
 
-// Tempo di gioco
-#define TEMPO_TOTALE 90; // Tempo totale di gioco (per round)
-
 #define KEY_SPACE 32 // Valore relativo al carattere spazio
-
-// Gestione proiettili
-#define RICARICA_PROIETTILI 1000
-#define SPEED_PROIETTILI 200000
 
 // Colori standard
 #define COLORE_STANDARD 1
@@ -86,13 +93,6 @@
 
 // Spostamento oggetti
 #define SPOSTAMENTO_RANA 1
-
-// quantità oggetti su schermo
-#define MAXCOCCODRILLI 40
-#define MAXGRANATE 10
-
-// velocità flusso fiume
-#define VELOCITA_FLUSSO 20000
 
 // direzione flusso fiume
 typedef enum
