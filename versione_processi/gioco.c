@@ -172,17 +172,6 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 
     do
     {
-        if (granata_eg.pid_oggetto > 0)
-        {
-            cancellaProiettile(granata_eg);
-        }
-        if (granata_eg.pid_oggetto > 0)
-        {
-            cancellaProiettile(proiettile_eg);
-        }
-
-        granata_eg.pid_oggetto = INVALID_PID;
-        proiettile_eg.pid_oggetto = INVALID_PID;
 
         // Aggiorna il timer e lo stampa
         time_t tempoAttuale = time(NULL);
@@ -299,7 +288,8 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                     if (pos_granate[i].pid == granata.pid_oggetto)
                     {
                         pos_granate[i].x = granata.x;
-                        if ((pos_granate[i].x > maxx && pos_granate[i].direzione == DESTRA) || (pos_granate[i].x == 0 && pos_granate[i].direzione == SINISTRA))
+                        pos_granate[i].direzione = granata.direzione;
+                        if ((pos_granate[i].x == maxx && pos_granate[i].direzione == DESTRA) || (pos_granate[i].x == 0 && pos_granate[i].direzione == SINISTRA))
                         {
                             if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
                             {
@@ -333,6 +323,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         else
                         {
                             t_posg.pid = granata.pid_oggetto;
+                            countG--;
                             if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
                             {
                                 perror("Errore nella scrittura sulla pipe");
@@ -446,28 +437,12 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         if (proiettile.pid_oggetto > 0)
             stampaSprite(proiettile);
 
-        if (granata_eg.pid_oggetto > 0)
-        {
-            cancellaProiettile(granata_eg);
-        }
-        if (granata_eg.pid_oggetto > 0)
-        {
-            cancellaProiettile(proiettile_eg);
-        }
-
-        countG = 0;
-        for (int i = 0; i < MAXGRANATE; i++)
-        {
-            if (pos_granate[i].pid != INVALID_PID)
-                countG++;
-        }
-
-        mvwprintw(gioco, 2, 3, "pid_proiettile:  %6d", pos_proiettili[0].pid);
-        mvwprintw(gioco, 3, 3, "pid_granata s?:  %6d", pos_granate[0].pid);
-        mvwprintw(gioco, 4, 3, "pid_granata d?:  %6d", pos_granate[1].pid);
+        // mvwprintw(gioco, 2, 3, "pid_proiettile:  %6d", pos_proiettili[0].pid);
+        // mvwprintw(gioco, 3, 3, "pid_granata s?:  %6d", pos_granate[0].pid);
+        // mvwprintw(gioco, 4, 3, "pid_granata d?:  %6d", pos_granate[1].pid);
         // utile per debug, stampa il numero di granate e proiettili presenti
-        // mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
-        // mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
+        mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
+        mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
         wrefresh(gioco);
 
         // controllo interazione tane
