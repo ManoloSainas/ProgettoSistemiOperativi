@@ -23,7 +23,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
     signal(SIGUSR1, handler);
     signal(SIGUSR2, handler);
 
-    start_sparo = clock();
+    start_sparo = time(NULL);
 
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
@@ -32,21 +32,23 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
     {
 
         coccodrillo.proiettile = pid_sparo;
-        fine_sparo = clock();
-        durata_sparo = (double)(fine_sparo - start_sparo) / CLOCKS_PER_SEC;
+        fine_sparo = time(NULL);
 
-        // Logica di sparo con fork
-        if ((1 + rand() % 1000) < 50 && pid_sparo == INVALID_PID)
+        if (difftime(fine_sparo, start_sparo) >= 2) // se due secondo è passato
         {
-            pid_sparo = fork();
-            if (pid_sparo == 0)
-            {
-                proiettile(pipeout, coccodrillo.y, coccodrillo.x, SPEED_PROIETTILI, coccodrillo.direzione, 'c');
-                _exit(0);
-            }
-            start_sparo = clock();
-        }
 
+            // Logica di sparo con fork
+            if ((1 + rand() % 100) < 10 && pid_sparo == INVALID_PID)
+            {
+                pid_sparo = fork();
+                if (pid_sparo == 0)
+                {
+                    proiettile(pipeout, coccodrillo.y, coccodrillo.x, SPEED_PROIETTILI, coccodrillo.direzione, 'c');
+                    _exit(0);
+                }
+                start_sparo = time(NULL);
+            }
+        }
         // Movimento del coccodrillo
         switch (coccodrillo.direzione)
         {
@@ -94,7 +96,7 @@ void handler(int sig)
     {
         chiudiProcessi(pid_sparo);
         pid_sparo = INVALID_PID;
-        start_sparo = clock();
+        start_sparo = time(NULL);
     }
     if (sig == SIGUSR2)
     {
