@@ -301,14 +301,11 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         pos_granate[i].x = granata.x;
                         if ((pos_granate[i].x > maxx && pos_granate[i].direzione == DESTRA) || (pos_granate[i].x == 0 && pos_granate[i].direzione == SINISTRA))
                         {
-                            // if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
-                            // {
-                            //     perror("Errore nella scrittura sulla pipe");
-                            //     _exit(6);
-                            // }
-                            kill(pos_granate[i].pid, SIGKILL);
-                            waitpid(pos_granate[i].pid, NULL, 0);
-
+                            if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
+                            {
+                                perror("Errore nella scrittura sulla pipe");
+                                _exit(6);
+                            }
                             pos_granate[i].pid = INVALID_PID;
                             countG--;
                         }
@@ -336,13 +333,11 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         else
                         {
                             t_posg.pid = granata.pid_oggetto;
-                            kill(granata.pid_oggetto, SIGKILL);
-                            waitpid(granata.pid_oggetto, NULL, 0);
-                            // if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
-                            // {
-                            //     perror("Errore nella scrittura sulla pipe");
-                            //     _exit(6);
-                            // }
+                            if (write(pipeRana, &t_posg, sizeof(posizione)) == -1)
+                            {
+                                perror("Errore nella scrittura sulla pipe");
+                                _exit(6);
+                            }
                             break;
                         }
                     }
