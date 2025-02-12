@@ -459,6 +459,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             cancellaProiettile(proiettile_eg);
         }
 
+        // utile per debug, stampa il numero di granate e proiettili presenti
         mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
         mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
         wrefresh(gioco);
