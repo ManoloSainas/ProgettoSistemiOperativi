@@ -26,25 +26,27 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 
     flussi[NUM_FLUSSI_FIUME + 2].velocita = 0;
     flussi[NUM_FLUSSI_FIUME + 1].velocita = 0;
-    flussi[1].velocita = 15000 + rand() % (100000) + 1;
+    // flussi[1].velocita = 15000 + rand() % (100000) + 1; // Nel caso si voglia utilizzare una velocità casuale e non prefissata
+    flussi[1].velocita = VELOCITA_FLUSSO;
 
     for (int i = 2; i <= NUM_FLUSSI_FIUME; i++)
     {
         if (flussi[i - 1].direzione == DESTRA)
         {
             flussi[i].direzione = SINISTRA;
+            flussi[i].velocita = VELOCITA_FLUSSO * i;
         }
         else
         {
             flussi[i].direzione = DESTRA;
+            flussi[i].velocita = VELOCITA_FLUSSO * i;
         }
-        // flussi[i].velocita = rand() % (100) + 1;
-        flussi[i].velocita = 15000 + rand() % (100000) + 1;
+        // flussi[i].velocita = 15000 + rand() % (100000) + 1; // Nel caso si voglia utilizzare una velocità casuale e non prefissata
     }
     // inizializazione numero di coccodrilli per flusso
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
     {
-        coccodrilli_flusso[i] = 5;
+        coccodrilli_flusso[i] = NUM_COCCODRILLI_FLUSSO;
     }
 }
 
@@ -61,7 +63,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
 
     for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
     {
-        coccodrilli_flusso[i] = 5; // Creazione di 5 coccodrilli per flusso
+        coccodrilli_flusso[i] = NUM_COCCODRILLI_FLUSSO; // Creazione di 5 coccodrilli per flusso
         tot_coc += coccodrilli_flusso[i];
     }
 
@@ -101,7 +103,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                 case 0:
                     close(pipeCocco[SCRITTURA]);
                     close(filedes[LETTURA]);
-                    srand(time(NULL) + i);
+                    srand(time(NULL) + i + j);
                     usleep((2000000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j);
                     coccodrillo(filedes[SCRITTURA], pipeCocco[LETTURA], i, j, flussi[i]);
                     _exit(0);

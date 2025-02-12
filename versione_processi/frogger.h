@@ -19,7 +19,7 @@
 // Numero dati
 #define NUM_VITE_RANA 3
 #define NUM_TANE 5
-#define NUM_MIN_COCCODRILLI_FLUSSO 5
+#define NUM_COCCODRILLI_FLUSSO 4
 #define NUM_FLUSSI_FIUME 8
 
 // Posizione iniziale rana
@@ -90,6 +90,9 @@
 // quantità oggetti su schermo
 #define MAXCOCCODRILLI 40
 #define MAXGRANATE 10
+
+// velocità flusso fiume
+#define VELOCITA_FLUSSO 20000
 
 // direzione flusso fiume
 typedef enum
