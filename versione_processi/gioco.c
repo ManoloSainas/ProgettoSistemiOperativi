@@ -8,6 +8,14 @@ posizioneTane posTane[NUM_TANE] = {
     {47, 6},
     {59, 6}};
 
+void terminaGioco()
+{
+    wclear(gioco);
+    wrefresh(gioco);
+    delwin(gioco); // Delete the window
+    endwin();      // End ncurses
+}
+
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 {
     // srand per renderlo davvero random
@@ -128,14 +136,6 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
     //  terminaGioco();
 }
 
-void terminaGioco()
-{
-    wclear(gioco);
-    wrefresh(gioco);
-    delwin(gioco); // Delete the window
-    endwin();      // End ncurses
-}
-
 void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana_status[], int tempoRimanente)
 {
 
@@ -201,8 +201,6 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
         // controllo collisione acqua
 
-        // DOPO IL 40ESIMO COCCODRILLO LA RANA NON PUÒ PIÙ SALIRE E COLPISCE L'ACQUA
-
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
             if (pos_r.y == pos_c[i].y && pos_c[i].pid != INVALID_PID)
@@ -238,22 +236,11 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
 
         if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
         {
-            elementoGioco oggettoLetto;
-            switch (valoreLetto.tipo)
-            {
-            case RANA:
-                oggettoLetto = rana;
-                break;
-            case COCCODRILLO:
-                oggettoLetto = coccodrillo;
-                break;
-            case GRANATA:
-                oggettoLetto = granata;
-                break;
-            case PROIETTILE_COCCODRILLO:
-                oggettoLetto = proiettile;
-            }
-            cancellaSprite(oggettoLetto);
+
+            cancellaSprite(rana);
+            cancellaSprite(coccodrillo);
+            cancellaSprite(granata);
+            cancellaSprite(proiettile);
 
             switch (valoreLetto.tipo)
             {
