@@ -108,12 +108,9 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
 
                     // NON FUNZIONA IL TIMING DELLO SPAWNING DEI COCCODRILLI
                     srand(time(NULL) + randomValue);
-                    if (rand() % 3 == 0)
-                        randomValue = (3000000 + rand() % 1000000); // da 3 a 4 secondi
-                    else if (rand() % 3 == 1)
-                        randomValue = (5000000 + rand() % 1000000); // da 5 a 6 secondi
-                    else
-                        randomValue = (7000000 + rand() % 1000000); // da 7 a 8 secondi
+
+                    randomValue = (3000000 * (j) + rand() % 1000000 * (j)); // da 3 a 4 secondi
+
                     usleep(randomValue + rand() % randomValue);
                     coccodrillo(filedes[SCRITTURA], pipeCocco[LETTURA], i, j, flussi[i]);
                     _exit(0);
