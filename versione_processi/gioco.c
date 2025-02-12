@@ -129,8 +129,6 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
 
         break;
     }
-
-    //  terminaGioco();
 }
 
 void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int tempoRimanente)
