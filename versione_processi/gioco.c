@@ -437,8 +437,11 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
         if (rana.pid_oggetto > 0)
             stampaSprite(rana);
 
-        if (valoreLetto.pid_oggetto > 0)
-            stampaSprite(valoreLetto);
+        if (granata.pid_oggetto > 0)
+            stampaSprite(granata);
+
+        if (proiettile.pid_oggetto > 0)
+            stampaSprite(proiettile);
 
         if (granata_eg.pid_oggetto > 0)
         {
