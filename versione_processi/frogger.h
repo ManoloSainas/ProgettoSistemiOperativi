@@ -27,14 +27,14 @@
 #define MAXGRANATE 10
 
 // velocità flusso fiume
-#define VELOCITA_FLUSSO 50000
+#define VELOCITA_FLUSSO 20000
 
 // Tempo di gioco
-#define TEMPO_TOTALE 90; // Tempo totale di gioco (per round)
+#define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
 // Gestione proiettili
 #define RICARICA_PROIETTILI 1000
-#define SPEED_PROIETTILI 80000
+#define SPEED_PROIETTILI 200000
 
 // Posizione iniziale rana
 #define RANA_X 36
