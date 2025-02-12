@@ -79,7 +79,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     // Processo proiettile
                     // mvwprintw(gioco, 5, 3, "spara destra");
                     // wrefresh(gioco);
-                    proiettile(pipeout, rana.y, rana.x, 100000, DESTRA, 'r');
+                    proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, DESTRA, 'r');
 
                     break;
                 default:

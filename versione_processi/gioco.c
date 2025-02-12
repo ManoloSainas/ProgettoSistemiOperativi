@@ -197,7 +197,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
             exit(6);
         }
 
-        danno = true; // danno con l'acqua -> false
+                danno = true; // danno con l'acqua -> false
 
         // controllo collisione acqua
 
@@ -293,7 +293,7 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
                     if (pos_granate[i].pid == granata.pid_oggetto)
                     {
                         pos_granate[i].x = granata.x;
-                        if ((granata.x > maxx + 1 && granata.direzione == DESTRA) || (granata.x < 0 && granata.direzione == SINISTRA))
+                        if ((granata.x > maxx && granata.direzione == DESTRA) || (granata.x == 0 && granata.direzione == SINISTRA))
                         {
                             if (write(pipeRana, &pos_granate[i], sizeof(posizione)) == -1)
                             {
@@ -391,7 +391,6 @@ void controlloGioco(int pipein, int pipeRana, int pipeCocco, int vita, bool tana
         /*Gestione collisione proiettili con granate */
         for (int i = 0; i < MAXGRANATE; i++)
         {
-
             if (pos_granate[i].pid != INVALID_PID)
             {
                 for (int j = 0; j < MAXCOCCODRILLI; j++)

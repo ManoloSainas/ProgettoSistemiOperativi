@@ -35,10 +35,16 @@
 // Gestione proiettili
 #define RICARICA_PROIETTILI 1000
 #define SPEED_PROIETTILI 200000
+#define SPEED_GRANATE 100000
 
 // Posizione iniziale rana
 #define RANA_X 36
 #define RANA_Y 16
+
+// Spostamento oggetti
+#define SPOSTAMENTO_RANA 1
+#define SPOSTAMENTO_COCCODRILLO 1
+#define SPOSTAMENTO_PROIETTILE 1
 
 // Dimensione campo da gioco
 #define maxy 18
@@ -90,11 +96,6 @@
 #define COLORE_PROIETTILE_COCCODRILLO 20
 
 #define INVALID_PID -500 // Valore di default per il PID
-
-// Spostamento oggetti
-#define SPOSTAMENTO_RANA 1
-#define SPOSTAMENTO_COCCODRILLO 1
-#define SPOSTAMENTO_PROIETTILE 1
 
 // direzione flusso fiume
 typedef enum

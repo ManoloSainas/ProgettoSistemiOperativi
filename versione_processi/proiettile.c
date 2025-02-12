@@ -7,6 +7,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
     proiettile.pid_oggetto = getpid();
     proiettile.y = y;
     proiettile.proiettile = getppid(); // PID del coccodrillo
+    proiettile.velocita = velocita;
     switch (tipo)
     {
     case 'c':
@@ -20,7 +21,6 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         {
             proiettile.x = x - 1;
         }
-        proiettile.velocita = velocita;
 
         // Evita di far spawnare il proiettile dentro il coccodrillo
         if (proiettile.x >= x - 1 && proiettile.x < x + COLONNE_SPRITE_COCCODRILLO + 1)
@@ -39,7 +39,6 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         {
             proiettile.x = x - 1;
         }
-        proiettile.velocita = velocita;
         break;
 
     default:
