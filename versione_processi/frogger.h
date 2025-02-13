@@ -187,6 +187,7 @@ void inizializzazionePipe(int filedes[]);
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
 
 void handler(int sig);
+void handler_rana(int sig);
 
 bool schermataFineGioco(bool esitoPartita, int score);
 bool verificaTanaStatus(bool tana_status[]);

@@ -1,9 +1,12 @@
 #include "frogger.h"
+elementoGioco ranaGiocatore;
 
 void rana(int pipeout, int pipein, corrente flussi[])
 {
     fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura della rana non bloccante
     // gestione tempo sparo
+
+    signal(SIGUSR1, handler_rana);
 
     int tempoTrascorso, tempoRicarica = 1; // Adatta la velocità di ricarica dei proiettili a seconda della dimensione dello schermo
 
@@ -12,14 +15,13 @@ void rana(int pipeout, int pipein, corrente flussi[])
     bool primoSparo = false; // true se sono state sparate le granate
     keypad(gioco, TRUE);
 
-    elementoGioco rana;
     int num_spari = 0;
-    rana.tipo = RANA;
-    rana.x = RANA_X;
-    rana.y = RANA_Y;
-    rana.pid_oggetto = getpid();
+    ranaGiocatore.tipo = RANA;
+    ranaGiocatore.x = RANA_X;
+    ranaGiocatore.y = RANA_Y;
+    ranaGiocatore.pid_oggetto = getpid();
 
-    rana.velocita = 0;
+    ranaGiocatore.velocita = 0;
     bool danno;
     clock_t start_m, stop_m, start_p, stop_p;
     long int x;
@@ -44,7 +46,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
         }
 
         // Calcolo del ritardo basato sulla velocità
-        int delay = 500000 - rana.velocita;
+        int delay = 500000 - ranaGiocatore.velocita;
         if (delay < 0)
             delay = 0;
 
@@ -52,20 +54,20 @@ void rana(int pipeout, int pipein, corrente flussi[])
         switch (ch)
         {
         case KEY_UP:
-            if (rana.y > miny + 5)
-                rana.y -= SPOSTAMENTO_RANA;
+            if (ranaGiocatore.y > miny + 5)
+                ranaGiocatore.y -= SPOSTAMENTO_RANA;
             break;
         case KEY_DOWN:
-            if (rana.y < maxy - 2)
-                rana.y += SPOSTAMENTO_RANA;
+            if (ranaGiocatore.y < maxy - 2)
+                ranaGiocatore.y += SPOSTAMENTO_RANA;
             break;
         case KEY_LEFT:
-            if (rana.x > minx)
-                rana.x -= SPOSTAMENTO_RANA;
+            if (ranaGiocatore.x > minx)
+                ranaGiocatore.x -= SPOSTAMENTO_RANA;
             break;
         case KEY_RIGHT:
-            if (rana.x < maxx - 3)
-                rana.x += SPOSTAMENTO_RANA;
+            if (ranaGiocatore.x < maxx - 3)
+                ranaGiocatore.x += SPOSTAMENTO_RANA;
             break;
         case KEY_SPACE:
 
@@ -82,7 +84,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     _exit(1);
                 case 0:
                     // Processo proiettile
-                    proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, DESTRA, 'r');
+                    proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, DESTRA, 'r');
 
                     break;
                 default:
@@ -97,7 +99,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                             _exit(1);
                         case 0:
                             // Processo proiettile
-                            proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, SINISTRA, 'r');
+                            proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, SINISTRA, 'r');
 
                             break;
                         default:
@@ -113,25 +115,25 @@ void rana(int pipeout, int pipein, corrente flussi[])
             }
         }
 
-        rana.direzione = flussi[16 - rana.y].direzione;
-        rana.velocita = flussi[16 - rana.y].velocita;
+        ranaGiocatore.direzione = flussi[16 - ranaGiocatore.y].direzione;
+        ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;
 
-        if (rana.y < maxy - 2 && rana.y > miny + 6 && ch != KEY_UP && ch != KEY_DOWN && ch != KEY_SPACE)
-        {
-            usleep(delay);
-            if (rana.direzione == DESTRA)
-            {
-                rana.x++;
-            }
-            if (rana.direzione == SINISTRA)
-            {
-                rana.x--;
-            }
-        }
+        // if (rana.y < maxy - 2 && rana.y > miny + 6 && ch != KEY_UP && ch != KEY_DOWN && ch != KEY_SPACE)
+        // {
+        //     usleep(delay);
+        //     if (rana.direzione == DESTRA)
+        //     {
+        //         rana.x++;
+        //     }
+        //     if (rana.direzione == SINISTRA)
+        //     {
+        //         rana.x--;
+        //     }
+        // }
 
-        rana.proiettile = num_spari;
+        ranaGiocatore.proiettile = num_spari;
         // Scrittura nella pipe delle informazioni della rana
-        if (write(pipeout, &rana, sizeof(elementoGioco)) == -1)
+        if (write(pipeout, &ranaGiocatore, sizeof(elementoGioco)) == -1)
         {
             perror("Errore nella scrittura sulla pipe");
             _exit(1);
@@ -145,4 +147,15 @@ void rana(int pipeout, int pipein, corrente flussi[])
     }
 
     _exit(1);
+}
+
+void handler_rana(int sig)
+{
+    if (sig == SIGUSR1)
+    {
+        if (ranaGiocatore.direzione == DESTRA)
+            ranaGiocatore.x++;
+        if (ranaGiocatore.direzione == SINISTRA)
+            ranaGiocatore.x--;
+    }
 }

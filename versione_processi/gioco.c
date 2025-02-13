@@ -141,6 +141,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
     elementoGioco valoreLetto;
     elementoGioco rana, coccodrillo, granata, proiettile;
 
+    pid_t coccodrillo_rana;
     bool danno, esiste;
     int countG = 0, countP = 0;
     pos_r.y = RANA_Y;
@@ -195,7 +196,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         danno = true; // danno con l'acqua -> false
 
         // controllo collisione acqua
-
+        coccodrillo_rana = INVALID_PID;
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
             if (pos_r.y == pos_c[i].y && pos_c[i].pid != INVALID_PID)
@@ -204,6 +205,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                 {
                     if (pos_r.x >= pos_c[i].x - 1 && pos_r.x <= pos_c[i].x + 3)
                     {
+                        coccodrillo_rana = pos_c[i].pid;
                         danno = true;
                         break;
                     }
@@ -212,6 +214,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                 {
                     if (pos_r.x < pos_c[i].x + 1 && pos_r.x > pos_c[i].x - 5)
                     {
+                        coccodrillo_rana = pos_c[i].pid;
                         danno = true;
                         break;
                     }
@@ -250,6 +253,10 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                 {
                     if (pos_c[i].pid == coccodrillo.pid_oggetto)
                     {
+                        if (pos_c[i].pid == coccodrillo_rana)
+                        {
+                            kill(rana.pid_oggetto, SIGUSR1);
+                        }
                         pos_c[i].x = coccodrillo.x;
                         pos_c[i].y = coccodrillo.y;
                         pos_c[i].proiettile = coccodrillo.proiettile;
