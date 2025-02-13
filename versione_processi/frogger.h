@@ -20,7 +20,7 @@
 // Numero dati
 #define NUM_VITE_RANA 3
 #define NUM_TANE 5
-#define NUM_COCCODRILLI_FLUSSO 3
+#define NUM_COCCODRILLI_FLUSSO 4
 #define NUM_FLUSSI_FIUME 8
 
 // quantità oggetti su schermo

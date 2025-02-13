@@ -112,7 +112,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                     close(filedes[LETTURA]);
 
                     srand(time(NULL) + i);
-                    usleep((2500000 - flussi[i].velocita + rand() % 5000000 + 2000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
+                    usleep((2500000 + rand() % 5000000 + 2000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
 
                     coccodrillo(filedes[SCRITTURA], i, j, flussi[i]);
                     _exit(0);
