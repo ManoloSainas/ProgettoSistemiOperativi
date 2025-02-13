@@ -25,8 +25,8 @@ void rana(int pipeout, int pipein, corrente flussi[])
     long int x;
     double durata_f, durata_p;
     bool puoi_sparare = true;
-    start_m = time(NULL);
-    start_p = time(NULL);
+    start_m = clock();
+    start_p = clock();
     pid_t proiettilePid;
     posizione dati_p;
 
@@ -37,16 +37,16 @@ void rana(int pipeout, int pipein, corrente flussi[])
         stop_p = clock();
         durata_p = (double)(stop_p - start_p) / CLOCKS_PER_SEC;
 
-        int delay = 500000 - rana.velocita;
-        if (delay < 0)
-            delay = 0;
-
         if (durata_p > tempoRicarica && puoi_sparare)
         {
             beep();
             puoi_sparare = false;
         }
-        stop_m = time(NULL);
+
+        // Calcolo del ritardo basato sulla velocità
+        int delay = 500000 - rana.velocita;
+        if (delay < 0)
+            delay = 0;
 
         int ch = wgetch(gioco);
         switch (ch)
@@ -68,70 +68,68 @@ void rana(int pipeout, int pipein, corrente flussi[])
                 rana.x += SPOSTAMENTO_RANA;
             break;
         case KEY_SPACE:
+
             if (num_spari <= MAXGRANATE - 2)
             {
+                num_spari++;
                 switch (fork())
                 {
                 case -1:
                     mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
+
                     perror("Errore nell'esecuzione della fork.");
+
                     _exit(1);
                 case 0:
                     // Processo proiettile
                     proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, DESTRA, 'r');
-                    _exit(0);
+
+                    break;
                 default:
-                    num_spari++;
-                    switch (fork())
+                    if (num_spari < MAXGRANATE)
                     {
-                    case -1:
-                        perror("Errore nell'esecuzione della fork.");
-                        mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
-                        _exit(1);
-                    case 0:
-                        // Processo proiettile
-                        proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, SINISTRA, 'r');
-                        _exit(0);
-                    default:
                         num_spari++;
-                        start_p = clock();
+                        switch (fork())
+                        {
+                        case -1:
+                            perror("Errore nell'esecuzione della fork.");
+                            mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
+                            _exit(1);
+                        case 0:
+                            // Processo proiettile
+                            proiettile(pipeout, rana.y, rana.x, SPEED_GRANATE, SINISTRA, 'r');
+
+                            break;
+                        default:
+
+                            start_p = clock();
+
+                            break;
+                        }
                         break;
                     }
                     break;
                 }
             }
-            break;
-        default:
-
-            int delay = 500000 - rana.velocita;
-            if (delay < 0)
-                delay = 0;
-
-            if (rana.y < maxy - 2 && rana.y > miny + 6 && ch != KEY_UP && ch != KEY_DOWN)
-            {
-                if (difftime(stop_m, start_m) >= delay / (10 * 7))
-                {
-                    if (rana.direzione == DESTRA)
-                    {
-                        rana.x++;
-                    }
-                    if (rana.direzione == SINISTRA)
-                    {
-                        rana.x--;
-                    }
-                    start_m = time(NULL);
-                }
-            }
-            break;
         }
 
         rana.direzione = flussi[16 - rana.y].direzione;
         rana.velocita = flussi[16 - rana.y].velocita;
 
-        // Calcolo del ritardo basato sulla velocità
+        if (rana.y < maxy - 2 && rana.y > miny + 6 && ch != KEY_UP && ch != KEY_DOWN && ch != KEY_SPACE)
+        {
+            usleep(delay);
+            if (rana.direzione == DESTRA)
+            {
+                rana.x++;
+            }
+            if (rana.direzione == SINISTRA)
+            {
+                rana.x--;
+            }
+        }
 
         rana.proiettile = num_spari;
-
         // Scrittura nella pipe delle informazioni della rana
         if (write(pipeout, &rana, sizeof(elementoGioco)) == -1)
         {
@@ -140,12 +138,9 @@ void rana(int pipeout, int pipein, corrente flussi[])
         }
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
-            if (kill(dati_p.pid, 0) == 0)
-            {
-                beep();
-                chiudiProcessi(dati_p.pid);
-                num_spari--;
-            }
+            beep();
+            chiudiProcessi(dati_p.pid);
+            num_spari--;
         }
     }
 
