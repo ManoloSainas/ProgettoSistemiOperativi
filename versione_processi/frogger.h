@@ -31,7 +31,7 @@
 #define VELOCITA_FLUSSO 20000
 
 // Tempo di gioco
-#define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
+#define TEMPO_TOTALE 90; // Tempo totale di gioco (per round)
 
 // Gestione proiettili
 #define RICARICA_PROIETTILI 1
