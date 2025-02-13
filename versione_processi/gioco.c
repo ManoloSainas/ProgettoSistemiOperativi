@@ -96,9 +96,9 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
         _exit(0);
         break;
     default:
-        for (int i = 1; i <= 1; i++)
+        for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
-            for (int j = 1; j <= 1; j++)
+            for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
             // coccodrilli_flusso[i - 1]
             {
                 pid_gioco = fork();
@@ -193,7 +193,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             exit(6);
         }
 
-        danno = true; // danno con l'acqua -> false
+        danno = false; // danno con l'acqua -> false
 
         // controllo collisione acqua
         coccodrillo_rana = INVALID_PID;
@@ -420,7 +420,8 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             pos_proiettili[j].pid = INVALID_PID;
                             granata_eg.pid_oggetto = INVALID_PID;
                             proiettile_eg.pid_oggetto = INVALID_PID;
-
+                            proiettile.pid_oggetto = INVALID_PID;
+                            granata.pid_oggetto = INVALID_PID;
                             countP--;
                             countG--;
 
@@ -463,9 +464,9 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // mvwprintw(gioco, 3, 3, "pid_granata s?:  %6d", pos_granate[0].pid);
         // mvwprintw(gioco, 4, 3, "pid_granata d?:  %6d", pos_granate[1].pid);
         // utile per debug, stampa il numero di granate e proiettili presenti
-        mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
-        // mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
-        mvwprintw(gioco, 3, 3, "numProiettiliRana:  %2d", rana.proiettile);
+        // mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
+        mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
+        // mvwprintw(gioco, 3, 3, "numProiettiliRana:  %2d", rana.proiettile);
         wrefresh(gioco);
 
         // controllo interazione tane
@@ -545,7 +546,6 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (pos_proiettili[i].pid != INVALID_PID)
                 {
-                    beep();
                     danno = false;
                     break;
                 }
@@ -561,6 +561,8 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 
     } while (true);
 }
+
+// seconda manche il proiettile non si elimina graficamente e il pid non viene killato
 
 void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein)
 {

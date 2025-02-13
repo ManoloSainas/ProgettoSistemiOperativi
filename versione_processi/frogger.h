@@ -25,13 +25,13 @@
 
 // quantità oggetti su schermo
 #define MAXCOCCODRILLI 40
-#define MAXGRANATE 100
+#define MAXGRANATE 12
 
 // velocità flusso fiume
 #define VELOCITA_FLUSSO 20000
 
 // Tempo di gioco
-#define TEMPO_TOTALE 120; // Tempo totale di gioco (per round)
+#define TEMPO_TOTALE 60; // Tempo totale di gioco (per round)
 
 // Gestione proiettili
 #define RICARICA_PROIETTILI 1
