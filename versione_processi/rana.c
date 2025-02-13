@@ -79,7 +79,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                 case -1:
                     mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
 
-                    perror("Errore nell'esecuzione della fork.");
+                    perror("Errore nell'esecuzione della fork sparo sinistra.");
 
                     _exit(1);
                 case 0:
@@ -94,7 +94,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                         switch (fork())
                         {
                         case -1:
-                            perror("Errore nell'esecuzione della fork.");
+                            perror("Errore nell'esecuzione della fork sparo destra");
                             mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
                             _exit(1);
                         case 0:
@@ -135,14 +135,16 @@ void rana(int pipeout, int pipein, corrente flussi[])
         // Scrittura nella pipe delle informazioni della rana
         if (write(pipeout, &ranaGiocatore, sizeof(elementoGioco)) == -1)
         {
-            perror("Errore nella scrittura sulla pipe");
+            perror("Errore nella scrittura sulla pipe rana->main");
             _exit(1);
         }
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
-
-            chiudiProcessi(dati_p.pid);
-            num_spari--;
+            if (kill(dati_p.pid, 0) == 0)
+            {
+                chiudiProcessi(dati_p.pid);
+                num_spari--;
+            }
         }
     }
 

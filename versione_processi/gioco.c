@@ -548,7 +548,6 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (pos_proiettili[i].pid != INVALID_PID)
                 {
-                    beep();
                     danno = false;
                     break;
                 }
