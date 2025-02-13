@@ -77,7 +77,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
 
         if (flag_muro)
         {
-            beep();
+
             if (coccodrillo.direzione == DESTRA)
                 coccodrillo.x = minx - 2;
 
@@ -100,7 +100,7 @@ void handler(int sig)
     }
     if (sig == SIGUSR2)
     {
-        beep();
+
         flag_muro = true;
     }
 }

@@ -41,7 +41,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
 
         if (durata_p > tempoRicarica && puoi_sparare)
         {
-            beep();
+
             puoi_sparare = false;
         }
 
@@ -140,7 +140,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
         }
         if (read(pipein, &dati_p, sizeof(posizione)) > 0)
         {
-            beep();
+
             chiudiProcessi(dati_p.pid);
             num_spari--;
         }

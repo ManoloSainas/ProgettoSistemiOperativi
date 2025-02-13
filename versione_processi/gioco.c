@@ -412,6 +412,8 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             proiettile_eg.x = pos_proiettili[j].x;
                             proiettile_eg.y = pos_proiettili[j].y;
 
+                            beep();
+
                             cancellaProiettile(granata_eg);
                             cancellaProiettile(proiettile_eg);
                             wrefresh(gioco);
@@ -546,6 +548,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (pos_proiettili[i].pid != INVALID_PID)
                 {
+                    beep();
                     danno = false;
                     break;
                 }

@@ -498,6 +498,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[])
             {
                 if (pos_proiettili[i].pid != INVALID_PID)
                 {
+
                     danno = false;
                     break;
                 }
