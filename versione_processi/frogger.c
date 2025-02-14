@@ -95,32 +95,31 @@ int main()
                     case -1:
                         mvwprintw(gioco, 1, 1, "errore");
                         break;
-                    case 6:
+                    case 6: // danno
                         punteggio -= vite * 5;
                         vite--;
                         break;
-                    case 1:
+                    case 1: // prima tana chiusa
                         tana_status[0] = false;
                         punteggio += vite * 10;
                         break;
-                    case 2:
+                    case 2: // seconda tana chiusa
                         tana_status[1] = false;
                         punteggio += vite * 10;
                         break;
-                    case 3:
+                    case 3: // terza tana chiusa
                         tana_status[2] = false;
                         punteggio += vite * 10;
                         break;
-                    case 4:
+                    case 4: // quarta tana chiusa
                         tana_status[3] = false;
                         punteggio += vite * 10;
                         break;
-                    case 5:
+                    case 5: // quinta tana chiusa
                         tana_status[4] = false;
                         punteggio += vite * 10;
                         break;
                     default:
-                        mvwprintw(gioco, 4, 1, "Figlio terminato.");
                         break;
                     }
                 }
