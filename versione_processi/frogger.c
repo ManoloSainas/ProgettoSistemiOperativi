@@ -123,7 +123,6 @@ int main()
                         break;
                     }
                 }
-
                 wrefresh(gioco);
             }
         }
