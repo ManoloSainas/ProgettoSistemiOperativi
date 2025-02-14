@@ -1,12 +1,17 @@
 #include "frogger.h"
 
+/*
+proiettili e granate si comportano allo stesso modo nel processo, la distinzione di tipo serve principalmente a separare
+la natura del processo e permettere una gestione più semplice in controllo gioco
+*/
+
 void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo)
 {
     elementoGioco proiettile;
     proiettile.direzione = direzione;
     proiettile.pid_oggetto = getpid();
     proiettile.y = y;
-    proiettile.proiettile = getppid(); // PID del coccodrillo
+    proiettile.proiettile = getppid(); // PID del coccodrillo o della rana
     proiettile.velocita = velocita;
 
     switch (tipo)
