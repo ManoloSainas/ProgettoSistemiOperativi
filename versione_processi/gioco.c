@@ -327,7 +327,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         {
                             if (pos_granate[i].pid != INVALID_PID) // eliminazione granata inviando alla rana un messaggio su pipe
                             {
-                                if (write(pipeRana, &pos_granate[i].pid, sizeof(posizione)) == -1)
+                                if (write(pipeRana, &pos_granate[i].pid, sizeof(pid_t)) == -1)
                                 {
                                     perror("Errore nella scrittura sulla pipe");
                                     _exit(6);
@@ -363,7 +363,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             t_posg.pid = granata.pid_oggetto;
                             if (t_posg.pid != INVALID_PID)
                             {
-                                if (write(pipeRana, &t_posg.pid, sizeof(posizione)) == -1)
+                                if (write(pipeRana, &t_posg.pid, sizeof(pid_t)) == -1)
                                 {
                                     perror("Errore nella scrittura sulla pipe");
                                     _exit(6);
@@ -482,7 +482,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             // viene inviato un messaggio attraverso la pipe della rana per eliminare la granata dopo la collisione
                             if (t_posg.pid != INVALID_PID)
                             {
-                                if (write(pipeRana, &t_posg.pid, sizeof(posizione)) == -1)
+                                if (write(pipeRana, &t_posg.pid, sizeof(pid_t)) == -1)
                                 {
                                     perror("Errore nella scrittura sulla pipe");
                                     _exit(6);
@@ -638,7 +638,7 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana
     {
         if (pos_granate[i].pid != INVALID_PID)
         {
-            if (write(pipeRana, &pos_granate[i].pid, sizeof(posizione)) == -1)
+            if (write(pipeRana, &pos_granate[i].pid, sizeof(pid_t)) == -1)
             {
                 perror("Errore nella scrittura sulla pipe");
                 _exit(6);
