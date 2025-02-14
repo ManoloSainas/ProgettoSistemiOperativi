@@ -1,6 +1,6 @@
 #include "frogger.h"
 
-// Function to initialize a pipe
+// Funzione per inizializzare le pipe
 void inizializzazionePipe(int filedes[])
 {
     if (pipe(filedes) == -1)
@@ -10,6 +10,7 @@ void inizializzazionePipe(int filedes[])
     }
 }
 
+// Funzione per chiudere i processi
 void chiudiProcessi(pid_t pid)
 {
 

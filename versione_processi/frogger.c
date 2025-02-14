@@ -4,6 +4,7 @@
 int minx, miny;
 WINDOW *gioco;
 
+// se tutte le tane sono chiuse (false) il gioco termina
 bool verificaTanaStatus(bool tana_status[])
 {
     for (int i = 0; i < NUM_TANE; i++)
@@ -18,8 +19,9 @@ bool verificaTanaStatus(bool tana_status[])
 
 bool schermataFineGioco(bool esitoPartita, int score)
 {
-    int risposta;
+    int risposta; // risposta dell'utente alla domanda se vuole rigiocare
 
+    // stampa della schermata fine gioco
     wclear(gioco);
     esitoPartita ? mvwprintw(gioco, 1, 2, "HAI VINTO!") : mvwprintw(gioco, 1, 2, "HAI PERSO!");
     mvwprintw(gioco, 2, 2, "Score: %d", score);
@@ -47,27 +49,30 @@ bool schermataFineGioco(bool esitoPartita, int score)
 
 int main()
 {
-    int status;
+    int status; // status di uscita di controlloGioco
     pid_t pid;
-    bool tana_status[NUM_TANE];
-    bool esitoPartita;
+    bool tana_status[NUM_TANE]; // array che tiene traccia dello stato delle tane
+    bool esitoPartita;          // esito della partita
     int punteggio;
     int vite;
 
     inizializzazioneSchermo();
-    srand(time(NULL));
+
     do
     {
+        // inizializzazzione vite e punti per una nuova partita
         vite = NUM_VITE_RANA;
         punteggio = 0;
 
+        // inizializzazione status delle tane a true, quando chiuse viene impostata a false
         for (int i = 0; i < NUM_TANE; i++)
         {
             tana_status[i] = true;
         }
+
+        // finché ci sono vite e tane aperte
         while (vite > 0 && verificaTanaStatus(tana_status))
         {
-
             pid = fork();
             switch (pid)
             {
@@ -76,13 +81,15 @@ int main()
                 _exit(1);
                 break;
             case 0:
-                avviaGioco(vite, tana_status, punteggio);
+                avviaGioco(vite, tana_status, punteggio); // avvia il gioco e crea i vari processi
                 break;
             default:
+                // aspetta la chiusura del processo figlio
                 waitpid(pid, &status, 0);
 
-                if (WIFEXITED(status) > 0)
+                if (WIFEXITED(status) > 0) // controllo uscita corretta da controlloGioco
                 {
+                    // controllo del valore di uscita di controlloGioco per aggiornare il punteggio, le vite e gestire la chiusura delle tane
                     switch (WEXITSTATUS(status))
                     {
                     case -1:
@@ -122,6 +129,7 @@ int main()
             }
         }
 
+        // se le vite sono terminate la partita è persa
         if (vite > 0)
         {
             esitoPartita = true;
@@ -130,7 +138,7 @@ int main()
         {
             esitoPartita = false;
         }
-    } while (schermataFineGioco(esitoPartita, punteggio));
-    terminaGioco();
+    } while (schermataFineGioco(esitoPartita, punteggio)); // continua finchè l'utente vuole rigiocare
+    terminaGioco(); // pulisce e chiude la finestra
     return 0;
 }

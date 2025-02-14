@@ -20,7 +20,6 @@ void graficaGioco(bool tana_status[], int punteggio, int vita)
     // stampa delle vite, del punteggio e del timer
     wattron(gioco, COLOR_PAIR(COLORE_ROSSO));
     mvwprintw(gioco, 1, 9, "%d", vita);
-    // mvwprintw(gioco, 1, maxx / 2 - 3, "%d", tempoRimanente);
     mvwprintw(gioco, 1, maxx - 12, "%d", punteggio);
     wattroff(gioco, COLOR_PAIR(COLORE_ROSSO));
 
@@ -62,7 +61,7 @@ void graficaGioco(bool tana_status[], int punteggio, int vita)
     }
     wattroff(gioco, COLOR_PAIR(SFONDO_TANE));
 
-    // Stampa delle tane, equidistanti tra loro, nella riga di coordinate y=maxy-12
+    // Stampa delle tane, equidistanti tra loro, nella riga di coordinate y=maxy-12 e visualizzazione delle tane chiuse
     wattron(gioco, COLOR_PAIR(COLORE_TANE));
 
     tana_status[0] == true ? mvwprintw(gioco, posTane[0].y, posTane[0].x, "  ") : mvwprintw(gioco, posTane[0].y, posTane[0].x, "XX");
@@ -85,8 +84,7 @@ void stampaSprite(elementoGioco elemento)
     {
     case RANA:
         switch (elemento.y)
-        // se la y è 6 (tana), 7 o 16 allora lo sfondo della rana dev'essere uguale al colore dell'argine
-        // altrimenti vuol dire che la rana è sopra un coccodrillo e cambierà sfondo
+        // cambia lo sfondo della rana in base alla zona del gioco in cui si trova
         {
         case (6):
             wattron(gioco, COLOR_PAIR(COLORE_RANA_TANA));

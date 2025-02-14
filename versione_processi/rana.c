@@ -1,57 +1,31 @@
 #include "frogger.h"
 elementoGioco ranaGiocatore;
-
+/*
+prende in input, una pipe in scrittura, una in lettura e i flussi di corrente
+*/
 void rana(int pipeout, int pipein, corrente flussi[])
 {
     fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura della rana non bloccante
-    // gestione tempo sparo
 
-    signal(SIGUSR1, handler_rana);
+    signal(SIGUSR1, handler_rana); // gestione segnale per lo spostamento del coccodrillo con rana sopra
 
-    int tempoTrascorso, tempoRicarica = 1; // Adatta la velocità di ricarica dei proiettili a seconda della dimensione dello schermo
-
-    tempoTrascorso = tempoRicarica + 1; // si aggiunge uno perchè altrimenti il primo proiettile non verrebbe sparato
-
-    bool primoSparo = false; // true se sono state sparate le granate
     keypad(gioco, TRUE);
 
-    int num_spari = 0;
+    int num_spari = 0; // contatore per la gestione della quantità di spari
+
+    // inizializzazione dell'elemento rana
     ranaGiocatore.tipo = RANA;
     ranaGiocatore.x = RANA_X;
     ranaGiocatore.y = RANA_Y;
     ranaGiocatore.pid_oggetto = getpid();
-
     ranaGiocatore.velocita = 0;
-    bool danno;
-    clock_t start_m, stop_m, start_p, stop_p;
-    long int x;
-    double durata_f, durata_p;
-    bool puoi_sparare = true;
-    start_m = clock();
-    start_p = clock();
-    pid_t proiettilePid;
-    posizione dati_p;
+
+    pid_t dati_p; // variabile che viene riscritta nella pipe di lettura per la gestione delle collisioni delle granate
 
     while (1)
     {
-        primoSparo = true;
-
-        stop_p = clock();
-        durata_p = (double)(stop_p - start_p) / CLOCKS_PER_SEC;
-
-        if (durata_p > tempoRicarica && puoi_sparare)
-        {
-
-            puoi_sparare = false;
-        }
-
-        // Calcolo del ritardo basato sulla velocità
-        int delay = 500000 - ranaGiocatore.velocita;
-        if (delay < 0)
-            delay = 0;
-
-        int ch = wgetch(gioco);
-        switch (ch)
+        // Gestione movimento rana
+        switch (wgetch(gioco))
         {
         case KEY_UP:
             if (ranaGiocatore.y > miny + 5)
@@ -69,43 +43,37 @@ void rana(int pipeout, int pipein, corrente flussi[])
             if (ranaGiocatore.x < maxx - 3)
                 ranaGiocatore.x += SPOSTAMENTO_RANA;
             break;
+        // Gestione sparo granate
         case KEY_SPACE:
 
-            if (num_spari <= MAXGRANATE - 2)
+            if (num_spari <= MAXGRANATE - 2) // controllo per la quantità di spari
             {
                 num_spari++;
+                // creaziobe processo proiettile sinistro
                 switch (fork())
                 {
                 case -1:
-                    mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
-
                     perror("Errore nell'esecuzione della fork sparo sinistra.");
-
                     _exit(1);
                 case 0:
                     // Processo proiettile
                     proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, DESTRA, 'r');
-
                     break;
                 default:
                     if (num_spari < MAXGRANATE)
                     {
                         num_spari++;
+                        // creazione processo proiettile destro
                         switch (fork())
                         {
                         case -1:
                             perror("Errore nell'esecuzione della fork sparo destra");
-                            mvwprintw(gioco, 3, maxx - 10, "spara sinistra fallito");
                             _exit(1);
                         case 0:
                             // Processo proiettile
                             proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, SINISTRA, 'r');
-
                             break;
                         default:
-
-                            start_p = clock();
-
                             break;
                         }
                         break;
@@ -115,34 +83,24 @@ void rana(int pipeout, int pipein, corrente flussi[])
             }
         }
 
-        ranaGiocatore.direzione = flussi[16 - ranaGiocatore.y].direzione;
-        ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;
+        ranaGiocatore.direzione = flussi[16 - ranaGiocatore.y].direzione; // direzione del flusso
+        ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;   // velocità del flusso
 
-        // if (rana.y < maxy - 2 && rana.y > miny + 6 && ch != KEY_UP && ch != KEY_DOWN && ch != KEY_SPACE)
-        // {
-        //     usleep(delay);
-        //     if (rana.direzione == DESTRA)
-        //     {
-        //         rana.x++;
-        //     }
-        //     if (rana.direzione == SINISTRA)
-        //     {
-        //         rana.x--;
-        //     }
-        // }
+        ranaGiocatore.proiettile = num_spari; // sfruttiamo la sezione inuttilizzata per debugging e controlli aggiuntivi
 
-        ranaGiocatore.proiettile = num_spari;
         // Scrittura nella pipe delle informazioni della rana
         if (write(pipeout, &ranaGiocatore, sizeof(elementoGioco)) == -1)
         {
             perror("Errore nella scrittura sulla pipe rana->main");
+
             _exit(1);
         }
-        if (read(pipein, &dati_p, sizeof(posizione)) > 0)
+        // Lettura dalla pipe dei dati, serve per cancellare le granate (collisioni o fine manche)
+        if (read(pipein, &dati_p, sizeof(pid_t)) > 0)
         {
-            if (kill(dati_p.pid, 0) == 0)
+            if (kill(dati_p, 0) == 0)
             {
-                chiudiProcessi(dati_p.pid);
+                chiudiProcessi(dati_p);
                 num_spari--;
             }
         }
@@ -151,6 +109,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
     _exit(1);
 }
 
+// movimento automatico della rana che si trova sopra un coccodrillo
 void handler_rana(int sig)
 {
     if (sig == SIGUSR1)

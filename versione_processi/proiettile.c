@@ -6,9 +6,10 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
     proiettile.direzione = direzione;
     proiettile.pid_oggetto = getpid();
     proiettile.y = y;
-    proiettile.proiettile = getppid(); // PID del coccodrillo
+    proiettile.proiettile = getppid(); // PID del processo padre, serve ad identificare principalmente il coccodrillo
     proiettile.velocita = velocita;
 
+    // In base al tipo di proiettile, determina il comportamento("c" -> proiettile coccodrillo, "r" -> granata rana)
     switch (tipo)
     {
     case 'c':
@@ -16,18 +17,13 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
 
         if (direzione == DESTRA)
         {
-            proiettile.x = x + COLONNE_SPRITE_COCCODRILLO;
+            proiettile.x = x + COLONNE_SPRITE_COCCODRILLO - 1;
         }
         if (direzione == SINISTRA)
         {
-            proiettile.x = x - 1;
+            proiettile.x = x - 2;
         }
 
-        // Evita di far spawnare il proiettile dentro il coccodrillo
-        if (proiettile.x >= x - 1 && proiettile.x < x + COLONNE_SPRITE_COCCODRILLO + 1)
-        {
-            proiettile.x = (direzione == DESTRA) ? x + COLONNE_SPRITE_COCCODRILLO : x - COLONNE_SPRITE_COCCODRILLO;
-        }
         break;
 
     case 'r':
@@ -46,11 +42,12 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         break;
     }
 
+    // Invia il proiettile a controlloGioco
     write(pipeout, &proiettile, sizeof(elementoGioco));
 
     while (1)
     {
-        usleep(proiettile.velocita);
+        usleep(proiettile.velocita); // Aggiorna la posizione del proiettile ogni tot millisecondi
 
         switch (proiettile.direzione)
         {
@@ -63,7 +60,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         default:
             break;
         }
-
+        // Invia il proiettile a controlloGioco
         write(pipeout, &proiettile, sizeof(elementoGioco));
     }
     _exit(1);
