@@ -20,7 +20,7 @@
 // Numero dati
 #define NUM_VITE_RANA 3
 #define NUM_TANE 5
-#define NUM_COCCODRILLI_FLUSSO 4
+#define NUM_COCCODRILLI_FLUSSO 5
 #define NUM_FLUSSI_FIUME 8
 
 // quantità oggetti su schermo
@@ -49,7 +49,7 @@
 
 // Dimensione campo da gioco
 #define maxy 18
-#define maxx 72
+#define maxx 80
 
 // Dimensione Sprite
 #define RIGHE_SPRITE_RANA 1
