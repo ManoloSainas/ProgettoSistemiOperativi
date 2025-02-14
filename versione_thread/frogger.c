@@ -4,9 +4,10 @@
 int minx, miny;
 WINDOW *gioco;
 
+// se tutte le tane sono chiuse (false) il gioco termina
 bool verificaTanaStatus(bool tana_status[])
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < NUM_TANE; i++)
     {
         if (tana_status[i])
         {
@@ -18,8 +19,9 @@ bool verificaTanaStatus(bool tana_status[])
 
 bool schermataFineGioco(bool esitoPartita, int score)
 {
-    int risposta;
+    int risposta; // risposta dell'utente alla domanda se vuole rigiocare
 
+    // stampa della schermata fine gioco
     wclear(gioco);
     esitoPartita ? mvwprintw(gioco, 1, 2, "HAI VINTO!") : mvwprintw(gioco, 1, 2, "HAI PERSO!");
     mvwprintw(gioco, 2, 2, "Score: %d", score);
@@ -45,84 +47,88 @@ bool schermataFineGioco(bool esitoPartita, int score)
     }
 }
 
-void *avviaGiocoThread(void *arg)
-{
-    // Extract arguments
-    int *args = (int *)arg;
-    int vita = args[0];
-    bool *tana_status = (bool *)args[1];
-    int punteggio = args[2];
-
-    int status = avviaGioco(vita, tana_status, punteggio);
-    return (void *)(intptr_t)status;
-}
-
 int main()
 {
-    int status;
-    pthread_t thread;
-    bool tana_status[5];
-    bool esitoPartita;
+    int status; // status di uscita di controlloGioco
+    pid_t pid;
+    bool tana_status[NUM_TANE]; // array che tiene traccia dello stato delle tane
+    bool esitoPartita;          // esito della partita
     int punteggio;
-    int vita;
+    int vite;
+
     inizializzazioneSchermo();
-    srand(time(NULL));
+
     do
     {
-        vita = 3;
+        // inizializzazzione vite e punti per una nuova partita
+        vite = NUM_VITE_RANA;
         punteggio = 0;
 
-        for (int i = 0; i < 5; i++)
+        // inizializzazione status delle tane a true, quando chiuse viene impostata a false
+        for (int i = 0; i < NUM_TANE; i++)
         {
             tana_status[i] = true;
         }
-        while (vita > 0 && verificaTanaStatus(tana_status))
+
+        // finché ci sono vite e tane aperte
+        while (vite > 0 && verificaTanaStatus(tana_status))
         {
-            int args[3] = {vita, (int)tana_status, punteggio};
-            pthread_create(&thread, NULL, avviaGiocoThread, (void *)args);
-            pthread_join(thread, (void **)&status);
-
-            if (status >= 0)
+            pid = fork();
+            switch (pid)
             {
-                switch (status)
-                {
-                case -1:
-                    mvwprintw(gioco, 1, 1, "errore");
-                    break;
-                case 6:
-                    punteggio -= vita * 5;
-                    vita--;
-                    break;
-                case 1:
-                    tana_status[0] = false;
-                    punteggio += vita * 10;
-                    break;
-                case 2:
-                    tana_status[1] = false;
-                    punteggio += vita * 10;
-                    break;
-                case 3:
-                    tana_status[2] = false;
-                    punteggio += vita * 10;
-                    break;
-                case 4:
-                    tana_status[3] = false;
-                    punteggio += vita * 10;
-                    break;
-                case 5:
-                    tana_status[4] = false;
-                    punteggio += vita * 10;
-                    break;
-                default:
-                    mvwprintw(gioco, 4, 1, "Thread terminato.");
-                    break;
-                }
-            }
+            case -1:
+                perror("Errore nella creazione del processo gioco");
+                _exit(1);
+                break;
+            case 0:
+                avviaGioco(vite, tana_status, punteggio); // avvia il gioco e crea i vari processi
+                break;
+            default:
+                // aspetta la chiusura del processo figlio
+                waitpid(pid, &status, 0);
 
-            wrefresh(gioco);
+                if (WIFEXITED(status) > 0) // controllo uscita corretta da controlloGioco
+                {
+                    // controllo del valore di uscita di controlloGioco per aggiornare il punteggio, le vite e gestire la chiusura delle tane
+                    switch (WEXITSTATUS(status))
+                    {
+                    case -1:
+                        mvwprintw(gioco, 1, 1, "errore");
+                        break;
+                    case 6: // danno
+                        punteggio -= vite * 5;
+                        vite--;
+                        break;
+                    case 1: // prima tana chiusa
+                        tana_status[0] = false;
+                        punteggio += vite * 10;
+                        break;
+                    case 2: // seconda tana chiusa
+                        tana_status[1] = false;
+                        punteggio += vite * 10;
+                        break;
+                    case 3: // terza tana chiusa
+                        tana_status[2] = false;
+                        punteggio += vite * 10;
+                        break;
+                    case 4: // quarta tana chiusa
+                        tana_status[3] = false;
+                        punteggio += vite * 10;
+                        break;
+                    case 5: // quinta tana chiusa
+                        tana_status[4] = false;
+                        punteggio += vite * 10;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                wrefresh(gioco);
+            }
         }
 
-        if (vita > 0)
+        // se le vite sono terminate la partita è persa
+        if (vite > 0)
         {
             esitoPartita = true;
         }
@@ -130,7 +136,7 @@ int main()
         {
             esitoPartita = false;
         }
-    } while (schermataFineGioco(esitoPartita, punteggio));
-    terminaGioco();
+    } while (schermataFineGioco(esitoPartita, punteggio)); // continua finchè l'utente vuole rigiocare
+    terminaGioco(); // pulisce e chiude la finestra
     return 0;
 }
