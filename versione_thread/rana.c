@@ -3,9 +3,8 @@ elementoGioco ranaGiocatore;
 /*
 prende in input, una pipe in scrittura, una in lettura e i flussi di corrente
 */
-void rana(int pipeout, int pipein, corrente flussi[])
+void *rana(corrente flussi[])
 {
-    fcntl(pipein, F_SETFL, O_NONBLOCK); // pipe in scrittura della rana non bloccante
 
     signal(SIGUSR1, handler_rana); // gestione segnale per lo spostamento del coccodrillo con rana sopra
 
@@ -17,7 +16,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
     ranaGiocatore.tipo = RANA;
     ranaGiocatore.x = RANA_X;
     ranaGiocatore.y = RANA_Y;
-    ranaGiocatore.pid_oggetto = getpid();
+    ranaGiocatore.thread_oggetto = pthread_self();
     ranaGiocatore.velocita = 0;
 
     pid_t dati_p; // variabile che viene riscritta nella pipe di lettura per la gestione delle collisioni delle granate

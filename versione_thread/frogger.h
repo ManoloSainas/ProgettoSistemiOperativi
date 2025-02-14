@@ -21,6 +21,8 @@
 
 // Macro
 
+#define DIM_BUFFER 250 // Dimensione del buffer circolare con l'ausilio dei threads
+
 // Numero dati
 #define NUM_VITE_RANA 3
 #define NUM_TANE 5
@@ -105,6 +107,16 @@
 
 #define INVALID_PID -500 // Valore di default per il PID
 
+// Indici per l'utilizzo del buffer
+int indexAggiunta, indexRimozione;
+
+// Semafori e mutex per il coordinamento dei thread
+pthread_mutex_t mutex;
+sem_t bufferPieno, bufferVuoto;
+
+elementoGioco buffer[DIM_BUFFER]; // Buffer
+elementoGioco oggettoPreso;       // oggetto che viene preso e rimosso dal buffer
+
 // direzione flusso fiume
 typedef enum
 {
@@ -130,7 +142,7 @@ typedef struct elementoGioco
     tipoOggetto tipo;
     int x;
     int y;
-    int pid_oggetto;
+    pthread_t thread_oggetto;
     int velocita;
     DirezioneFlusso direzione;
     pid_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
@@ -188,7 +200,7 @@ void cancellaSprite(elementoGioco elemento);
 void cancellaProiettile(elementoGioco elemento);
 
 // Funzioni per la gestione dei processi
-void rana(int pipeout, int pipein, corrente flussi[]);
+void *rana(corrente flussi[]);
 void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso);
 void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo);
 void handler_coccodrillo(int sig); // gestione segnali coccodrillo
