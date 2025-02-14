@@ -20,7 +20,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 {
     // srand per renderlo davvero random
     srand(time(NULL));
-    
+
     // inizializzazione flussi del fiume
     flussi[0].direzione = NESSUNA;
     flussi[NUM_FLUSSI_FIUME + 2].direzione = NESSUNA;
@@ -62,15 +62,19 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 void avviaGioco(int vita, bool tana_status[], int punteggio)
 {
 
-    //srand(time(NULL));
+    srand(time(NULL));
     int tempoRimanente = TEMPO_TOTALE; // Inizializzazione del tempo rimanente
-    double durata_cocco, fine_cocco, start_cocco;
+
     int filedes[2], pipeRana[2];
     int pid_gioco;
-    int coccodrilli_flusso[NUM_FLUSSI_FIUME]={NUM_COCCODRILLI_FLUSSO};
+    int coccodrilli_flusso[NUM_FLUSSI_FIUME], tot_coc = 0;
     corrente flussi[NUM_FLUSSI_FIUME + 3];
 
-    
+    for (int i = 0; i < NUM_FLUSSI_FIUME; i++)
+    {
+        coccodrilli_flusso[i] = NUM_COCCODRILLI_FLUSSO; // Creazione di 5 coccodrilli per flusso
+        tot_coc += coccodrilli_flusso[i];
+    }
 
     graficaGioco(tana_status, punteggio, vita);
     gestioneFlussi(flussi, coccodrilli_flusso);
@@ -78,6 +82,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
     inizializzazionePipe(pipeRana);
 
     pid_gioco = fork();
+
     switch (pid_gioco)
     {
     case -1:
@@ -85,7 +90,6 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
         _exit(1);
         break;
     case 0:
-    //processo rana
         close(filedes[LETTURA]);
         close(pipeRana[SCRITTURA]);
         rana(filedes[SCRITTURA], pipeRana[LETTURA], flussi);
@@ -95,9 +99,8 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
             for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
-           
+            // coccodrilli_flusso[i - 1]
             {
-                //processi coccodrilli
                 pid_gioco = fork();
                 switch (pid_gioco)
                 {
@@ -107,17 +110,10 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                     break;
                 case 0:
                     close(filedes[LETTURA]);
-             start_cocco=time(NULL);
-             //spawn randomico dei coccodrilli nello stesso flusso in modo che i flussi in fondo arrivino prima
-                            srand(time(NULL) + getpid());
-                                durata_cocco=rand()%3 - ((rand()%1000 )/1000 ) + 1 ;
-                     while(true){
-                        fine_cocco=time(NULL);
-                        if (difftime(fine_cocco, start_cocco) >= (durata_cocco+0.3*j)+((12)*0.5)*(j-1)){
-            break;
-        }
-                     }   
-                        //usleep((2500000 + (rand() % 2500000 )+ 3000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
+
+                    srand(time(NULL) + i);
+                    usleep((2500000 + rand() % 5000000 + 2000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
+
                     coccodrillo(filedes[SCRITTURA], i, j, flussi[i]);
                     _exit(0);
                     break;
@@ -126,7 +122,6 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                 }
             }
         }
-
 
         close(filedes[SCRITTURA]);
         close(pipeRana[LETTURA]);
@@ -140,9 +135,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 {
     time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
 
-    
-    elementoGioco granata_eg, proiettile_eg; //
-
+    elementoGioco granata_eg, proiettile_eg;
     posizione pos_r, pos_c[MAXCOCCODRILLI], pos_granate[MAXGRANATE], pos_proiettili[MAXCOCCODRILLI], t_posg;
     int score = 0;
     elementoGioco valoreLetto;
@@ -241,10 +234,10 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 
         if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
         {
-           if(rana.pid_oggetto>0) cancellaSprite(rana);
-            if(coccodrillo.pid_oggetto>0)cancellaSprite(coccodrillo);
-            if(granata.pid_oggetto>0)cancellaSprite(granata);
-            if(proiettile.pid_oggetto>0)cancellaSprite(proiettile);
+            cancellaSprite(rana);
+            cancellaSprite(coccodrillo);
+            cancellaSprite(granata);
+            cancellaSprite(proiettile);
 
             switch (valoreLetto.tipo)
             {
@@ -474,7 +467,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // mvwprintw(gioco, 4, 3, "pid_granata d?:  %6d", pos_granate[1].pid);
         // utile per debug, stampa il numero di granate e proiettili presenti
         // mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
-        //mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
+        mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
         // mvwprintw(gioco, 3, 3, "numProiettiliRana:  %2d", rana.proiettile);
         wrefresh(gioco);
 
