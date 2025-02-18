@@ -49,12 +49,11 @@ bool schermataFineGioco(bool esitoPartita, int score)
 
 int main()
 {
-    int status; // status di uscita di controlloGioco
-    pid_t pid;
     bool tana_status[NUM_TANE]; // array che tiene traccia dello stato delle tane
     bool esitoPartita;          // esito della partita
     int punteggio;
-    int vite;
+    int vite,tempo;
+    pthread_t gioco;
 
     inizializzazioneSchermo();
 
@@ -69,29 +68,11 @@ int main()
         {
             tana_status[i] = true;
         }
-
+    tempo=TEMPO_TOTALE
         // finché ci sono vite e tane aperte
         while (vite > 0 && verificaTanaStatus(tana_status))
         {
-            pid = fork();
-            switch (pid)
-            {
-            case -1:
-                perror("Errore nella creazione del processo gioco");
-                _exit(1);
-                break;
-            case 0:
-                avviaGioco(vite, tana_status, punteggio); // avvia il gioco e crea i vari processi
-                break;
-            default:
-                // aspetta la chiusura del processo figlio
-                waitpid(pid, &status, 0);
-
-                if (WIFEXITED(status) > 0) // controllo uscita corretta da controlloGioco
-                {
-                    // controllo del valore di uscita di controlloGioco per aggiornare il punteggio, le vite e gestire la chiusura delle tane
-                    switch (WEXITSTATUS(status))
-                    {
+                   switch (controlloGioco(vite,tana_status, tempo, punteggio)){
                     case -1:
                         mvwprintw(gioco, 1, 1, "errore");
                         break;
@@ -121,11 +102,8 @@ int main()
                         break;
                     default:
                         break;
-                    }
-                }
+                    }}
                 wrefresh(gioco);
-            }
-        }
 
         // se le vite sono terminate la partita è persa
         if (vite > 0)
@@ -139,4 +117,5 @@ int main()
     } while (schermataFineGioco(esitoPartita, punteggio)); // continua finchè l'utente vuole rigiocare
     terminaGioco(); // pulisce e chiude la finestra
     return 0;
+
 }

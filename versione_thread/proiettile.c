@@ -1,25 +1,26 @@
 #include "frogger.h"
 
-void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo)
+void *proiettile(void *info)
 {
-    elementoGioco proiettile;
-    proiettile.direzione = direzione;
-    proiettile.pid_oggetto = getpid();
-    proiettile.y = y;
-    proiettile.proiettile = getppid(); // PID del processo padre, serve ad identificare principalmente il coccodrillo
-    proiettile.velocita = velocita;
 
+    info_elemento *letto=(info_elemento*)info;
+    elementoGioco proiettile;
+    proiettile.direzione = letto->direzione;
+    proiettile.thread_oggetto = pthread_self();
+    proiettile.y = letto->y;
+    proiettile.velocita = letto->speed;
+    int x=letto->x;
     // In base al tipo di proiettile, determina il comportamento("c" -> proiettile coccodrillo, "r" -> granata rana)
-    switch (tipo)
+    switch (letto->tipo)
     {
     case 'c':
         proiettile.tipo = PROIETTILE_COCCODRILLO;
 
-        if (direzione == DESTRA)
+        if (proiettile.direzione == DESTRA)
         {
             proiettile.x = x + COLONNE_SPRITE_COCCODRILLO - 1;
         }
-        if (direzione == SINISTRA)
+        if (proiettile.direzione == SINISTRA)
         {
             proiettile.x = x - 2;
         }
@@ -28,11 +29,11 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
 
     case 'r':
         proiettile.tipo = GRANATA;
-        if (direzione == DESTRA)
+        if (proiettile.direzione == DESTRA)
         {
             proiettile.x = x + 2;
         }
-        if (direzione == SINISTRA)
+        if (proiettile.direzione == SINISTRA)
         {
             proiettile.x = x - 1;
         }
@@ -42,8 +43,6 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
         break;
     }
 
-    // Invia il proiettile a controlloGioco
-    write(pipeout, &proiettile, sizeof(elementoGioco));
 
     while (1)
     {
@@ -61,7 +60,7 @@ void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzio
             break;
         }
         // Invia il proiettile a controlloGioco
-        write(pipeout, &proiettile, sizeof(elementoGioco));
+       //inserire nella lista thread
     }
-    _exit(1);
+    return(1);
 }

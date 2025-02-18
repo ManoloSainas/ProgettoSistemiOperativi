@@ -2,10 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Librerie per la gestione dei processi e delle pipes
-#include <signal.h>
-#include <unistd.h>
-#include <fcntl.h>
 
 // Librerie per le chiamate a sistema
 #include <sys/types.h>
@@ -105,7 +101,7 @@
 // Colori proiettile coccodrillo
 #define COLORE_PROIETTILE_COCCODRILLO 20
 
-#define INVALID_PID -500 // Valore di default per il PID
+#define INVALID_THREAD -500 // Valore di default per il PID
 
 // Indici per l'utilizzo del buffer
 int indexAggiunta, indexRimozione;
@@ -116,6 +112,16 @@ sem_t bufferPieno, bufferVuoto;
 
 elementoGioco buffer[DIM_BUFFER]; // Buffer
 elementoGioco oggettoPreso;       // oggetto che viene preso e rimosso dal buffer
+
+//variabile da dare ai giochi
+typedef struct info_elemento{
+int x;
+int y;
+int speed;
+char tipo;
+DirezioneFlusso direzione;
+
+}info_elemento;
 
 // direzione flusso fiume
 typedef enum
@@ -148,15 +154,18 @@ typedef struct elementoGioco
     pid_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
 } elementoGioco;
 
+
 // struttura per rappresentare la posizione di un oggetto
 typedef struct posizione
 {
     int x;
     int y;
-    int pid;
+    int thread_id;
     pid_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
     DirezioneFlusso direzione;
 } posizione;
+
+
 
 // struttura per rappresentare la posizione delle tane
 typedef struct posizioneTane
@@ -186,6 +195,10 @@ extern int minx,
 // Schermo ncurses
 extern WINDOW *gioco;
 
+//variabile per la lettura dei flussi
+extern corrente flussi[NUM_FLUSSI_FIUME+3];
+
+
 // Variabile per la posizione delle tane
 extern posizioneTane posTane[NUM_TANE];
 
@@ -211,8 +224,8 @@ void chiudiProcessi(pid_t pid);
 
 // gestione gioco
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
-void avviaGioco(int vite, bool tana_status[], int punteggio);
-void controlloGioco(int pipein, int pipeRana, int vite, bool tana_status[], int tempoRimanente);
+void avviaGioco(bool tana_status[], int punteggio, int vita);
+int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteggio);
 void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein);
 void terminaGioco();
 

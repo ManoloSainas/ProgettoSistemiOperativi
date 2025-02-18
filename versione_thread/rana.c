@@ -1,12 +1,12 @@
 #include "frogger.h"
-elementoGioco ranaGiocatore;
 /*
 prende in input, una pipe in scrittura, una in lettura e i flussi di corrente
 */
-void *rana(corrente flussi[])
+void *rana()
 {
 
-    signal(SIGUSR1, handler_rana); // gestione segnale per lo spostamento del coccodrillo con rana sopra
+    elementoGioco ranaGiocatore;
+
 
     keypad(gioco, TRUE);
 
@@ -18,8 +18,6 @@ void *rana(corrente flussi[])
     ranaGiocatore.y = RANA_Y;
     ranaGiocatore.thread_oggetto = pthread_self();
     ranaGiocatore.velocita = 0;
-
-    pid_t dati_p; // variabile che viene riscritta nella pipe di lettura per la gestione delle collisioni delle granate
 
     while (1)
     {
@@ -48,74 +46,24 @@ void *rana(corrente flussi[])
             if (num_spari <= MAXGRANATE - 2) // controllo per la quantità di spari
             {
                 num_spari++;
-                // creaziobe processo proiettile sinistro
-                switch (fork())
-                {
-                case -1:
-                    perror("Errore nell'esecuzione della fork sparo sinistra.");
-                    _exit(1);
-                case 0:
-                    // Processo proiettile
-                    proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, DESTRA, 'r');
-                    break;
-                default:
-                    if (num_spari < MAXGRANATE)
-                    {
-                        num_spari++;
-                        // creazione processo proiettile destro
-                        switch (fork())
-                        {
-                        case -1:
-                            perror("Errore nell'esecuzione della fork sparo destra");
-                            _exit(1);
-                        case 0:
-                            // Processo proiettile
-                            proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, SINISTRA, 'r');
-                            break;
-                        default:
-                            break;
-                        }
-                        break;
-                    }
-                    break;
+                // creaziobe thread proiettile sinistro
+                num_spari++;
+                //creazione thread proiettile destro
+                
                 }
             }
-        }
+        
 
         ranaGiocatore.direzione = flussi[16 - ranaGiocatore.y].direzione; // direzione del flusso
         ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;   // velocità del flusso
 
         ranaGiocatore.proiettile = num_spari; // sfruttiamo la sezione inuttilizzata per debugging e controlli aggiuntivi
 
-        // Scrittura nella pipe delle informazioni della rana
-        if (write(pipeout, &ranaGiocatore, sizeof(elementoGioco)) == -1)
-        {
-            perror("Errore nella scrittura sulla pipe rana->main");
-
-            _exit(1);
-        }
-        // Lettura dalla pipe dei dati, serve per cancellare le granate (collisioni o fine manche)
-        if (read(pipein, &dati_p, sizeof(pid_t)) > 0)
-        {
-            if (kill(dati_p, 0) == 0)
-            {
-                chiudiProcessi(dati_p);
-                num_spari--;
-            }
-        }
+        // Scrittura nella lista thread delle informazioni della rana
+       
+        
     }
 
-    _exit(1);
+    return(1);
 }
 
-// movimento automatico della rana che si trova sopra un coccodrillo
-void handler_rana(int sig)
-{
-    if (sig == SIGUSR1)
-    {
-        if (ranaGiocatore.direzione == DESTRA)
-            ranaGiocatore.x++;
-        if (ranaGiocatore.direzione == SINISTRA)
-            ranaGiocatore.x--;
-    }
-}

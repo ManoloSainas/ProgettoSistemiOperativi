@@ -69,15 +69,13 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 }
 
 // avvia il gioco e crea i vari processi
-void avviaGioco(int vita, bool tana_status[], int punteggio)
+void avviaGioco(bool tana_status[], int punteggio, int vita)
 {
     int tempoRimanente = TEMPO_TOTALE; // Inizializzazione del tempo rimanente
 
-    int filedes[2], pipeRana[2];
     int pid_gioco;
 
     int coccodrilli_flusso[NUM_FLUSSI_FIUME] = {NUM_COCCODRILLI_FLUSSO}; // numero di coccodrilli per flusso
-    corrente flussi[NUM_FLUSSI_FIUME + 3];
 
     // inizializzazione grafica
     graficaGioco(tana_status, punteggio, vita);
@@ -85,25 +83,11 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
     // inizialiizzazione flussi del fiume
     gestioneFlussi(flussi, coccodrilli_flusso);
 
-    // inizializzazione pipe
-    inizializzazionePipe(filedes);
-    inizializzazionePipe(pipeRana);
-
     // creazione processo rana
-    pid_gioco = fork();
-    switch (pid_gioco)
-    {
-    case -1:
-        perror("Errore nella creazione del processo per la rana");
-        _exit(1);
-        break;
-    case 0:
-        close(filedes[LETTURA]);
-        close(pipeRana[SCRITTURA]);
-        rana(filedes[SCRITTURA], pipeRana[LETTURA], flussi);
-        _exit(0);
-        break;
-    default:
+    
+      
+       //thread rana
+       
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
             for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
@@ -113,35 +97,30 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
                 {
                 case -1:
                     perror("Errore nella creazione del processo per il coccodrillo");
-                    _exit(1);
+                    return(1);
                     break;
                 case 0:
-                    close(filedes[LETTURA]);
+                 
 
                     // spawn coccodrilli in modo casuale
                     srand(time(NULL) + i);
                     usleep((2500000 + rand() % 5000000 + 2000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
-
-                    coccodrillo(filedes[SCRITTURA], i, j, flussi[i]);
-                    _exit(0);
+                    //thread coccodrilli
+                  
+                    return(0);
                     break;
                 default:
                     break;
                 }
             }
         }
-
-        close(filedes[SCRITTURA]);
-        close(pipeRana[LETTURA]);
-        controlloGioco(filedes[LETTURA], pipeRana[SCRITTURA], vita, tana_status, tempoRimanente); // riceve le coordinate e controlla le collisioni
-
-        break;
-    }
 }
 
+
 // processo che riceve le coordinate e controlla le collisioni
-void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int tempoRimanente)
+int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteggio)
 {
+    avviaGioco(tana_status, punteggio, vita);
     time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
 
     // elementi per la gestione delle granate e dei proiettili dopo la collisione
@@ -163,29 +142,29 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
     pos_r.x = RANA_X;
 
     // inizializzazione elementi del gioco
-    rana.pid_oggetto = INVALID_PID;
-    coccodrillo.pid_oggetto = INVALID_PID;
-    granata.pid_oggetto = INVALID_PID;
-    proiettile.pid_oggetto = INVALID_PID;
+    rana.thread_oggetto = INVALID_THREAD;
+    coccodrillo.thread_oggetto = INVALID_THREAD;
+    granata.thread_oggetto = INVALID_THREAD;
+    proiettile.thread_oggetto = INVALID_THREAD;
 
     // reset di granata_eg e di proiettile_eg
-    granata_eg.pid_oggetto = INVALID_PID;
-    proiettile_eg.pid_oggetto = INVALID_PID;
+    granata_eg.thread_oggetto = INVALID_THREAD;
+    proiettile_eg.thread_oggetto = INVALID_THREAD;
 
     // inizializzazione liste di posizione
-    // INVALID_PID è un identificativo che serve per distinguere un oggetto attivo da uno eliminato o vuoto
+    // INVALID_THREAD è un identificativo che serve per distinguere un oggetto attivo da uno eliminato o vuoto
     for (int i = 0; i < MAXCOCCODRILLI; i++) // ogni coccodrillo è associata un proiettile quindi maxproiettili=maxcoccodrilli
     {
-        pos_c[i].pid = INVALID_PID;
+        pos_c[i].thread_id = INVALID_THREAD;
         pos_c[i].x = -1;
         pos_c[i].y = -1;
-        pos_proiettili[i].pid = INVALID_PID;
+        pos_proiettili[i].thread_id = INVALID_THREAD;
         pos_proiettili[i].x = -1;
         pos_proiettili[i].y = -1;
     }
     for (int i = 0; i < MAXGRANATE; i++)
     {
-        pos_granate[i].pid = INVALID_PID;
+        pos_granate[i].thread_id = INVALID_THREAD;
         pos_granate[i].x = -1;
         pos_granate[i].y = -1;
     }
@@ -208,23 +187,23 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // se finisce il tempo il giocatore perde una vita e finisce la manche
         if (tempoRimanente == 0)
         {
-            chiusuraFineManche(pos_c, pos_granate, pipeRana, rana.pid_oggetto, pipein);
-            exit(6);
+          //chiusura o reset dei thread
+            return 6;
         }
 
         danno = false; // danno con l'acqua -> false
 
         // controllo collisione acqua
-        coccodrillo_rana = INVALID_PID;
+        coccodrillo_rana = INVALID_THREAD;
         for (int i = 0; i < MAXCOCCODRILLI; i++)
         {
-            if (pos_r.y == pos_c[i].y && pos_c[i].pid != INVALID_PID)
+            if (pos_r.y == pos_c[i].y && pos_c[i].thread_id != INVALID_THREAD)
             {
                 if (pos_c[i].direzione == SINISTRA)
                 {
                     if (pos_r.x >= pos_c[i].x - 1 && pos_r.x <= pos_c[i].x + 3)
                     {
-                        coccodrillo_rana = pos_c[i].pid; // aggiornamento del coccodrillo cavalcato
+                        coccodrillo_rana = pos_c[i].thread_id; // aggiornamento del coccodrillo cavalcato
                         danno = true;
                         break;
                     }
@@ -233,7 +212,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                 {
                     if (pos_r.x < pos_c[i].x + 1 && pos_r.x > pos_c[i].x - 5)
                     {
-                        coccodrillo_rana = pos_c[i].pid; // aggiornamento del coccodrillo cavalcato
+                        coccodrillo_rana = pos_c[i].thread_id; // aggiornamento del coccodrillo cavalcato
                         danno = true;
                         break;
                     }
@@ -254,7 +233,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         }
 
         // legge il valore dalla pipe
-        if (read(pipein, &valoreLetto, sizeof(valoreLetto)) > 0)
+        //mettere controllo thread
         {
             // cancella gli sprite
             cancellaSprite(rana);
@@ -275,12 +254,12 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 
                 for (int i = 0; i < MAXCOCCODRILLI; i++)
                 {
-                    if (pos_c[i].pid == coccodrillo.pid_oggetto)
+                    if (pos_c[i].thread_id == coccodrillo.thread_oggetto)
                     {
                         // se il coccodrillo è cavalcato dalla rana
-                        if (pos_c[i].pid == coccodrillo_rana)
+                        if (pos_c[i].thread_id == coccodrillo_rana)
                         {
-                            kill(rana.pid_oggetto, SIGUSR1); // invio segnale alla rana per spostarsi quando il coccodrillo si muove
+                            //inserire kill thread
                         }
 
                         pos_c[i].x = coccodrillo.x;
@@ -290,7 +269,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         // collisione coccodrilli con le pareti
                         if ((pos_c[i].x == maxx + 2 && pos_c[i].direzione == DESTRA) || (pos_c[i].x == minx - 4 && pos_c[i].direzione == SINISTRA))
                         {
-                            kill(pos_c[i].pid, SIGUSR2); // segnale per indicare che il coccodrillo deve rispawnare in un' altra posizione
+                            //inserire killthread
                         }
 
                         break;
@@ -299,9 +278,9 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                     inizializzazione del coccodrillo in una posizione valida, essendo che ogni processo rimane fino alla fine
                     ogni posizione verrà occupata e non c'è bisogno di fare controlli aggiuntivi
                     */
-                    if (pos_c[i].pid == INVALID_PID)
+                    if (pos_c[i].thread_id == INVALID_THREAD)
                     {
-                        pos_c[i].pid = coccodrillo.pid_oggetto;
+                        pos_c[i].thread_id = coccodrillo.thread_oggetto;
                         pos_c[i].x = coccodrillo.x;
                         pos_c[i].y = coccodrillo.y;
                         pos_c[i].direzione = coccodrillo.direzione;
@@ -317,7 +296,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                 // controllo e aggiornamento delle granate
                 for (int i = 0; i < MAXGRANATE; i++)
                 {
-                    if (pos_granate[i].pid == granata.pid_oggetto)
+                    if (pos_granate[i].thread_id == granata.thread_oggetto)
                     {
                         pos_granate[i].x = granata.x;
                         pos_granate[i].direzione = granata.direzione;
@@ -325,15 +304,12 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         // collisione delle granate con i bordi
                         if ((pos_granate[i].x == maxx && pos_granate[i].direzione == DESTRA) || (pos_granate[i].x == 0 && pos_granate[i].direzione == SINISTRA))
                         {
-                            if (pos_granate[i].pid != INVALID_PID) // eliminazione granata inviando alla rana un messaggio su pipe
+                            if (pos_granate[i].thread_id != INVALID_THREAD) // eliminazione granata inviando alla rana un messaggio su pipe
                             {
-                                if (write(pipeRana, &pos_granate[i].pid, sizeof(pid_t)) == -1)
-                                {
-                                    perror("Errore nella scrittura sulla pipe");
-                                    _exit(6);
-                                }
+                                
+                                //eliminare thread proiettile
                                 // la posizione della granata eliminata diventa valida e il count granate viene decrementato
-                                pos_granate[i].pid = INVALID_PID;
+                                pos_granate[i].thread_id = INVALID_THREAD;
                                 countG--;
                             }
                         }
@@ -349,10 +325,10 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                     {
                         if (countG < MAXGRANATE)
                         {
-                            if (pos_granate[i].pid == INVALID_PID)
+                            if (pos_granate[i].thread_id == INVALID_THREAD)
                             {
                                 countG++; // aumenta il count delle granate presenti
-                                pos_granate[i].pid = granata.pid_oggetto;
+                                pos_granate[i].thread_id = granata.thread_oggetto;
                                 pos_granate[i].x = granata.x;
                                 pos_granate[i].y = granata.y;
                                 break;
@@ -360,14 +336,10 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                         }
                         else
                         { // se per caso dovessero generarsi dei processi in più del dovuto vengono eliminati
-                            t_posg.pid = granata.pid_oggetto;
-                            if (t_posg.pid != INVALID_PID)
+                            t_posg.thread_id = granata.thread_oggetto;
+                            if (t_posg.thread_id != INVALID_THREAD)
                             {
-                                if (write(pipeRana, &t_posg.pid, sizeof(pid_t)) == -1)
-                                {
-                                    perror("Errore nella scrittura sulla pipe");
-                                    _exit(6);
-                                }
+                                //eliminare thread proiettile
                             }
 
                             break;
@@ -382,17 +354,16 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                 // controllo e aggiornamento del proiettile in caso sia gia presente nell'array
                 for (int i = 0; i < MAXCOCCODRILLI; i++)
                 {
-                    if (pos_proiettili[i].pid == proiettile.pid_oggetto)
+                    if (pos_proiettili[i].thread_id == proiettile.thread_oggetto)
                     {
                         pos_proiettili[i].x = proiettile.x;
 
                         // controllo collisioni tra proiettile e muro
                         if (((proiettile.x > maxx) && (proiettile.direzione == DESTRA)) || ((proiettile.x < 0) && (proiettile.direzione == SINISTRA)))
                         {
-                            kill(pos_proiettili[i].proiettile, SIGUSR1); // invio un segnale a processo coccodrillo che distruggerà il proiettile
-
+                            //inserire killthread
                             // la posizione del proiettile nell'array diventa valida e il count dei proiettili viene decrementato
-                            pos_proiettili[i].pid = INVALID_PID;
+                            pos_proiettili[i].thread_id = INVALID_THREAD;
                             countP--;
                         }
 
@@ -408,10 +379,10 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                     {
                         for (int i = 0; i < MAXCOCCODRILLI; i++)
                         {
-                            if (pos_proiettili[i].pid == INVALID_PID)
+                            if (pos_proiettili[i].thread_id == INVALID_THREAD)
                             {
                                 countP++; // aumenta il count dei proiettili presenti
-                                pos_proiettili[i].pid = proiettile.pid_oggetto;
+                                pos_proiettili[i].thread_id = proiettile.thread_oggetto;
                                 pos_proiettili[i].proiettile = proiettile.proiettile;
                                 pos_proiettili[i].x = proiettile.x;
                                 pos_proiettili[i].y = proiettile.y;
@@ -421,7 +392,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                     }
                     else
                     {
-                        kill(proiettile.proiettile, SIGUSR1); // se per qualche motivo il numero di proiettili è superiore al massimo, uccide il processo
+                    //inserire kill thread proiettile
                     }
                 }
                 break;
@@ -433,22 +404,22 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         /*Gestione collisione proiettili con granate */
         for (int i = 0; i < MAXGRANATE; i++)
         {
-            if (pos_granate[i].pid != INVALID_PID)
+            if (pos_granate[i].thread_id != INVALID_THREAD)
             {
                 for (int j = 0; j < MAXCOCCODRILLI; j++)
                 {
-                    if (pos_proiettili[j].pid != INVALID_PID)
+                    if (pos_proiettili[j].thread_id != INVALID_THREAD)
                     {
                         if ((pos_granate[i].y == pos_proiettili[j].y) && (pos_granate[i].x == pos_proiettili[j].x))
                         {
                             // info della granata da eliminare
-                            granata_eg.pid_oggetto = pos_granate[i].pid;
+                            granata_eg.thread_oggetto = pos_granate[i].thread_id;
                             granata_eg.x = pos_granate[i].x;
                             granata_eg.y = pos_granate[i].y;
                             t_posg = pos_granate[i];
 
                             // info del proiettile da eliminare
-                            proiettile_eg.pid_oggetto = pos_proiettili[j].pid;
+                            proiettile_eg.thread_oggetto = pos_proiettili[j].thread_id;
                             proiettile_eg.x = pos_proiettili[j].x;
                             proiettile_eg.y = pos_proiettili[j].y;
 
@@ -460,34 +431,26 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
                             wrefresh(gioco);
 
                             // reinizializzazione del pid delle posizioni per permet
-                            pos_granate[i].pid = INVALID_PID;
-                            pos_proiettili[j].pid = INVALID_PID;
-                            granata_eg.pid_oggetto = INVALID_PID;
-                            proiettile_eg.pid_oggetto = INVALID_PID;
-                            proiettile.pid_oggetto = INVALID_PID;
-                            granata.pid_oggetto = INVALID_PID;
+                            pos_granate[i].thread_id = INVALID_THREAD;
+                            pos_proiettili[j].thread_id = INVALID_THREAD;
+                            granata_eg.thread_oggetto = INVALID_THREAD;
+                            proiettile_eg.thread_oggetto = INVALID_THREAD;
+                            proiettile.thread_oggetto = INVALID_THREAD;
+                            granata.thread_oggetto = INVALID_THREAD;
 
                             // decremento del contatore delle granate e dei proiettili
                             countP--;
                             countG--;
 
                             // viene inviato un segnale al coccodrillo per eliminare il proiettile dopo la collisione
-                            if (pos_proiettili[j].proiettile != INVALID_PID)
+                            if (pos_proiettili[j].proiettile != INVALID_THREAD)
                             {
-                                if (kill(pos_proiettili[j].proiettile, SIGUSR1) == -1)
-                                {
-                                    perror("Errore nell'inviare il segnale SIGUSR1 al processo proiettile");
-                                }
+                                //inserire kill proiettile
                             }
                             // viene inviato un messaggio attraverso la pipe della rana per eliminare la granata dopo la collisione
-                            if (t_posg.pid != INVALID_PID)
+                            if (t_posg.thread_id != INVALID_THREAD)
                             {
-                                if (write(pipeRana, &t_posg.pid, sizeof(pid_t)) == -1)
-                                {
-                                    perror("Errore nella scrittura sulla pipe");
-                                    _exit(6);
-                                }
-                                waitpid(t_posg.pid, NULL, 0);
+                                
                             }
                             break;
                         }
@@ -497,24 +460,24 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         }
 
         // stampa delle sprite
-        if (coccodrillo.pid_oggetto > 0)
+        if (coccodrillo.thread_oggetto > 0)
             stampaSprite(coccodrillo);
 
-        if (rana.pid_oggetto > 0)
+        if (rana.thread_oggetto > 0)
             stampaSprite(rana);
 
-        if (granata.pid_oggetto > 0)
+        if (granata.thread_oggetto > 0)
             stampaSprite(granata);
 
-        if (proiettile.pid_oggetto > 0)
+        if (proiettile.thread_oggetto > 0)
             stampaSprite(proiettile);
 
         // stampe di debug
 
         // stampa dei pid delle granate e del proiettile (impostando un coccodrillo a schermo)
-        // mvwprintw(gioco, 2, 3, "pid_proiettile:  %6d", pos_proiettili[0].pid);
-        // mvwprintw(gioco, 3, 3, "pid_granata s?:  %6d", pos_granate[0].pid);
-        // mvwprintw(gioco, 4, 3, "pid_granata d?:  %6d", pos_granate[1].pid);
+        // mvwprintw(gioco, 2, 3, "pid_proiettile:  %6d", pos_proiettili[0].thread_id);
+        // mvwprintw(gioco, 3, 3, "pid_granata s?:  %6d", pos_granate[0].thread_id);
+        // mvwprintw(gioco, 4, 3, "pid_granata d?:  %6d", pos_granate[1].thread_id);
 
         // stampa il numero di granate e proiettili presenti
         // mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
@@ -529,12 +492,12 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // se la rana è nella y delle tane
         if (pos_r.y == posTane[0].y)
         {
-            chiusuraFineManche(pos_c, pos_granate, pipeRana, rana.pid_oggetto, pipein);
+           //chiusura o reset dei thread
 
             // controllo se la rana ha preso danno nell'erba intorno alle tane
             if (pos_r.x != posTane[0].x && pos_r.x != posTane[1].x && pos_r.x != posTane[2].x && pos_r.x != posTane[3].x && pos_r.x != posTane[4].x)
             {
-                exit(6);
+                return(6);
             }
 
             // controllo se la rana è in una delle tane, se la tana è libera esce con un determianto stato altrimenti prende danno ed esce con un altro stato
@@ -543,11 +506,11 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (tana_status[0])
                 {
-                    exit(1);
+                    return(1);
                 }
                 else
                 {
-                    exit(6);
+                    return(6);
                 }
             }
 
@@ -555,11 +518,11 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (tana_status[1])
                 {
-                    exit(2);
+                    return(2);
                 }
                 else
                 {
-                    exit(6);
+                    return(6);
                 }
             }
 
@@ -567,11 +530,11 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (tana_status[2])
                 {
-                    exit(3);
+                    return(3);
                 }
                 else
                 {
-                    exit(6);
+                    return(6);
                 }
             }
 
@@ -579,11 +542,11 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (tana_status[3])
                 {
-                    exit(4);
+                    return(4);
                 }
                 else
                 {
-                    exit(6);
+                    return(6);
                 }
             }
 
@@ -591,11 +554,11 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
             {
                 if (tana_status[4])
                 {
-                    exit(5);
+                    return(5);
                 }
                 else
                 {
-                    exit(6);
+                    return(6);
                 }
             }
         }
@@ -605,7 +568,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         {
             if ((pos_proiettili[i].y == pos_r.y) && ((pos_proiettili[i].x == pos_r.x) || (pos_proiettili[i].x == pos_r.x + 1)))
             {
-                if (pos_proiettili[i].pid != INVALID_PID)
+                if (pos_proiettili[i].thread_id != INVALID_THREAD)
                 {
                     danno = false;
                     break;
@@ -616,8 +579,8 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // controllo gestione del danno, se ha preso danno chiude la manche ed esce con un determinato stato
         if (!danno)
         {
-            chiusuraFineManche(pos_c, pos_granate, pipeRana, rana.pid_oggetto, pipein);
-            exit(6);
+            //chiusura fine manche con reset
+            return(6);
         }
 
     } while (true);
@@ -628,24 +591,24 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana
 {
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {
-        if (pos_c[i].pid != INVALID_PID)
+        if (pos_c[i].thread_id != INVALID_THREAD)
         {
-            kill(pos_c[i].pid, SIGUSR1);
-            chiudiProcessi(pos_c[i].pid);
+           //kill thread rana
+            chiudiProcessi(pos_c[i].thread_id);
         }
     }
     for (int i = 0; i < MAXGRANATE; i++)
     {
-        if (pos_granate[i].pid != INVALID_PID)
+        if (pos_granate[i].thread_id != INVALID_THREAD)
         {
-            if (write(pipeRana, &pos_granate[i].pid, sizeof(pid_t)) == -1)
+            if (write(pipeRana, &pos_granate[i].thread_id, sizeof(pid_t)) == -1)
             {
                 perror("Errore nella scrittura sulla pipe");
-                _exit(6);
+                return(6);
             }
         }
     }
-    if (pid_rana != INVALID_PID)
+    if (pid_rana != INVALID_THREAD)
     {
         chiudiProcessi(pid_rana);
     }
