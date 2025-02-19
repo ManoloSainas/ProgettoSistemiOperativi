@@ -18,8 +18,8 @@ void *rana()
     ranaGiocatore.y = RANA_Y;
     ranaGiocatore.thread_oggetto = pthread_self();
     ranaGiocatore.velocita = 0;
-
-    while (1)
+    *(ranaGiocatore.controllo)=true;
+    while (controllo && *(ranaGiocatore.controllo))
     {
         // Gestione movimento rana
         switch (wgetch(gioco))
@@ -60,8 +60,10 @@ void *rana()
         ranaGiocatore.proiettile = num_spari; // sfruttiamo la sezione inuttilizzata per debugging e controlli aggiuntivi
 
         // Scrittura nella lista thread delle informazioni della rana
-       
-        
+     wait_produttore();
+    lista_elementi[in]=ranaGiocatore;
+    in=(in+1)&DIM_BUFFER;
+     signal_produttore();   
     }
 
     return(1);

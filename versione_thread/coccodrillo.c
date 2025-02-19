@@ -35,7 +35,7 @@ void *coccodrillo(void *info)
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
 
-    while (true)
+    while (controllo)
     {
         proiettile_info.x=coccodrillo.x;
         

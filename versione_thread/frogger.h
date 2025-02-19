@@ -113,7 +113,7 @@ sem_t bufferPieno, bufferVuoto;
 elementoGioco buffer[DIM_BUFFER]; // Buffer
 elementoGioco oggettoPreso;       // oggetto che viene preso e rimosso dal buffer
 
-//variabile da dare ai giochi
+//variabile da dare ai thread
 typedef struct info_elemento{
 int x;
 int y;
@@ -148,6 +148,7 @@ typedef struct elementoGioco
     tipoOggetto tipo;
     int x;
     int y;
+    bool *controllo;
     pthread_t thread_oggetto;
     int velocita;
     DirezioneFlusso direzione;
@@ -230,3 +231,34 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana
 void terminaGioco();
 
 bool verificaTanaStatus(bool tana_status[]); // verifica se tutte le tane sono state raggiunte
+
+
+//funzioni e variabili globali per thread e semafori 
+sem_t sem_liberi, sem_occupati;
+elementoGioco lista_elementi[DIM_BUFFER];
+bool controllo=true; //variabile di controllo per la terminazione
+
+
+int in = 0;    // Indice per inserire nuovi elementi
+int out = 0;   // Indice per rimuovere elementi
+
+ void inizializza_meccanismi_sincronizzazione() {
+ sem_init(&sem_occupati, 0, 0); // All'inizio 0 elementi sono presenti nel buffer
+ sem_init(&sem_liberi, 0, DIM_BUFFER); // All'inizio tutti i posti del buffer sono liberi
+ }
+ void dealloca_meccanismi_sincronizzazione() {
+ sem_destroy(&sem_occupati);
+ sem_destroy(&sem_liberi);
+ }
+
+ void wait_produttore() { sem_wait(&sem_liberi); }
+ void signal_produttore() { sem_post(&sem_occupati); }
+
+ void wait_consumatore() { sem_wait(&sem_occupati); }
+ void signal_consumatore() { sem_post(&sem_liberi); }
+
+ int get_contatore_occupati() {
+ int contatore_occupati;
+ sem_getvalue(&sem_occupati, &contatore_occupati);
+ return contatore_occupati;
+ }

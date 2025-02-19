@@ -44,7 +44,7 @@ void *proiettile(void *info)
     }
 
 
-    while (1)
+    while (controllo)
     {
         usleep(proiettile.velocita); // Aggiorna la posizione del proiettile ogni tot millisecondi
 

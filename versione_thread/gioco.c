@@ -73,8 +73,6 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 {
     int tempoRimanente = TEMPO_TOTALE; // Inizializzazione del tempo rimanente
 
-    int pid_gioco;
-
     int coccodrilli_flusso[NUM_FLUSSI_FIUME] = {NUM_COCCODRILLI_FLUSSO}; // numero di coccodrilli per flusso
 
     // inizializzazione grafica
@@ -83,7 +81,7 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
     // inizialiizzazione flussi del fiume
     gestioneFlussi(flussi, coccodrilli_flusso);
 
-    // creazione processo rana
+    
     
       
        //thread rana
@@ -91,35 +89,23 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
             for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
-            { // creazione processi coccodrillo
-                pid_gioco = fork();
-                switch (pid_gioco)
-                {
-                case -1:
-                    perror("Errore nella creazione del processo per il coccodrillo");
-                    return(1);
-                    break;
-                case 0:
+            { 
                  
-
+                    
                     // spawn coccodrilli in modo casuale
                     srand(time(NULL) + i);
                     usleep((2500000 + rand() % 5000000 + 2000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
                     //thread coccodrilli
                   
-                    return(0);
-                    break;
-                default:
-                    break;
                 }
             }
         }
-}
 
 
 // processo che riceve le coordinate e controlla le collisioni
 int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteggio)
 {
+    controllo=true;
     avviaGioco(tana_status, punteggio, vita);
     time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
 
@@ -133,7 +119,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
     elementoGioco rana, coccodrillo, granata, proiettile; // elementi del gioco
 
     int score = 0;
-    pid_t coccodrillo_rana;     // identificatore del coccodrillo cavalcato dalla rana
+    pthread_t coccodrillo_rana;     // identificatore del coccodrillo cavalcato dalla rana
     bool danno, esiste;         // flag gestione collisione e esistenza negli array, danno->false danno ricevuto, danno->true niente danno
     int countG = 0, countP = 0; // contatori per gestione corretta del numero di processi e debugging
 
@@ -241,6 +227,10 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
             cancellaSprite(granata);
             cancellaSprite(proiettile);
 
+        wait_consumatore();
+        valoreLetto=lista_elementi[out];
+        out=(out+1)%DIM_BUFFER;
+        signal_consumatore();
             // aggiorna le posizioni e inserimento negli array di posizione
             switch (valoreLetto.tipo)
             {
@@ -587,31 +577,29 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
 }
 
 // funzione per la chiusura dei processi dopo una manche
-void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein)
+void chiusuraFineManche(posizione pos_c[], posizione pos_proiettili[], posizione pos_granate[],pthread_t id_rana)
 {
+    controllo =false;
+
+    pthread_join(id_rana,NULL);
+
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {
         if (pos_c[i].thread_id != INVALID_THREAD)
         {
-           //kill thread rana
-            chiudiProcessi(pos_c[i].thread_id);
+           pthread_join(pos_c[i].thread_id, NULL);
         }
+        if(pos_proiettili[i].thread_id!=INVALID_THREAD){
+            pthread_join(pos_proiettili[i].thread_id, NULL);
+        }
+        
     }
     for (int i = 0; i < MAXGRANATE; i++)
     {
-        if (pos_granate[i].thread_id != INVALID_THREAD)
+        
+            if (pos_granate[i].thread_id != INVALID_THREAD)
         {
-            if (write(pipeRana, &pos_granate[i].thread_id, sizeof(pid_t)) == -1)
-            {
-                perror("Errore nella scrittura sulla pipe");
-                return(6);
-            }
-        }
+           pthread_join(pos_c[i].thread_id, NULL);
+        } 
     }
-    if (pid_rana != INVALID_THREAD)
-    {
-        chiudiProcessi(pid_rana);
-    }
-    close(pipeRana);
-    close(pipein);
 }
