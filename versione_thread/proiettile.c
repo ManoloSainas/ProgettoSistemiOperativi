@@ -10,6 +10,8 @@ void *proiettile(void *info)
     proiettile.y = letto->y;
     proiettile.velocita = letto->speed;
     int x=letto->x;
+    double start_timer, fine_timer, durata_timer;
+    durata_timer=proiettile.velocita/1000000;
     // In base al tipo di proiettile, determina il comportamento("c" -> proiettile coccodrillo, "r" -> granata rana)
     switch (letto->tipo)
     {
@@ -42,11 +44,14 @@ void *proiettile(void *info)
     default:
         break;
     }
+    
+    *proiettile.controllo=true;
 
-
-    while (controllo)
+    start_timer=time(NULL);
+    while (controllo && *proiettile.controllo)
     {
-        usleep(proiettile.velocita); // Aggiorna la posizione del proiettile ogni tot millisecondi
+        fine_timer=time(NULL);
+       if(difftime(fine_timer,start_timer)>=durata_timer){
 
         switch (proiettile.direzione)
         {
@@ -60,7 +65,12 @@ void *proiettile(void *info)
             break;
         }
         // Invia il proiettile a controlloGioco
-       //inserire nella lista thread
+      wait_produttore();
+    lista_elementi[in]=proiettile;
+    in=(in+1)%DIM_BUFFER;
+     signal_produttore(); 
+     start_timer=time(NULL);
+     }
     }
     return(1);
 }

@@ -75,6 +75,7 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 
     int coccodrilli_flusso[NUM_FLUSSI_FIUME] = {NUM_COCCODRILLI_FLUSSO}; // numero di coccodrilli per flusso
 
+    
     // inizializzazione grafica
     graficaGioco(tana_status, punteggio, vita);
 
@@ -82,21 +83,27 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
     gestioneFlussi(flussi, coccodrilli_flusso);
 
     
+    pthread_t rana_id, coccodrilli[MAXCOCCODRILLI];
+    info_elemento infococco[MAXCOCCODRILLI];
+
     
-      
-       //thread rana
-       
+
+    void *info_void;
+       pthread_create(&rana_id,NULL,&rana,NULL);
+       int count=0;
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
             for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
-            { 
-                 
-                    
-                    // spawn coccodrilli in modo casuale
-                    srand(time(NULL) + i);
-                    usleep((2500000 + rand() % 5000000 + 2000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
+            {                  
+
+                    infococco[count].direzione=flussi[i-1].direzione;
+                    infococco[count].speed=flussi[i-1].velocita;
+                    infococco[count].y=i;
+                    infococco[count].x=j; //info cocco usato per  dare al coccodrillo informazioni sull'attesa
+                    info_void=&infococco[count];                    
                     //thread coccodrilli
-                  
+                    pthread_create(&coccodrilli[count],NULL,&coccodrillo,info_void);
+                  count++;
                 }
             }
         }
@@ -173,7 +180,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
         // se finisce il tempo il giocatore perde una vita e finisce la manche
         if (tempoRimanente == 0)
         {
-          //chiusura o reset dei thread
+          chiusuraFineManche(pos_c,pos_proiettili,pos_granate,rana.thread_oggetto);
             return 6;
         }
 
@@ -238,6 +245,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                 rana = valoreLetto;
                 pos_r.x = rana.x;
                 pos_r.y = rana.y;
+                pos_r.controllo=rana.controllo;
                 break;
             case COCCODRILLO:
                 coccodrillo = valoreLetto;
@@ -249,17 +257,16 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                         // se il coccodrillo è cavalcato dalla rana
                         if (pos_c[i].thread_id == coccodrillo_rana)
                         {
-                            //inserire kill thread
+                            //inserire spostamento rana
                         }
 
                         pos_c[i].x = coccodrillo.x;
-                        pos_c[i].y = coccodrillo.y;
                         pos_c[i].proiettile = coccodrillo.proiettile;
-
+                        pos_c[i].controllo=coccodrillo.controllo;
                         // collisione coccodrilli con le pareti
                         if ((pos_c[i].x == maxx + 2 && pos_c[i].direzione == DESTRA) || (pos_c[i].x == minx - 4 && pos_c[i].direzione == SINISTRA))
                         {
-                            //inserire killthread
+                            //mettere la x come puntatore?
                         }
 
                         break;
@@ -275,6 +282,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                         pos_c[i].y = coccodrillo.y;
                         pos_c[i].direzione = coccodrillo.direzione;
                         pos_c[i].proiettile = coccodrillo.proiettile;
+                        pos_c[i].controllo= coccodrillo.controllo;
                         break;
                     }
                 }
@@ -297,7 +305,8 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                             if (pos_granate[i].thread_id != INVALID_THREAD) // eliminazione granata inviando alla rana un messaggio su pipe
                             {
                                 
-                                //eliminare thread proiettile
+                                *pos_granate[i].controllo=false;
+                                pthread_join(pos_granate[i].thread_id, NULL);
                                 // la posizione della granata eliminata diventa valida e il count granate viene decrementato
                                 pos_granate[i].thread_id = INVALID_THREAD;
                                 countG--;
@@ -321,6 +330,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                                 pos_granate[i].thread_id = granata.thread_oggetto;
                                 pos_granate[i].x = granata.x;
                                 pos_granate[i].y = granata.y;
+                                pos_granate[i].controllo=granata.controllo;
                                 break;
                             }
                         }
@@ -329,7 +339,8 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                             t_posg.thread_id = granata.thread_oggetto;
                             if (t_posg.thread_id != INVALID_THREAD)
                             {
-                                //eliminare thread proiettile
+                                pthread_join(t_posg.thread_id, NULL);
+                                pos_granate[i].thread_id = INVALID_THREAD;
                             }
 
                             break;
@@ -352,9 +363,11 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                         if (((proiettile.x > maxx) && (proiettile.direzione == DESTRA)) || ((proiettile.x < 0) && (proiettile.direzione == SINISTRA)))
                         {
                             //inserire killthread
-                            // la posizione del proiettile nell'array diventa valida e il count dei proiettili viene decrementato
+                            *pos_proiettili[i].controllo=false;
+                            pthread_join(pos_proiettili[i].thread_id, NULL);
                             pos_proiettili[i].thread_id = INVALID_THREAD;
                             countP--;
+
                         }
 
                         // il proiettile è presente nell'array
@@ -376,6 +389,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                                 pos_proiettili[i].proiettile = proiettile.proiettile;
                                 pos_proiettili[i].x = proiettile.x;
                                 pos_proiettili[i].y = proiettile.y;
+                                pos_proiettili[i].controllo = proiettile.controllo;
                                 break;
                             }
                         }
@@ -420,13 +434,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                             cancellaProiettile(proiettile_eg);
                             wrefresh(gioco);
 
-                            // reinizializzazione del pid delle posizioni per permet
-                            pos_granate[i].thread_id = INVALID_THREAD;
-                            pos_proiettili[j].thread_id = INVALID_THREAD;
-                            granata_eg.thread_oggetto = INVALID_THREAD;
-                            proiettile_eg.thread_oggetto = INVALID_THREAD;
-                            proiettile.thread_oggetto = INVALID_THREAD;
-                            granata.thread_oggetto = INVALID_THREAD;
+                        
 
                             // decremento del contatore delle granate e dei proiettili
                             countP--;
@@ -435,13 +443,24 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
                             // viene inviato un segnale al coccodrillo per eliminare il proiettile dopo la collisione
                             if (pos_proiettili[j].proiettile != INVALID_THREAD)
                             {
-                                //inserire kill proiettile
+                                *pos_proiettili[j].controllo=false;
+                                pthread_join(pos_proiettili[i].thread_id, NULL); 
                             }
                             // viene inviato un messaggio attraverso la pipe della rana per eliminare la granata dopo la collisione
-                            if (t_posg.thread_id != INVALID_THREAD)
+                            if (pos_granate[i].thread_id != INVALID_THREAD)
                             {
-                                
+                                *pos_granate[i].controllo=false;
+                             pthread_join(pos_granate[i].thread_id, NULL);
+                                 
                             }
+
+                            pos_granate[i].thread_id = INVALID_THREAD;
+                            pos_proiettili[j].thread_id = INVALID_THREAD;
+                            granata_eg.thread_oggetto = INVALID_THREAD;
+                            proiettile_eg.thread_oggetto = INVALID_THREAD;
+                            proiettile.thread_oggetto = INVALID_THREAD;
+                            granata.thread_oggetto = INVALID_THREAD;
+
                             break;
                         }
                     }
@@ -483,7 +502,7 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
         if (pos_r.y == posTane[0].y)
         {
            //chiusura o reset dei thread
-
+            chiusuraFineManche(pos_c,pos_proiettili,pos_granate,rana.thread_oggetto);
             // controllo se la rana ha preso danno nell'erba intorno alle tane
             if (pos_r.x != posTane[0].x && pos_r.x != posTane[1].x && pos_r.x != posTane[2].x && pos_r.x != posTane[3].x && pos_r.x != posTane[4].x)
             {
@@ -569,14 +588,14 @@ int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteg
         // controllo gestione del danno, se ha preso danno chiude la manche ed esce con un determinato stato
         if (!danno)
         {
-            //chiusura fine manche con reset
+          chiusuraFineManche(pos_c,pos_proiettili,pos_granate,rana.thread_oggetto);
             return(6);
         }
 
     } while (true);
 }
 
-// funzione per la chiusura dei processi dopo una manche
+// funzione per la chiusura dei thread dopo una manche
 void chiusuraFineManche(posizione pos_c[], posizione pos_proiettili[], posizione pos_granate[],pthread_t id_rana)
 {
     controllo =false;

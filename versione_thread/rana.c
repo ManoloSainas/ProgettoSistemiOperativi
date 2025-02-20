@@ -62,7 +62,7 @@ void *rana()
         // Scrittura nella lista thread delle informazioni della rana
      wait_produttore();
     lista_elementi[in]=ranaGiocatore;
-    in=(in+1)&DIM_BUFFER;
+    in=(in+1)%DIM_BUFFER;
      signal_produttore();   
     }
 

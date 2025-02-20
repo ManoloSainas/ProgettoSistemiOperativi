@@ -164,6 +164,7 @@ typedef struct posizione
     int thread_id;
     pid_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
     DirezioneFlusso direzione;
+    bool *controllo;
 } posizione;
 
 
@@ -214,9 +215,9 @@ void cancellaSprite(elementoGioco elemento);
 void cancellaProiettile(elementoGioco elemento);
 
 // Funzioni per la gestione dei processi
-void *rana(corrente flussi[]);
-void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso);
-void proiettile(int pipeout, int y, int x, int velocita, DirezioneFlusso direzione, char tipo);
+void *rana();
+void *coccodrillo(void *info);
+void *proiettile(void *info);
 void handler_coccodrillo(int sig); // gestione segnali coccodrillo
 void handler_rana(int sig);        // gestione segnali rana
 
