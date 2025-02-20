@@ -22,6 +22,9 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
     // srand per generare numeri casuali
     srand(time(NULL));
 
+    // serve per generare una velocità differente per ogni flusso
+    int velocitaRandom;
+
     // inizializzazione flussi del fiume
 
     // flusso 0
@@ -48,15 +51,23 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
     // gestione della direzione e della velocità dei restanti 7 flussi
     for (int i = 2; i <= NUM_FLUSSI_FIUME; i++)
     {
+        if (i == 2)
+        {
+            velocitaRandom = 1 + rand() % ((i - 2) + 1); // velocità random per il primo flusso tra 1 e 2
+        }
+        else
+        {
+            velocitaRandom = 1 + rand() % (i - 2); // velocità random per i flussi successivi tra 1 e i-2
+        }
         if (flussi[i - 1].direzione == DESTRA)
         {
             flussi[i].direzione = SINISTRA;
-            flussi[i].velocita = VELOCITA_FLUSSO * i;
+            flussi[i].velocita = VELOCITA_FLUSSO * velocitaRandom;
         }
         else
         {
             flussi[i].direzione = DESTRA;
-            flussi[i].velocita = VELOCITA_FLUSSO * i;
+            flussi[i].velocita = VELOCITA_FLUSSO * velocitaRandom;
         }
         // flussi[i].velocita = 15000 + rand() % (100000) + 1; // Nel caso si voglia utilizzare una velocità casuale e non prefissata
     }
@@ -106,7 +117,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
     default:
         for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
         {
-            for (int j = 1; j <= coccodrilli_flusso[i - 1]; j++)
+            for (int j = 1; j <= NUM_COCCODRILLI_FLUSSO; j++)
             { // creazione processi coccodrillo
                 pid_gioco = fork();
                 switch (pid_gioco)
@@ -120,7 +131,7 @@ void avviaGioco(int vita, bool tana_status[], int punteggio)
 
                     // spawn coccodrilli in modo casuale
                     srand(time(NULL) + i);
-                    usleep((2500000 + rand() % 5000000 + 2000000) * j); // si moltiplica per j per non farli spawnare uno sopra l'altro
+                    usleep((2500000 + rand() % 5000000 + 1500000) * j);
 
                     coccodrillo(filedes[SCRITTURA], i, j, flussi[i]);
                     _exit(0);
@@ -208,7 +219,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // se finisce il tempo il giocatore perde una vita e finisce la manche
         if (tempoRimanente == 0)
         {
-            chiusuraFineManche(pos_c, pos_granate, pipeRana, rana.pid_oggetto, pipein);
+            chiusuraFineManche(pos_c, pos_granate, pos_proiettili, pipeRana, rana.pid_oggetto, pipein);
             exit(6);
         }
 
@@ -529,7 +540,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // se la rana è nella y delle tane
         if (pos_r.y == posTane[0].y)
         {
-            chiusuraFineManche(pos_c, pos_granate, pipeRana, rana.pid_oggetto, pipein);
+            chiusuraFineManche(pos_c, pos_granate, pos_proiettili, pipeRana, rana.pid_oggetto, pipein);
 
             // controllo se la rana ha preso danno nell'erba intorno alle tane
             if (pos_r.x != posTane[0].x && pos_r.x != posTane[1].x && pos_r.x != posTane[2].x && pos_r.x != posTane[3].x && pos_r.x != posTane[4].x)
@@ -616,7 +627,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
         // controllo gestione del danno, se ha preso danno chiude la manche ed esce con un determinato stato
         if (!danno)
         {
-            chiusuraFineManche(pos_c, pos_granate, pipeRana, rana.pid_oggetto, pipein);
+            chiusuraFineManche(pos_c, pos_granate, pos_proiettili, pipeRana, rana.pid_oggetto, pipein);
             exit(6);
         }
 
@@ -624,7 +635,7 @@ void controlloGioco(int pipein, int pipeRana, int vita, bool tana_status[], int 
 }
 
 // funzione per la chiusura dei processi dopo una manche
-void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein)
+void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], posizione pos_proiettili[], int pipeRana, pid_t pid_rana, int pipein)
 {
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {
@@ -632,6 +643,11 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana
         {
             kill(pos_c[i].pid, SIGUSR1);
             chiudiProcessi(pos_c[i].pid);
+        }
+
+        if (pos_proiettili[i].pid != INVALID_PID)
+        {
+            pos_proiettili[i].pid = INVALID_PID;
         }
     }
     for (int i = 0; i < MAXGRANATE; i++)
@@ -645,6 +661,7 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana
             }
         }
     }
+
     if (pid_rana != INVALID_PID)
     {
         chiudiProcessi(pid_rana);

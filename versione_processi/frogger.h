@@ -24,18 +24,17 @@
 #define NUM_FLUSSI_FIUME 8
 
 // quantità oggetti su schermo
-#define MAXCOCCODRILLI 40
+#define MAXCOCCODRILLI 32
 #define MAXGRANATE 12
 
 // velocità flusso fiume
 #define VELOCITA_FLUSSO 20000
 
 // Tempo di gioco
-#define TEMPO_TOTALE 90; // Tempo totale di gioco (per round)
+#define TEMPO_TOTALE 90 // Tempo totale di gioco (per round)
 
 // Gestione proiettili
-#define SPEED_PROIETTILI 200000
-#define SPEED_GRANATE 100000
+#define SPEED_PROIETTILI 150000
 
 // Posizione iniziale rana
 #define RANA_X 36
@@ -197,7 +196,7 @@ void chiudiProcessi(pid_t pid);
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
 void avviaGioco(int vite, bool tana_status[], int punteggio);
 void controlloGioco(int pipein, int pipeRana, int vite, bool tana_status[], int tempoRimanente);
-void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein);
+void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], posizione pos_proiettili[], int pipeRana, pid_t pid_rana, int pipein);
 void terminaGioco();
 
 bool verificaTanaStatus(bool tana_status[]); // verifica se tutte le tane sono state raggiunte

@@ -19,7 +19,7 @@ void coccodrillo(int pipeout, int riga, int id_coccodrillo, corrente flusso)
 
     // gestione sparo
     double durata_sparo, fine_sparo;
-    int tempo_sparo = rand() % 4 + 1;
+    int tempo_sparo = rand() % 4 + 3;
 
     // inizializzazione variabili globali
     pid_sparo = INVALID_PID;

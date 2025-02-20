@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 // Librerie per le chiamate a sistema
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -26,18 +25,17 @@
 #define NUM_FLUSSI_FIUME 8
 
 // quantità oggetti su schermo
-#define MAXCOCCODRILLI 40
+#define MAXCOCCODRILLI 32
 #define MAXGRANATE 12
 
 // velocità flusso fiume
 #define VELOCITA_FLUSSO 20000
 
 // Tempo di gioco
-#define TEMPO_TOTALE 90; // Tempo totale di gioco (per round)
+#define TEMPO_TOTALE 90 // Tempo totale di gioco (per round)
 
 // Gestione proiettili
-#define SPEED_PROIETTILI 200000
-#define SPEED_GRANATE 100000
+#define SPEED_PROIETTILI 150000
 
 // Posizione iniziale rana
 #define RANA_X 36
@@ -113,15 +111,16 @@ sem_t bufferPieno, bufferVuoto;
 elementoGioco buffer[DIM_BUFFER]; // Buffer
 elementoGioco oggettoPreso;       // oggetto che viene preso e rimosso dal buffer
 
-//variabile da dare ai thread
-typedef struct info_elemento{
-int x;
-int y;
-int speed;
-char tipo;
-DirezioneFlusso direzione;
+// variabile da dare ai thread
+typedef struct info_elemento
+{
+    int x;
+    int y;
+    int speed;
+    char tipo;
+    DirezioneFlusso direzione;
 
-}info_elemento;
+} info_elemento;
 
 // direzione flusso fiume
 typedef enum
@@ -155,7 +154,6 @@ typedef struct elementoGioco
     pid_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
 } elementoGioco;
 
-
 // struttura per rappresentare la posizione di un oggetto
 typedef struct posizione
 {
@@ -166,8 +164,6 @@ typedef struct posizione
     DirezioneFlusso direzione;
     bool *controllo;
 } posizione;
-
-
 
 // struttura per rappresentare la posizione delle tane
 typedef struct posizioneTane
@@ -197,9 +193,8 @@ extern int minx,
 // Schermo ncurses
 extern WINDOW *gioco;
 
-//variabile per la lettura dei flussi
-extern corrente flussi[NUM_FLUSSI_FIUME+3];
-
+// variabile per la lettura dei flussi
+extern corrente flussi[NUM_FLUSSI_FIUME + 3];
 
 // Variabile per la posizione delle tane
 extern posizioneTane posTane[NUM_TANE];
@@ -227,39 +222,40 @@ void chiudiProcessi(pid_t pid);
 // gestione gioco
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
 void avviaGioco(bool tana_status[], int punteggio, int vita);
-int controlloGioco( int vita, bool tana_status[], int tempoRimanente, int punteggio);
+int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int punteggio);
 void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein);
 void terminaGioco();
 
 bool verificaTanaStatus(bool tana_status[]); // verifica se tutte le tane sono state raggiunte
 
-
-//funzioni e variabili globali per thread e semafori 
+// funzioni e variabili globali per thread e semafori
 sem_t sem_liberi, sem_occupati;
 elementoGioco lista_elementi[DIM_BUFFER];
-bool controllo=true; //variabile di controllo per la terminazione
+bool controllo = true; // variabile di controllo per la terminazione
 
+int in = 0;  // Indice per inserire nuovi elementi
+int out = 0; // Indice per rimuovere elementi
 
-int in = 0;    // Indice per inserire nuovi elementi
-int out = 0;   // Indice per rimuovere elementi
+void inizializza_meccanismi_sincronizzazione()
+{
+    sem_init(&sem_occupati, 0, 0);        // All'inizio 0 elementi sono presenti nel buffer
+    sem_init(&sem_liberi, 0, DIM_BUFFER); // All'inizio tutti i posti del buffer sono liberi
+}
+void dealloca_meccanismi_sincronizzazione()
+{
+    sem_destroy(&sem_occupati);
+    sem_destroy(&sem_liberi);
+}
 
- void inizializza_meccanismi_sincronizzazione() {
- sem_init(&sem_occupati, 0, 0); // All'inizio 0 elementi sono presenti nel buffer
- sem_init(&sem_liberi, 0, DIM_BUFFER); // All'inizio tutti i posti del buffer sono liberi
- }
- void dealloca_meccanismi_sincronizzazione() {
- sem_destroy(&sem_occupati);
- sem_destroy(&sem_liberi);
- }
+void wait_produttore() { sem_wait(&sem_liberi); }
+void signal_produttore() { sem_post(&sem_occupati); }
 
- void wait_produttore() { sem_wait(&sem_liberi); }
- void signal_produttore() { sem_post(&sem_occupati); }
+void wait_consumatore() { sem_wait(&sem_occupati); }
+void signal_consumatore() { sem_post(&sem_liberi); }
 
- void wait_consumatore() { sem_wait(&sem_occupati); }
- void signal_consumatore() { sem_post(&sem_liberi); }
-
- int get_contatore_occupati() {
- int contatore_occupati;
- sem_getvalue(&sem_occupati, &contatore_occupati);
- return contatore_occupati;
- }
+int get_contatore_occupati()
+{
+    int contatore_occupati;
+    sem_getvalue(&sem_occupati, &contatore_occupati);
+    return contatore_occupati;
+}

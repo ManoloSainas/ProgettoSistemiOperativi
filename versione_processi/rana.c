@@ -57,7 +57,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                     _exit(1);
                 case 0:
                     // Processo proiettile
-                    proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, DESTRA, 'r');
+                    proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_PROIETTILI, DESTRA, 'r');
                     break;
                 default:
                     if (num_spari < MAXGRANATE)
@@ -71,7 +71,7 @@ void rana(int pipeout, int pipein, corrente flussi[])
                             _exit(1);
                         case 0:
                             // Processo proiettile
-                            proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_GRANATE, SINISTRA, 'r');
+                            proiettile(pipeout, ranaGiocatore.y, ranaGiocatore.x, SPEED_PROIETTILI, SINISTRA, 'r');
                             break;
                         default:
                             break;
