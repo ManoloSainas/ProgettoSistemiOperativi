@@ -298,7 +298,7 @@ void cancellaSprite(elementoGioco elemento)
 // funzione per cancellare il proiettile/granata
 void cancellaProiettile(elementoGioco elemento)
 {
-    if (elemento.pid_oggetto != INVALID_PID)
+    if (elemento.thread_oggetto != INVALID_THREAD)
     {
         wattron(gioco, COLOR_PAIR(SFONDO_ACQUA));
         mvwprintw(gioco, elemento.y, elemento.x, " ");

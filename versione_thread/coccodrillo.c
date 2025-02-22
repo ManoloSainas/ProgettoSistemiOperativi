@@ -3,7 +3,7 @@
 void *coccodrillo(void *info)
 {
     // Inizializzazione del coccodrillo
-    srand(time(NULL) + pthread_self());
+    srand(time(NULL) + (unsigned long)pthread_self());
     info_elemento *info_cocco = (info_elemento *)info;
 
     posizione pos_c;
@@ -48,7 +48,7 @@ void *coccodrillo(void *info)
             {
 
                 // creazioen thread sparo
-                if (pthread_create(gioco, NULL, &proiettile, var_proiettile) == 0)
+                if (pthread_create(&coccodrillo.proiettile, NULL, &proiettile, var_proiettile) == 0)
                 {
                     start_sparo = time(NULL);
                 }

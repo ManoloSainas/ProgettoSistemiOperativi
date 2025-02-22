@@ -7,7 +7,6 @@ void *rana()
 
     elementoGioco ranaGiocatore;
 
-
     keypad(gioco, TRUE);
 
     int num_spari = 0; // contatore per la gestione della quantità di spari
@@ -18,7 +17,7 @@ void *rana()
     ranaGiocatore.y = RANA_Y;
     ranaGiocatore.thread_oggetto = pthread_self();
     ranaGiocatore.velocita = 0;
-    *(ranaGiocatore.controllo)=true;
+    *(ranaGiocatore.controllo) = true;
     while (controllo && *(ranaGiocatore.controllo))
     {
         // Gestione movimento rana
@@ -48,11 +47,9 @@ void *rana()
                 num_spari++;
                 // creaziobe thread proiettile sinistro
                 num_spari++;
-                //creazione thread proiettile destro
-                
-                }
+                // creazione thread proiettile destro
             }
-        
+        }
 
         ranaGiocatore.direzione = flussi[16 - ranaGiocatore.y].direzione; // direzione del flusso
         ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;   // velocità del flusso
@@ -60,12 +57,9 @@ void *rana()
         ranaGiocatore.proiettile = num_spari; // sfruttiamo la sezione inuttilizzata per debugging e controlli aggiuntivi
 
         // Scrittura nella lista thread delle informazioni della rana
-     wait_produttore();
-    lista_elementi[in]=ranaGiocatore;
-    in=(in+1)%DIM_BUFFER;
-     signal_produttore();   
+        wait_produttore();
+        lista_elementi[in] = ranaGiocatore;
+        in = (in + 1) % DIM_BUFFER;
+        signal_produttore();
     }
-
-    return(1);
 }
-

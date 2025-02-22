@@ -102,14 +102,22 @@
 #define INVALID_THREAD -500 // Valore di default per il PID
 
 // Indici per l'utilizzo del buffer
-int indexAggiunta, indexRimozione;
+extern int indexAggiunta, indexRimozione;
 
 // Semafori e mutex per il coordinamento dei thread
-pthread_mutex_t mutex;
+/*pthread_mutex_t mutex;
 sem_t bufferPieno, bufferVuoto;
 
 elementoGioco buffer[DIM_BUFFER]; // Buffer
-elementoGioco oggettoPreso;       // oggetto che viene preso e rimosso dal buffer
+elementoGioco oggettoPreso;       // oggetto che viene preso e rimosso dal buffer*/
+
+// direzione flusso fiume
+typedef enum
+{
+    SINISTRA,
+    DESTRA,
+    NESSUNA
+} DirezioneFlusso;
 
 // variabile da dare ai thread
 typedef struct info_elemento
@@ -121,14 +129,6 @@ typedef struct info_elemento
     DirezioneFlusso direzione;
 
 } info_elemento;
-
-// direzione flusso fiume
-typedef enum
-{
-    SINISTRA,
-    DESTRA,
-    NESSUNA
-} DirezioneFlusso;
 
 // differenziazione tra oggetti
 typedef enum tipoOggetto
@@ -151,7 +151,7 @@ typedef struct elementoGioco
     pthread_t thread_oggetto;
     int velocita;
     DirezioneFlusso direzione;
-    pid_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
+    pthread_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
 } elementoGioco;
 
 // struttura per rappresentare la posizione di un oggetto
@@ -160,7 +160,7 @@ typedef struct posizione
     int x;
     int y;
     int thread_id;
-    pid_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
+    pthread_t proiettile; // usato dai proiettili per identificare il coccodrillo che li ha generati e viceversa il coccodrillo per identificare il proprio proiettile
     DirezioneFlusso direzione;
     bool *controllo;
 } posizione;
@@ -186,11 +186,9 @@ typedef enum tipoDescrittore
     SCRITTURA
 } tipoDescrittore;
 
-// Coordinate dell'area di gioco
-extern int minx,
-    miny;
-
 // Schermo ncurses
+extern int minx;
+extern int miny;
 extern WINDOW *gioco;
 
 // variabile per la lettura dei flussi
@@ -223,39 +221,27 @@ void chiudiProcessi(pid_t pid);
 void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso);
 void avviaGioco(bool tana_status[], int punteggio, int vita);
 int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int punteggio);
-void chiusuraFineManche(posizione pos_c[], posizione pos_granate[], int pipeRana, pid_t pid_rana, int pipein);
+void chiusuraFineManche(posizione pos_c[], posizione pos_proiettili[], posizione pos_granate[], pthread_t id_rana);
 void terminaGioco();
-
 bool verificaTanaStatus(bool tana_status[]); // verifica se tutte le tane sono state raggiunte
 
-// funzioni e variabili globali per thread e semafori
-sem_t sem_liberi, sem_occupati;
-elementoGioco lista_elementi[DIM_BUFFER];
-bool controllo = true; // variabile di controllo per la terminazione
+// Indici per l'utilizzo del buffer
+extern int indexAggiunta, indexRimozione;
 
-int in = 0;  // Indice per inserire nuovi elementi
-int out = 0; // Indice per rimuovere elementi
+// Semafori e mutex per il coordinamento dei thread
+extern sem_t sem_liberi, sem_occupati;
 
-void inizializza_meccanismi_sincronizzazione()
-{
-    sem_init(&sem_occupati, 0, 0);        // All'inizio 0 elementi sono presenti nel buffer
-    sem_init(&sem_liberi, 0, DIM_BUFFER); // All'inizio tutti i posti del buffer sono liberi
-}
-void dealloca_meccanismi_sincronizzazione()
-{
-    sem_destroy(&sem_occupati);
-    sem_destroy(&sem_liberi);
-}
+extern elementoGioco lista_elementi[DIM_BUFFER]; // Buffer
+extern bool controllo;                           // variabile di controllo per la terminazione
 
-void wait_produttore() { sem_wait(&sem_liberi); }
-void signal_produttore() { sem_post(&sem_occupati); }
+extern int in;  // Indice per inserire nuovi elementi
+extern int out; // Indice per rimuovere elementi
 
-void wait_consumatore() { sem_wait(&sem_occupati); }
-void signal_consumatore() { sem_post(&sem_liberi); }
-
-int get_contatore_occupati()
-{
-    int contatore_occupati;
-    sem_getvalue(&sem_occupati, &contatore_occupati);
-    return contatore_occupati;
-}
+// Function declarations
+void inizializza_meccanismi_sincronizzazione();
+void dealloca_meccanismi_sincronizzazione();
+void wait_produttore();
+void signal_produttore();
+void wait_consumatore();
+void signal_consumatore();
+int get_contatore_occupati();

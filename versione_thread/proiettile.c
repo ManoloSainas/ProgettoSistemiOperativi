@@ -3,15 +3,15 @@
 void *proiettile(void *info)
 {
 
-    info_elemento *letto=(info_elemento*)info;
+    info_elemento *letto = (info_elemento *)info;
     elementoGioco proiettile;
     proiettile.direzione = letto->direzione;
     proiettile.thread_oggetto = pthread_self();
     proiettile.y = letto->y;
     proiettile.velocita = letto->speed;
-    int x=letto->x;
+    int x = letto->x;
     double start_timer, fine_timer, durata_timer;
-    durata_timer=proiettile.velocita/1000000;
+    durata_timer = proiettile.velocita / 1000000;
     // In base al tipo di proiettile, determina il comportamento("c" -> proiettile coccodrillo, "r" -> granata rana)
     switch (letto->tipo)
     {
@@ -44,33 +44,33 @@ void *proiettile(void *info)
     default:
         break;
     }
-    
-    *proiettile.controllo=true;
 
-    start_timer=time(NULL);
+    *proiettile.controllo = true;
+
+    start_timer = time(NULL);
     while (controllo && *proiettile.controllo)
     {
-        fine_timer=time(NULL);
-       if(difftime(fine_timer,start_timer)>=durata_timer){
-
-        switch (proiettile.direzione)
+        fine_timer = time(NULL);
+        if (difftime(fine_timer, start_timer) >= durata_timer)
         {
-        case DESTRA:
-            proiettile.x += SPOSTAMENTO_PROIETTILE;
-            break;
-        case SINISTRA:
-            proiettile.x -= SPOSTAMENTO_PROIETTILE;
-            break;
-        default:
-            break;
+
+            switch (proiettile.direzione)
+            {
+            case DESTRA:
+                proiettile.x += SPOSTAMENTO_PROIETTILE;
+                break;
+            case SINISTRA:
+                proiettile.x -= SPOSTAMENTO_PROIETTILE;
+                break;
+            default:
+                break;
+            }
+            // Invia il proiettile a controlloGioco
+            wait_produttore();
+            lista_elementi[in] = proiettile;
+            in = (in + 1) % DIM_BUFFER;
+            signal_produttore();
+            start_timer = time(NULL);
         }
-        // Invia il proiettile a controlloGioco
-      wait_produttore();
-    lista_elementi[in]=proiettile;
-    in=(in+1)%DIM_BUFFER;
-     signal_produttore(); 
-     start_timer=time(NULL);
-     }
     }
-    return(1);
 }
