@@ -15,7 +15,8 @@ void *coccodrillo(void *info)
     coccodrillo.velocita = info_cocco->speed;
     coccodrillo.proiettile = INVALID_THREAD;
     info_elemento proiettile_info;
-    *(coccodrillo.controllo) = true;
+    bool controllo_coccodrillo = true;
+    coccodrillo.controllo = &controllo_coccodrillo;
     // gestione sparo
     double durata_sparo, fine_sparo, start_sparo, start_timer, fine_timer, durata_timer;
     int tempo_sparo = rand() % 4 + 3;
@@ -47,7 +48,7 @@ void *coccodrillo(void *info)
             if (difftime(fine_sparo, start_sparo) >= tempo_sparo) // se  tempo_sparo è passato spara
             {
 
-                // creazioen thread sparo
+                // creazione thread sparo
                 if (pthread_create(&coccodrillo.proiettile, NULL, &proiettile, var_proiettile) == 0)
                 {
                     start_sparo = time(NULL);
@@ -56,26 +57,26 @@ void *coccodrillo(void *info)
                 {
                     perror("errore creazione thread");
                 }
-                // Movimento del coccodrillo
-                switch (coccodrillo.direzione)
-                {
-                case DESTRA:
-                    coccodrillo.x += SPOSTAMENTO_COCCODRILLO;
-                    break;
-                case SINISTRA:
-                    coccodrillo.x -= SPOSTAMENTO_COCCODRILLO;
-                    break;
-                }
-
-                // Scrive l'elemento coccodrillo nell lista degli elementi in comune
-
-                wait_produttore();
-                lista_elementi[in] = coccodrillo;
-                in = (in + 1) % DIM_BUFFER;
-                signal_produttore();
-
-                start_timer = time(NULL);
             }
+            // Movimento del coccodrillo
+            switch (coccodrillo.direzione)
+            {
+            case DESTRA:
+                coccodrillo.x += SPOSTAMENTO_COCCODRILLO;
+                break;
+            case SINISTRA:
+                coccodrillo.x -= SPOSTAMENTO_COCCODRILLO;
+                break;
+            }
+
+            // Scrive l'elemento coccodrillo nella lista degli elementi in comune
+            wait_produttore();
+            lista_elementi[in] = coccodrillo;
+            in = (in + 1) % DIM_BUFFER;
+            signal_produttore();
+
+            start_timer = time(NULL);
         }
     }
+    return NULL;
 }

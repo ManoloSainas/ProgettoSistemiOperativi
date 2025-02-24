@@ -1,5 +1,5 @@
 frogger: frogger.o schermo.o stampa.o gioco.o gestione.o rana.o coccodrillo.o proiettile.o
-	gcc frogger.o schermo.o stampa.o gioco.o gestione.o rana.o coccodrillo.o proiettile.o -o frogger -lncurses -lpthread
+	gcc frogger.o schermo.o stampa.o gioco.o gestione.o rana.o coccodrillo.o proiettile.o -g -o frogger -lncurses -lpthread
 
 frogger.o: frogger.h frogger.c
 	gcc -c frogger.c

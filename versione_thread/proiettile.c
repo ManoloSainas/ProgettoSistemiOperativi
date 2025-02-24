@@ -2,9 +2,10 @@
 
 void *proiettile(void *info)
 {
-
     info_elemento *letto = (info_elemento *)info;
     elementoGioco proiettile;
+    bool controllo_proiettile = true;
+    proiettile.controllo = &controllo_proiettile;
     proiettile.direzione = letto->direzione;
     proiettile.thread_oggetto = pthread_self();
     proiettile.y = letto->y;
@@ -45,8 +46,6 @@ void *proiettile(void *info)
         break;
     }
 
-    *proiettile.controllo = true;
-
     start_timer = time(NULL);
     while (controllo && *proiettile.controllo)
     {
@@ -73,4 +72,5 @@ void *proiettile(void *info)
             start_timer = time(NULL);
         }
     }
+    return NULL;
 }
