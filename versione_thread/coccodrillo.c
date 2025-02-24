@@ -78,5 +78,6 @@ void *coccodrillo(void *info)
             start_timer = time(NULL);
         }
     }
+
     return NULL;
 }

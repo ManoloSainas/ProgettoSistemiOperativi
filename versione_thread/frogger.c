@@ -57,6 +57,7 @@ int main()
     pthread_t gioco_thread;
 
     inizializzazioneSchermo();
+    inizializza_meccanismi_sincronizzazione();
 
     do
     {

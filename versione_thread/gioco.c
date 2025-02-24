@@ -121,7 +121,6 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
 {
     controllo = true;
     avviaGioco(tana_status, punteggio, vita);
-    inizializza_meccanismi_sincronizzazione();
     time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
 
     // elementi per la gestione delle granate e dei proiettili dopo la collisione
