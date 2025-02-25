@@ -106,8 +106,9 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 
             infococco[count].direzione = flussi[i - 1].direzione;
             infococco[count].speed = flussi[i - 1].velocita;
-            infococco[count].y = i;
-            infococco[count].x = j; // info cocco usato per  dare al coccodrillo informazioni sull'attesa
+            infococco[count].y = maxy - i - 2;
+            int x_cocco = (infococco[count].direzione == DESTRA) ? (minx - 1) : maxx - 1;
+            infococco[count].x = x_cocco; // info cocco usato per  dare al coccodrillo informazioni sull'attesa
             info_void = &infococco[count];
             // thread coccodrilli
             pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void);
@@ -234,6 +235,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
 
         // legge il valore dalla pipe
         // mettere controllo thread
+
         {
             // cancella gli sprite
             cancellaSprite(rana);
@@ -313,6 +315,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
                             {
 
                                 *pos_granate[i].controllo = false;
+                                pthread_cancel(pos_granate[i].thread_id);
                                 pthread_join(pos_granate[i].thread_id, NULL);
                                 // la posizione della granata eliminata diventa valida e il count granate viene decrementato
                                 pos_granate[i].thread_id = INVALID_THREAD;
@@ -346,6 +349,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
                             t_posg.thread_id = granata.thread_oggetto;
                             if (t_posg.thread_id != INVALID_THREAD)
                             {
+                                pthread_cancel(t_posg.thread_id);
                                 pthread_join(t_posg.thread_id, NULL);
                                 pos_granate[i].thread_id = INVALID_THREAD;
                             }
@@ -371,6 +375,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
                         {
                             // inserire killthread
                             *pos_proiettili[i].controllo = false;
+                            pthread_cancel(pos_proiettili[i].thread_id);
                             pthread_join(pos_proiettili[i].thread_id, NULL);
                             pos_proiettili[i].thread_id = INVALID_THREAD;
                             countP--;
@@ -448,12 +453,14 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
                             if (pos_proiettili[j].proiettile != INVALID_THREAD)
                             {
                                 *pos_proiettili[j].controllo = false;
+                                pthread_cancel(pos_proiettili[j].proiettile);
                                 pthread_join(pos_proiettili[i].thread_id, NULL);
                             }
                             // viene inviato un messaggio attraverso la pipe della rana per eliminare la granata dopo la collisione
                             if (pos_granate[i].thread_id != INVALID_THREAD)
                             {
                                 *pos_granate[i].controllo = false;
+                                pthread_cancel(pos_granate[i].thread_id);
                                 pthread_join(pos_granate[i].thread_id, NULL);
                             }
 
@@ -603,25 +610,31 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_proiettili[], posizione
 {
     controllo = false;
 
-    pthread_join(id_rana, NULL);
+    if (id_rana != INVALID_THREAD && id_rana != 0)
+    {
+        pthread_cancel(id_rana);
+        pthread_join(id_rana, NULL);
+    }
 
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {
-        if (pos_c[i].thread_id != INVALID_THREAD)
+        if (pos_c[i].thread_id != INVALID_THREAD && pos_c[i].thread_id != 0)
         {
+            pthread_cancel(pos_c[i].thread_id);
             pthread_join(pos_c[i].thread_id, NULL);
         }
-        if (pos_proiettili[i].thread_id != INVALID_THREAD)
+        if (pos_proiettili[i].thread_id != INVALID_THREAD && pos_proiettili[i].thread_id != 0)
         {
+            pthread_cancel(pos_proiettili[i].thread_id);
             pthread_join(pos_proiettili[i].thread_id, NULL);
         }
     }
     for (int i = 0; i < MAXGRANATE; i++)
     {
-
-        if (pos_granate[i].thread_id != INVALID_THREAD)
+        if (pos_granate[i].thread_id != INVALID_THREAD && pos_granate[i].thread_id != 0)
         {
-            pthread_join(pos_c[i].thread_id, NULL);
+            pthread_cancel(pos_granate[i].thread_id);
+            pthread_join(pos_granate[i].thread_id, NULL);
         }
     }
 

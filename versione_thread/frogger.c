@@ -74,7 +74,8 @@ int main()
         // finché ci sono vite e tane aperte
         while (vite > 0 && verificaTanaStatus(tana_status))
         {
-            switch (controlloGioco(vite, tana_status, tempo, punteggio))
+            int risultato = controlloGioco(vite, tana_status, tempo, punteggio);
+            switch (risultato)
             {
             case -1:
                 mvwprintw(gioco, 1, 1, "errore");
