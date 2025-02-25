@@ -1,4 +1,5 @@
 #include "frogger.h"
+#include <unistd.h> // Include the header for usleep
 
 void *coccodrillo(void *info)
 {
@@ -18,12 +19,10 @@ void *coccodrillo(void *info)
     bool controllo_coccodrillo = true;
     coccodrillo.controllo = &controllo_coccodrillo;
     // gestione sparo
-    double durata_sparo, fine_sparo, start_sparo, start_timer, fine_timer, durata_timer;
     int tempo_sparo = rand() % 4 + 3;
     void *var_proiettile;
     // inizializzazione variabili globali
-    start_sparo = time(NULL);
-    start_timer = time(NULL);
+    time_t start_sparo = time(NULL);
     proiettile_info.y = coccodrillo.y;
     proiettile_info.speed = SPEED_PROIETTILI;
     proiettile_info.tipo = 'c';
@@ -33,50 +32,46 @@ void *coccodrillo(void *info)
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
 
-    durata_timer = ((2500000 + rand() % 5000000 + 2000000) / 1000000) * info_cocco->x;
     while (controllo && *coccodrillo.controllo)
     {
+        proiettile_info.x = coccodrillo.x;
 
-        fine_timer = time(NULL);
-        if (difftime(fine_timer, start_timer) >= durata_timer)
+        time_t fine_sparo = time(NULL);
+        if (difftime(fine_sparo, start_sparo) >= tempo_sparo) // se tempo_sparo è passato spara
         {
-            proiettile_info.x = coccodrillo.x;
-            durata_timer = ((500000 - coccodrillo.velocita) / 1000000);
-
-            fine_sparo = time(NULL);
-
-            if (difftime(fine_sparo, start_sparo) >= tempo_sparo) // se  tempo_sparo è passato spara
+            // creazione thread sparo
+            if (pthread_create(&coccodrillo.proiettile, NULL, &proiettile, var_proiettile) == 0)
             {
-
-                // creazione thread sparo
-                if (pthread_create(&coccodrillo.proiettile, NULL, &proiettile, var_proiettile) == 0)
-                {
-                    start_sparo = time(NULL);
-                }
-                else
-                {
-                    perror("errore creazione thread");
-                }
+                start_sparo = time(NULL);
             }
-            // Movimento del coccodrillo
-            switch (coccodrillo.direzione)
+            else
             {
-            case DESTRA:
-                coccodrillo.x += SPOSTAMENTO_COCCODRILLO;
-                break;
-            case SINISTRA:
-                coccodrillo.x -= SPOSTAMENTO_COCCODRILLO;
-                break;
+                perror("errore creazione thread");
             }
-
-            // Scrive l'elemento coccodrillo nella lista degli elementi in comune
-            wait_produttore();
-            lista_elementi[in] = coccodrillo;
-            in = (in + 1) % DIM_BUFFER;
-            signal_produttore();
-
-            start_timer = time(NULL);
         }
+
+        // Movimento del coccodrillo
+        switch (coccodrillo.direzione)
+        {
+        case DESTRA:
+            coccodrillo.x += SPOSTAMENTO_COCCODRILLO;
+            break;
+        case SINISTRA:
+            coccodrillo.x -= SPOSTAMENTO_COCCODRILLO;
+            break;
+        }
+
+        // Scrive l'elemento coccodrillo nella lista degli elementi in comune
+        wait_produttore();
+        lista_elementi[in] = coccodrillo;
+        in = (in + 1) % DIM_BUFFER;
+        signal_produttore();
+
+        // Calcolo del ritardo basato sulla velocità
+        int delay = 500000 - coccodrillo.velocita;
+        if (delay < 0)
+            delay = 0;
+        usleep(delay);
     }
 
     return NULL;

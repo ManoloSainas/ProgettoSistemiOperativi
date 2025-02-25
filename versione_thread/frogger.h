@@ -14,6 +14,9 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+// libreria per usare usleep
+#include <unistd.h>
+
 // Macro
 
 #define DIM_BUFFER 250 // Dimensione del buffer circolare con l'ausilio dei threads
