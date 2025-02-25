@@ -24,6 +24,7 @@ void *coccodrillo(void *info)
     // inizializzazione variabili globali
     time_t start_sparo = time(NULL);
     proiettile_info.y = coccodrillo.y;
+    proiettile_info.x = coccodrillo.x;
     proiettile_info.speed = SPEED_PROIETTILI;
     proiettile_info.tipo = 'c';
     proiettile_info.direzione = coccodrillo.direzione;

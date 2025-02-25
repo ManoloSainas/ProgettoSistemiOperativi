@@ -108,7 +108,7 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
             infococco[count].speed = flussi[i - 1].velocita;
             infococco[count].y = maxy - i - 2;
             int x_cocco = (infococco[count].direzione == DESTRA) ? (minx - 1) : maxx - 1;
-            infococco[count].x = x_cocco; // info cocco usato per  dare al coccodrillo informazioni sull'attesa
+            infococco[count].x = j; // info cocco usato per  dare al coccodrillo informazioni sull'attesa
             info_void = &infococco[count];
             // thread coccodrilli
             pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void);
