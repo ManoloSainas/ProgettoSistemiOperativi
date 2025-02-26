@@ -249,11 +249,6 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
         // legge il valore dalla pipe
         // mettere controllo thread
         {
-            // cancella gli sprite
-            // cancellaSprite(rana);
-            cancellaSprite(coccodrillo);
-            cancellaSprite(granata);
-            cancellaSprite(proiettile);
 
             wait_consumatore();
             valoreLetto = lista_elementi[out];
@@ -608,6 +603,13 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
             chiusuraFineManche(pos_c, pos_proiettili, pos_granate, rana.thread_oggetto);
             return (6);
         }
+
+        // cancella gli sprite
+
+        cancellaSprite(rana);
+        cancellaSprite(coccodrillo);
+        cancellaSprite(granata);
+        cancellaSprite(proiettile);
 
     } while (true);
 }

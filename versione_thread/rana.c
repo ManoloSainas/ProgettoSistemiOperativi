@@ -1,7 +1,6 @@
 #include "frogger.h"
 
-void *
-rana(void *arg)
+void *rana(void *arg)
 {
     elementoGioco ranaGiocatore;
     info_elemento *info_rana = (info_elemento *)arg;
