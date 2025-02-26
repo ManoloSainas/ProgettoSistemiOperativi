@@ -19,7 +19,7 @@
 
 // Macro
 
-#define DIM_BUFFER 250 // Dimensione del buffer circolare con l'ausilio dei threads
+#define DIM_BUFFER 500 // Dimensione del buffer circolare con l'ausilio dei threads
 
 // Numero dati
 #define NUM_VITE_RANA 3

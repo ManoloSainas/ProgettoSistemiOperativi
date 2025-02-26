@@ -4,6 +4,15 @@ void *rana(void *arg)
 {
     elementoGioco ranaGiocatore;
 
+    info_elemento *info_rana = (info_elemento *)arg;
+    ranaGiocatore.tipo = RANA;
+    ranaGiocatore.x = info_rana->x;
+    ranaGiocatore.y = info_rana->y;
+    ranaGiocatore.thread_oggetto = pthread_self();
+    ranaGiocatore.velocita = info_rana->speed;
+    ranaGiocatore.direzione = info_rana->direzione;
+    ranaGiocatore.proiettile = INVALID_THREAD;
+
     // Ensure controllo_rana is properly initialized
     bool controllo_rana = true;
     ranaGiocatore.controllo = &controllo_rana;
@@ -12,14 +21,7 @@ void *rana(void *arg)
 
     int num_spari = 0; // contatore per la gestione della quantità di spari
 
-    // inizializzazione dell'elemento rana
-    ranaGiocatore.tipo = RANA;
-    ranaGiocatore.x = RANA_X;
-    ranaGiocatore.y = RANA_Y;
-    ranaGiocatore.thread_oggetto = pthread_self();
-    ranaGiocatore.velocita = 0;
-
-    while (controllo && *ranaGiocatore.controllo)
+        while (controllo && *ranaGiocatore.controllo)
     {
         // Gestione movimento rana
         switch (wgetch(gioco))
@@ -68,7 +70,7 @@ void *rana(void *arg)
 
         // Scrittura nella lista thread delle informazioni della rana
         wait_produttore();
-        lista_elementi[200] = ranaGiocatore;
+        lista_elementi[in] = ranaGiocatore;
         in = (in + 1) % DIM_BUFFER;
         signal_produttore();
     }

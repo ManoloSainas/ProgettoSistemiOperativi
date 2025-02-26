@@ -99,9 +99,17 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 
     void *info_void[MAXCOCCODRILLI], *rana_void;
 
+    inforana.y = RANA_Y;
+    inforana.x = RANA_X;
+    inforana.speed = 0;
+    inforana.tipo = 'r';
+    inforana.direzione = NESSUNA;
+
+    rana_void = &inforana;
+
     // initialize the rana thread in rana_void and send it to the rana function
 
-    int result = pthread_create(&rana_id, NULL, &rana, NULL);
+    int result = pthread_create(&rana_id, NULL, &rana, rana_void);
     if (result > 0)
         perror("errore creazione thread rana");
 
