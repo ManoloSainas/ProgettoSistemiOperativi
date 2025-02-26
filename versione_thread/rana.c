@@ -1,14 +1,12 @@
 #include "frogger.h"
-/*
-prende in input, una pipe in scrittura, una in lettura e i flussi di corrente
-*/
+
 void *rana(void *arg)
 {
-
     elementoGioco ranaGiocatore;
 
-    // bool controllo_rana = true;
-    // ranaGiocatore.controllo = &controllo_rana;
+    // Ensure controllo_rana is properly initialized
+    bool controllo_rana = true;
+    ranaGiocatore.controllo = &controllo_rana;
 
     keypad(gioco, TRUE);
 
@@ -20,7 +18,8 @@ void *rana(void *arg)
     ranaGiocatore.y = RANA_Y;
     ranaGiocatore.thread_oggetto = pthread_self();
     ranaGiocatore.velocita = 0;
-    while (controllo && true)
+
+    while (controllo && *ranaGiocatore.controllo)
     {
         // Gestione movimento rana
         switch (wgetch(gioco))
@@ -43,27 +42,33 @@ void *rana(void *arg)
             break;
         // Gestione sparo granate
         case KEY_SPACE:
-
             if (num_spari <= MAXGRANATE - 2) // controllo per la quantità di spari
             {
                 num_spari++;
-                // creaziobe thread proiettile sinistro
+                // creazione thread proiettile sinistro
+
                 num_spari++;
                 // creazione thread proiettile destro
+                // pthread_t thread_proiettile_destro;
+                // if (pthread_create(&thread_proiettile_destro, NULL, proiettile, &ranaGiocatore) != 0)
+                // {
+                //     perror("Errore creazione thread proiettile destro");
+                // }
             }
+            break;
         }
 
-        if (ranaGiocatore.y < maxy - 2 && ranaGiocatore.y > miny + 5)
-        {
-            ranaGiocatore.direzione = flussi[16 - ranaGiocatore.y].direzione; // direzione del flusso
-            ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;   // velocità del flusso
-        }
+        // if (ranaGiocatore.y < maxy - 2 && ranaGiocatore.y > miny + 5)
+        // {
+        //     ranaGiocatore.direzione = flussi[16 - ranaGiocatore.y].direzione; // direzione del flusso
+        //     ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;   // velocità del flusso
+        // }
 
         ranaGiocatore.proiettile = num_spari; // sfruttiamo la sezione inuttilizzata per debugging e controlli aggiuntivi
 
         // Scrittura nella lista thread delle informazioni della rana
         wait_produttore();
-        lista_elementi[in] = ranaGiocatore;
+        lista_elementi[200] = ranaGiocatore;
         in = (in + 1) % DIM_BUFFER;
         signal_produttore();
     }

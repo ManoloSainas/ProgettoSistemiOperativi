@@ -110,7 +110,6 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
     // {
     //     for (int j = 1; j <= NUM_COCCODRILLI_FLUSSO; j++)
     //     {
-
     //         infococco[count].direzione = flussi[i - 1].direzione;
     //         infococco[count].speed = flussi[i - 1].velocita;
     //         infococco[count].y = maxy - i - 2;
@@ -200,7 +199,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
             return 6;
         }
 
-        danno = false; // danno con l'acqua -> false
+        danno = true; // danno con l'acqua -> false
 
         // controllo collisione acqua
         coccodrillo_rana = INVALID_THREAD;
@@ -245,7 +244,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
         // mettere controllo thread
         {
             // cancella gli sprite
-            cancellaSprite(rana);
+            // cancellaSprite(rana);
             cancellaSprite(coccodrillo);
             cancellaSprite(granata);
             cancellaSprite(proiettile);
@@ -442,7 +441,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
                             proiettile_eg.x = pos_proiettili[j].x;
                             proiettile_eg.y = pos_proiettili[j].y;
 
-                            beep();
+                            // beep();
 
                             // cancella graficamente i proiettili e le granate
                             cancellaProiettile(granata_eg);
@@ -630,7 +629,7 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_proiettili[], posizione
 
         if (pos_granate[i].thread_id != INVALID_THREAD)
         {
-            pthread_join(pos_c[i].thread_id, NULL);
+            pthread_join(pos_granate[i].thread_id, NULL);
         }
     }
 
