@@ -67,4 +67,5 @@ void *rana()
         in = (in + 1) % DIM_BUFFER;
         signal_produttore();
     }
+    return NULL;
 }

@@ -98,23 +98,22 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 
     void *info_void;
     pthread_create(&rana_id, NULL, &rana, NULL);
-    int count = 0;
-    for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
-    {
-        for (int j = 1; j <= NUM_COCCODRILLI_FLUSSO; j++)
-        {
+    // int count = 0;
+    // for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
+    // {
+    //     for (int j = 1; j <= NUM_COCCODRILLI_FLUSSO; j++)
+    //     {
 
-            infococco[count].direzione = flussi[i - 1].direzione;
-            infococco[count].speed = flussi[i - 1].velocita;
-            infococco[count].y = maxy - i - 2;
-            int x_cocco = (infococco[count].direzione == DESTRA) ? (minx - 1) : maxx - 1;
-            infococco[count].x = x_cocco; // info cocco usato per  dare al coccodrillo informazioni sull'attesa
-            info_void = &infococco[count];
-            // thread coccodrilli
-            pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void);
-            count++;
-        }
-    }
+    //         infococco[count].direzione = flussi[i - 1].direzione;
+    //         infococco[count].speed = flussi[i - 1].velocita;
+    //         infococco[count].y = maxy - i - 2;
+    //         infococco[count].x = (infococco[count].direzione == DESTRA) ? (minx - 1) : maxx - 1;
+    //         info_void = &infococco[count];
+    //         // thread coccodrilli
+    //         pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void);
+    //         count++;
+    //     }
+    // }
 }
 
 // processo che riceve le coordinate e controlla le collisioni
@@ -497,7 +496,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
 
         // stampa il numero di granate e proiettili presenti
         // mvwprintw(gioco, 2, 3, "numG:  %2d", countG);
-        // mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
+        mvwprintw(gioco, 3, 3, "numP:  %2d", countP);
 
         // stampa il numero di proiettili della rana (il valore che è presente dentro rana.c)
         // mvwprintw(gioco, 3, 3, "numProiettiliRana:  %2d", rana.proiettile);
