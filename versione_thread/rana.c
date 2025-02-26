@@ -7,8 +7,8 @@ void *rana(void *arg)
 
     elementoGioco ranaGiocatore;
 
-    bool controllo_rana = true;
-    ranaGiocatore.controllo = &controllo_rana;
+    // bool controllo_rana = true;
+    // ranaGiocatore.controllo = &controllo_rana;
 
     keypad(gioco, TRUE);
 
@@ -20,7 +20,7 @@ void *rana(void *arg)
     ranaGiocatore.y = RANA_Y;
     ranaGiocatore.thread_oggetto = pthread_self();
     ranaGiocatore.velocita = 0;
-    while (controllo && *(ranaGiocatore.controllo))
+    while (controllo && true)
     {
         // Gestione movimento rana
         switch (wgetch(gioco))

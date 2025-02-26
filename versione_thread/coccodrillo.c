@@ -33,13 +33,13 @@ void *coccodrillo(void *info)
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
 
-    durata_timer = ((2500000 + rand() % 5000000 + 2000000) / 1000000) * info_cocco->x;
+    durata_timer = ((2500000 + rand() % 5000000 + 2000000)) * info_cocco->x;
     while (controllo && *coccodrillo.controllo)
     {
-        usleep(durata_timer * 1000000);
+        usleep(durata_timer);
 
         proiettile_info.x = coccodrillo.x;
-        durata_timer = ((500000 - coccodrillo.velocita) / 1000000);
+        durata_timer = ((500000 - coccodrillo.velocita));
 
         if (difftime(time(NULL), start_sparo) >= tempo_sparo) // se tempo_sparo è passato spara
         {

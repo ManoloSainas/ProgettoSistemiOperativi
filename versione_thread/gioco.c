@@ -83,6 +83,7 @@ void gestioneFlussi(corrente *flussi, int *coccodrilli_flusso)
 // avvia il gioco e crea i vari processi
 void avviaGioco(bool tana_status[], int punteggio, int vita)
 {
+    inizializza_meccanismi_sincronizzazione();
     int tempoRimanente = TEMPO_TOTALE; // Inizializzazione del tempo rimanente
 
     int coccodrilli_flusso[NUM_FLUSSI_FIUME] = {NUM_COCCODRILLI_FLUSSO}; // numero di coccodrilli per flusso
@@ -96,17 +97,13 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
     pthread_t rana_id, coccodrilli[MAXCOCCODRILLI];
     info_elemento inforana, infococco[MAXCOCCODRILLI];
 
-    void *info_void, *rana_void;
+    void *info_void[MAXCOCCODRILLI], *rana_void;
 
     // initialize the rana thread in rana_void and send it to the rana function
 
-    info_void = NULL;
-    int result = pthread_create(&rana_id, NULL, &rana, info_void);
-    if (result != 0)
-    {
-        perror("Error creating rana thread");
-        exit(EXIT_FAILURE);
-    }
+    int result = pthread_create(&rana_id, NULL, &rana, NULL);
+    if (result > 0)
+        perror("errore creazione thread rana");
 
     // int count = 0;
     // for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
@@ -117,10 +114,10 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
     //         infococco[count].direzione = flussi[i - 1].direzione;
     //         infococco[count].speed = flussi[i - 1].velocita;
     //         infococco[count].y = maxy - i - 2;
-    //         infococco[count].x = (infococco[count].direzione == DESTRA) ? (minx - 1) : maxx - 1;
-    //         info_void = &infococco[count];
+    //         infococco[count].x = j;
+    //         info_void[count] = &infococco[count];
     //         // thread coccodrilli
-    //         pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void);
+    //         pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void[count]);
     //         count++;
     //     }
     // }
@@ -132,7 +129,6 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
     controllo = true;
     // inizializza_meccanismi_sincronizzazione();    // SE MESSO QUI SI ROMPE TUTTO
     avviaGioco(tana_status, punteggio, vita);
-    inizializza_meccanismi_sincronizzazione();
 
     time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
 
