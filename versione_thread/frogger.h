@@ -14,6 +14,11 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+// librerie per i mutex
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+
 // Librerie per le usleep
 #include <unistd.h>
 
@@ -248,3 +253,7 @@ void signal_produttore();
 void wait_consumatore();
 void signal_consumatore();
 int get_contatore_occupati();
+
+// Funzioni per gestire il mutex
+void lock_mutex();
+void unlock_mutex();

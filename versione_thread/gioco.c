@@ -109,9 +109,7 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 
     // initialize the rana thread in rana_void and send it to the rana function
 
-    int result = pthread_create(&rana_id, NULL, &rana, rana_void);
-    if (result > 0)
-        perror("errore creazione thread rana");
+    pthread_create(&rana_id, NULL, &rana, rana_void);
 
     // int count = 0;
     // for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
@@ -618,8 +616,11 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
 void chiusuraFineManche(posizione pos_c[], posizione pos_proiettili[], posizione pos_granate[], pthread_t id_rana)
 {
     controllo = false;
-
-    pthread_join(id_rana, NULL);
+    // cancella il thread della rana
+    if (id_rana != INVALID_THREAD)
+    {
+        pthread_join(id_rana, NULL);
+    }
 
     for (int i = 0; i < MAXCOCCODRILLI; i++)
     {

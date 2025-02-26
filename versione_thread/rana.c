@@ -21,10 +21,16 @@ void *rana(void *arg)
 
     int num_spari = 0; // contatore per la gestione della quantità di spari
 
-        while (controllo && *ranaGiocatore.controllo)
+    while (controllo && *ranaGiocatore.controllo)
     {
+        int c;
+
+        // Lock the mutex before calling wgetch and modifying shared resources
+        lock_mutex();
+        c = wgetch(gioco);
+
         // Gestione movimento rana
-        switch (wgetch(gioco))
+        switch (c)
         {
         case KEY_UP:
             if (ranaGiocatore.y > miny + 5)
@@ -42,21 +48,23 @@ void *rana(void *arg)
             if (ranaGiocatore.x < maxx - 3)
                 ranaGiocatore.x += SPOSTAMENTO_RANA;
             break;
-        // Gestione sparo granate
-        case KEY_SPACE:
-            if (num_spari <= MAXGRANATE - 2) // controllo per la quantità di spari
-            {
-                num_spari++;
-                // creazione thread proiettile sinistro
+            // Gestione sparo granate
+            // case KEY_SPACE:
+            //     if (num_spari <= MAXGRANATE - 2) // controllo per la quantità di spari
+            //     {
+            //         num_spari++;
+            //         // creazione thread proiettile sinistro
 
-                num_spari++;
-                // creazione thread proiettile destro
-                // pthread_t thread_proiettile_destro;
-                // if (pthread_create(&thread_proiettile_destro, NULL, proiettile, &ranaGiocatore) != 0)
-                // {
-                //     perror("Errore creazione thread proiettile destro");
-                // }
-            }
+            //         num_spari++;
+            //         // creazione thread proiettile destro
+            //         // pthread_t thread_proiettile_destro;
+            //         // if (pthread_create(&thread_proiettile_destro, NULL, proiettile, &ranaGiocatore) != 0)
+            //         // {
+            //         //     perror("Errore creazione thread proiettile destro");
+            //         // }
+            //     }
+            //     break;
+        default:
             break;
         }
 
@@ -66,13 +74,16 @@ void *rana(void *arg)
         //     ranaGiocatore.velocita = flussi[16 - ranaGiocatore.y].velocita;   // velocità del flusso
         // }
 
-        ranaGiocatore.proiettile = num_spari; // sfruttiamo la sezione inuttilizzata per debugging e controlli aggiuntivi
+        // ranaGiocatore.proiettile = num_spari; // sfruttiamo la sezione inuttilizzata per debugging e controlli aggiuntivi
 
         // Scrittura nella lista thread delle informazioni della rana
         wait_produttore();
         lista_elementi[in] = ranaGiocatore;
         in = (in + 1) % DIM_BUFFER;
         signal_produttore();
+
+        // Unlock the mutex after modifying shared resources
+        unlock_mutex();
     }
     return NULL;
 }
