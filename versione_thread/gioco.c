@@ -10,6 +10,7 @@ posizioneTane posTane[NUM_TANE] = {
 
 void terminaGioco()
 {
+
     wclear(gioco);   // pulisce la finestra di gioco
     wrefresh(gioco); // aggiorna la finestra di gioco
     delwin(gioco);   // elimina la finestra di gioco
@@ -124,6 +125,8 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int punteggio)
 {
     controllo = true;
+    inizializza_meccanismi_sincronizzazione();
+
     avviaGioco(tana_status, punteggio, vita);
     time_t inizioTempo = time(NULL); // Inizializzazione del tempo di inizio
 
@@ -640,6 +643,4 @@ void chiusuraFineManche(posizione pos_c[], posizione pos_proiettili[], posizione
             pthread_join(pos_granate[i].thread_id, NULL);
         }
     }
-
-    dealloca_meccanismi_sincronizzazione();
 }

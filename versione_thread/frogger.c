@@ -120,6 +120,9 @@ int main()
         {
             esitoPartita = false;
         }
+
+        dealloca_meccanismi_sincronizzazione();
+
     } while (schermataFineGioco(esitoPartita, punteggio)); // continua finchè l'utente vuole rigiocare
     terminaGioco(); // pulisce e chiude la finestra
     return 0;
