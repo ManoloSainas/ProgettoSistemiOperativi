@@ -98,23 +98,26 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
 
     void *info_void;
     pthread_create(&rana_id, NULL, &rana, NULL);
-    int count = 0;
-    for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
-    {
-        for (int j = 1; j <= NUM_COCCODRILLI_FLUSSO; j++)
-        {
 
-            infococco[count].direzione = flussi[i - 1].direzione;
-            infococco[count].speed = flussi[i - 1].velocita;
-            infococco[count].y = maxy - i - 2;
-            int x_cocco = (infococco[count].direzione == DESTRA) ? (minx - 1) : maxx - 1;
-            infococco[count].x = j; // info cocco usato per  dare al coccodrillo informazioni sull'attesa
-            info_void = &infococco[count];
-            // thread coccodrilli
-            pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void);
-            count++;
-        }
-    }
+    // Prima facciamo funzionare rana, granate rana, tane e manche -> poi attiviamo anche coccodrilli e proiettili
+
+    // int count = 0;
+    // for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
+    // {
+    //     for (int j = 1; j <= NUM_COCCODRILLI_FLUSSO; j++)
+    //     {
+
+    //         infococco[count].direzione = flussi[i - 1].direzione;
+    //         infococco[count].speed = flussi[i - 1].velocita;
+    //         infococco[count].y = maxy - i - 2;
+    //         int x_cocco = (infococco[count].direzione == DESTRA) ? (minx - 1) : maxx - 1;
+    //         infococco[count].x = j; // info cocco usato per  dare al coccodrillo informazioni sull'attesa
+    //         info_void = &infococco[count];
+    //         // thread coccodrilli
+    //         pthread_create(&coccodrilli[count], NULL, &coccodrillo, info_void);
+    //         count++;
+    //     }
+    // }
 }
 
 // processo che riceve le coordinate e controlla le collisioni
@@ -192,7 +195,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
             return 6;
         }
 
-        danno = false; // danno con l'acqua -> false
+        danno = true; // danno con l'acqua -> false
 
         // controllo collisione acqua
         coccodrillo_rana = INVALID_THREAD;
@@ -454,7 +457,7 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
                             {
                                 *pos_proiettili[j].controllo = false;
                                 pthread_cancel(pos_proiettili[j].proiettile);
-                                pthread_join(pos_proiettili[i].thread_id, NULL);
+                                pthread_join(pos_proiettili[j].thread_id, NULL);
                             }
                             // viene inviato un messaggio attraverso la pipe della rana per eliminare la granata dopo la collisione
                             if (pos_granate[i].thread_id != INVALID_THREAD)
@@ -479,17 +482,17 @@ int controlloGioco(int vita, bool tana_status[], int tempoRimanente, int puntegg
         }
 
         // stampa delle sprite
-        if (coccodrillo.thread_oggetto > 0)
-            stampaSprite(coccodrillo);
+        // if (coccodrillo.thread_oggetto > 0)
+        //  stampaSprite(coccodrillo);
 
         if (rana.thread_oggetto > 0)
             stampaSprite(rana);
 
-        if (granata.thread_oggetto > 0)
-            stampaSprite(granata);
+        // if (granata.thread_oggetto > 0)
+        //   stampaSprite(granata);
 
-        if (proiettile.thread_oggetto > 0)
-            stampaSprite(proiettile);
+        // if (proiettile.thread_oggetto > 0)
+        //  stampaSprite(proiettile);
 
         // stampe di debug
 

@@ -4,9 +4,9 @@
 int indexAggiunta, indexRimozione;
 sem_t sem_liberi, sem_occupati;
 elementoGioco lista_elementi[DIM_BUFFER];
-bool controllo = true; // variabile di controllo per la terminazione
-int in = 0;            // Indice per inserire nuovi elementi
-int out = 0;           // Indice per rimuovere elementi
+bool controllo; // variabile di controllo per la terminazione dei thread
+int in = 0;     // Indice per inserire nuovi elementi
+int out = 0;    // Indice per rimuovere elementi
 
 // Function definitions
 void inizializza_meccanismi_sincronizzazione()
