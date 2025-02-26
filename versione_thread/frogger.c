@@ -57,7 +57,6 @@ int main()
     pthread_t gioco_thread;
 
     inizializzazioneSchermo();
-    inizializza_meccanismi_sincronizzazione();
 
     do
     {
@@ -74,9 +73,7 @@ int main()
         // finché ci sono vite e tane aperte
         while (vite > 0 && verificaTanaStatus(tana_status))
         {
-
-            int risultato = controlloGioco(vite, tana_status, tempo, punteggio);
-            switch (risultato)
+            switch (controlloGioco(vite, tana_status, tempo, punteggio))
             {
             case -1:
                 mvwprintw(gioco, 1, 1, "errore");
@@ -120,9 +117,6 @@ int main()
         {
             esitoPartita = false;
         }
-
-        dealloca_meccanismi_sincronizzazione();
-
     } while (schermataFineGioco(esitoPartita, punteggio)); // continua finchè l'utente vuole rigiocare
     terminaGioco(); // pulisce e chiude la finestra
     return 0;

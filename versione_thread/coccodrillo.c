@@ -1,5 +1,4 @@
 #include "frogger.h"
-#include <unistd.h> // Include the header for usleep
 
 void *coccodrillo(void *info)
 {
@@ -19,12 +18,13 @@ void *coccodrillo(void *info)
     bool controllo_coccodrillo = true;
     coccodrillo.controllo = &controllo_coccodrillo;
     // gestione sparo
+    double durata_sparo, start_sparo, start_timer, durata_timer;
     int tempo_sparo = rand() % 4 + 3;
     void *var_proiettile;
     // inizializzazione variabili globali
-    time_t start_sparo = time(NULL);
+    start_sparo = time(NULL);
+    start_timer = time(NULL);
     proiettile_info.y = coccodrillo.y;
-    proiettile_info.x = coccodrillo.x;
     proiettile_info.speed = SPEED_PROIETTILI;
     proiettile_info.tipo = 'c';
     proiettile_info.direzione = coccodrillo.direzione;
@@ -33,12 +33,15 @@ void *coccodrillo(void *info)
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
 
+    durata_timer = ((2500000 + rand() % 5000000 + 2000000) / 1000000) * info_cocco->x;
     while (controllo && *coccodrillo.controllo)
     {
-        proiettile_info.x = coccodrillo.x;
+        usleep(durata_timer * 1000000);
 
-        time_t fine_sparo = time(NULL);
-        if (difftime(fine_sparo, start_sparo) >= tempo_sparo) // se tempo_sparo è passato spara
+        proiettile_info.x = coccodrillo.x;
+        durata_timer = ((500000 - coccodrillo.velocita) / 1000000);
+
+        if (difftime(time(NULL), start_sparo) >= tempo_sparo) // se tempo_sparo è passato spara
         {
             // creazione thread sparo
             if (pthread_create(&coccodrillo.proiettile, NULL, &proiettile, var_proiettile) == 0)
@@ -50,7 +53,6 @@ void *coccodrillo(void *info)
                 perror("errore creazione thread");
             }
         }
-
         // Movimento del coccodrillo
         switch (coccodrillo.direzione)
         {
@@ -68,12 +70,13 @@ void *coccodrillo(void *info)
         in = (in + 1) % DIM_BUFFER;
         signal_produttore();
 
+        start_timer = time(NULL);
+
         // Calcolo del ritardo basato sulla velocità
         int delay = 500000 - coccodrillo.velocita;
         if (delay < 0)
             delay = 0;
         usleep(delay);
     }
-
     return NULL;
 }

@@ -1,5 +1,4 @@
 #include "frogger.h"
-#include <unistd.h> // Include the header for usleep
 
 void *proiettile(void *info)
 {
@@ -12,7 +11,6 @@ void *proiettile(void *info)
     proiettile.y = letto->y;
     proiettile.velocita = letto->speed;
     int x = letto->x;
-
     // In base al tipo di proiettile, determina il comportamento("c" -> proiettile coccodrillo, "r" -> granata rana)
     switch (letto->tipo)
     {

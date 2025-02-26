@@ -14,7 +14,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-// libreria per usare usleep
+// Librerie per le usleep
 #include <unistd.h>
 
 // Macro
