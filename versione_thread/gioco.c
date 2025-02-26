@@ -94,10 +94,20 @@ void avviaGioco(bool tana_status[], int punteggio, int vita)
     gestioneFlussi(flussi, coccodrilli_flusso);
 
     pthread_t rana_id, coccodrilli[MAXCOCCODRILLI];
-    info_elemento infococco[MAXCOCCODRILLI];
+    info_elemento inforana, infococco[MAXCOCCODRILLI];
 
-    void *info_void;
-    pthread_create(&rana_id, NULL, &rana, NULL);
+    void *info_void, *rana_void;
+
+    // initialize the rana thread in rana_void and send it to the rana function
+
+    info_void = NULL;
+    int result = pthread_create(&rana_id, NULL, &rana, info_void);
+    if (result != 0)
+    {
+        perror("Error creating rana thread");
+        exit(EXIT_FAILURE);
+    }
+
     // int count = 0;
     // for (int i = 1; i <= NUM_FLUSSI_FIUME; i++)
     // {

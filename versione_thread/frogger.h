@@ -211,7 +211,7 @@ void cancellaSprite(elementoGioco elemento);
 void cancellaProiettile(elementoGioco elemento);
 
 // Funzioni per la gestione dei processi
-void *rana();
+void *rana(void *arg);
 void *coccodrillo(void *info);
 void *proiettile(void *info);
 void handler_coccodrillo(int sig); // gestione segnali coccodrillo

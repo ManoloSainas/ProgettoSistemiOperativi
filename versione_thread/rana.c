@@ -2,7 +2,7 @@
 /*
 prende in input, una pipe in scrittura, una in lettura e i flussi di corrente
 */
-void *rana()
+void *rana(void *arg)
 {
 
     elementoGioco ranaGiocatore;
