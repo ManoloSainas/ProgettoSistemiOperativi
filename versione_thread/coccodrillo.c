@@ -33,26 +33,23 @@ void *coccodrillo(void *info)
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
 
-    durata_timer = ((2500000 + rand() % 5000000 + 2000000)) * info_cocco->x;
     while (controllo && *coccodrillo.controllo)
     {
-        usleep(durata_timer);
 
         proiettile_info.x = coccodrillo.x;
-        durata_timer = ((500000 - coccodrillo.velocita));
 
-        if (difftime(time(NULL), start_sparo) >= tempo_sparo) // se tempo_sparo è passato spara
-        {
-            // creazione thread sparo
-            if (pthread_create(&coccodrillo.proiettile, NULL, &proiettile, var_proiettile) == 0)
-            {
-                start_sparo = time(NULL);
-            }
-            else
-            {
-                perror("errore creazione thread");
-            }
-        }
+        // if (difftime(time(NULL), start_sparo) >= tempo_sparo) // se tempo_sparo è passato spara
+        // {
+        //     // creazione thread sparo
+        //     if (pthread_create(&coccodrillo.proiettile, NULL, &proiettile, var_proiettile) == 0)
+        //     {
+        //         start_sparo = time(NULL);
+        //     }
+        //     else
+        //     {
+        //         perror("errore creazione thread");
+        //     }
+        // }
         // Movimento del coccodrillo
         switch (coccodrillo.direzione)
         {
@@ -77,6 +74,9 @@ void *coccodrillo(void *info)
         if (delay < 0)
             delay = 0;
         usleep(delay);
+
+        // Evitiamo di usare la CPU al 100%
+        usleep(50000);
     }
     return NULL;
 }

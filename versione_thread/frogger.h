@@ -40,7 +40,7 @@
 #define VELOCITA_FLUSSO 20000
 
 // Tempo di gioco
-#define TEMPO_TOTALE 10 // Tempo totale di gioco (per round)
+#define TEMPO_TOTALE 90 // Tempo totale di gioco (per round)
 
 // Gestione proiettili
 #define SPEED_PROIETTILI 150000
@@ -107,8 +107,7 @@
 // Colori proiettile coccodrillo
 #define COLORE_PROIETTILE_COCCODRILLO 20
 
-#define INVALID_THREAD -500 // Valore di default per il PID
-
+#define INVALID_THREAD ((pthread_t)0) // Valore di default per un thread non valido
 // Indici per l'utilizzo del buffer
 extern int indexAggiunta, indexRimozione;
 
@@ -257,3 +256,6 @@ int get_contatore_occupati();
 // Funzioni per gestire il mutex
 void lock_mutex();
 void unlock_mutex();
+
+// libera il buffer a fine gioco
+void liberaBuffer();

@@ -40,3 +40,21 @@ int get_contatore_occupati()
 // Funzioni per gestire il mutex
 void lock_mutex() { pthread_mutex_lock(&mutex); }
 void unlock_mutex() { pthread_mutex_unlock(&mutex); }
+
+// libera il buffer a fine gioco
+void liberaBuffer()
+{
+    int i;
+
+    for (i = 0; i < DIM_BUFFER; i++)
+    {
+        lista_elementi[i].tipo = '0';
+        lista_elementi[i].x = 0;
+        lista_elementi[i].y = 0;
+        lista_elementi[i].thread_oggetto = INVALID_THREAD;
+        lista_elementi[i].velocita = 0;
+        lista_elementi[i].direzione = NESSUNA;
+        lista_elementi[i].proiettile = INVALID_THREAD;
+        lista_elementi[i].controllo = NULL;
+    }
+}
