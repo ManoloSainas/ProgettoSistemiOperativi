@@ -1,6 +1,6 @@
 #include "frogger.h"
 
-// Define the extern variables
+// Definizione variabili globali
 int minx = 0;
 int miny = 0;
 WINDOW *gioco = NULL;

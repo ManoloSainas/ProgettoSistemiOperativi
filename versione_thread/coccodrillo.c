@@ -21,14 +21,12 @@ void *coccodrillo(void *info)
     double durata_sparo, start_sparo, start_timer, durata_timer;
     int tempo_sparo = rand() % 4 + 3;
     void *var_proiettile;
-    // inizializzazione variabili globali
     start_sparo = time(NULL);
     start_timer = time(NULL);
     proiettile_info.y = coccodrillo.y;
     proiettile_info.speed = SPEED_PROIETTILI;
     proiettile_info.tipo = 'c';
     proiettile_info.direzione = coccodrillo.direzione;
-    // gestione segnale tramite handler
     var_proiettile = &proiettile_info;
     // Inizializza posizione iniziale del coccodrillo
     coccodrillo.x = (coccodrillo.direzione == DESTRA) ? (minx - 1) : maxx - 1;
@@ -61,7 +59,7 @@ void *coccodrillo(void *info)
             break;
         }
 
-        // Scrive l'elemento coccodrillo nella lista degli elementi in comune
+        // Scrive l'elemento coccodrillo nella lista degli elementi
         wait_produttore();
         lista_elementi[in] = coccodrillo;
         in = (in + 1) % DIM_BUFFER;
@@ -74,9 +72,6 @@ void *coccodrillo(void *info)
         if (delay < 0)
             delay = 0;
         usleep(delay);
-
-        // Evitiamo di usare la CPU al 100%
-        usleep(50000);
     }
     return NULL;
 }

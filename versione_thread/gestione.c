@@ -9,7 +9,7 @@ bool controllo = true; // variabile di controllo per la terminazione
 int in = 0;            // Indice per inserire nuovi elementi
 int out = 0;           // Indice per rimuovere elementi
 
-// Function definitions
+// Funzione per l'inizializzazione dei meccanismi di sincronizzazione
 void inizializza_meccanismi_sincronizzazione()
 {
     sem_init(&sem_occupati, 0, 0);        // All'inizio 0 elementi sono presenti nel buffer
@@ -17,6 +17,7 @@ void inizializza_meccanismi_sincronizzazione()
     pthread_mutex_init(&mutex, NULL);     // Inizializzazione del mutex
 }
 
+// Funzione per la deallocazione dei meccanismi di sincronizzazione
 void dealloca_meccanismi_sincronizzazione()
 {
     sem_destroy(&sem_occupati);
@@ -24,6 +25,7 @@ void dealloca_meccanismi_sincronizzazione()
     pthread_mutex_destroy(&mutex); // Deallocazione del mutex
 }
 
+// Funzioni per gestire i semafori
 void wait_produttore() { sem_wait(&sem_liberi); }
 void signal_produttore() { sem_post(&sem_occupati); }
 

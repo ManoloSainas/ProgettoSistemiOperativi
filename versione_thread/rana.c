@@ -12,6 +12,8 @@ void *rana(void *arg)
     ranaGiocatore.direzione = info_rana->direzione;
     ranaGiocatore.proiettile = INVALID_THREAD;
 
+    pthread_t granataSinistra, granataDestra;
+
     bool controllo_rana = true;
     ranaGiocatore.controllo = &controllo_rana;
 
@@ -48,6 +50,43 @@ void *rana(void *arg)
             if (ranaGiocatore.x < maxx - 3)
                 ranaGiocatore.x += SPOSTAMENTO_RANA;
             break;
+            // case KEY_SPACE:
+
+            //     if (num_spari < MAXGRANATE - 2)
+            //     {
+            //         info_elemento granataDestra_info, granataSinistra_info;
+            //         granataDestra_info.x = ranaGiocatore.x;
+            //         granataDestra_info.y = ranaGiocatore.y;
+            //         granataDestra_info.speed = SPEED_PROIETTILI;
+            //         granataDestra_info.tipo = 'r';
+            //         granataDestra_info.direzione = DESTRA;
+
+            //         granataSinistra_info.x = ranaGiocatore.x;
+            //         granataSinistra_info.y = ranaGiocatore.y;
+            //         granataSinistra_info.speed = SPEED_PROIETTILI;
+            //         granataSinistra_info.tipo = 'r';
+            //         granataSinistra_info.direzione = SINISTRA;
+
+            //         if (pthread_create(&granataDestra, NULL, &proiettile, &granataDestra_info) == 0)
+            //         {
+            //             num_spari++;
+            //         }
+            //         else
+            //         {
+            //             perror("errore creazione thread");
+            //         }
+
+            //         if (pthread_create(&granataSinistra, NULL, &proiettile, &granataSinistra_info) == 0)
+            //         {
+            //             num_spari++;
+            //         }
+            //         else
+            //         {
+            //             perror("errore creazione thread");
+            //         }
+            //     }
+
+            break;
         default:
             break;
         }
@@ -57,7 +96,6 @@ void *rana(void *arg)
         in = (in + 1) % DIM_BUFFER;
         signal_produttore();
 
-        // Evitiamo di usare la CPU al 100%
         usleep(50000);
     }
     return NULL;

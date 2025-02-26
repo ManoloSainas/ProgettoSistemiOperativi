@@ -107,16 +107,9 @@
 // Colori proiettile coccodrillo
 #define COLORE_PROIETTILE_COCCODRILLO 20
 
-#define INVALID_THREAD ((pthread_t)0) // Valore di default per un thread non valido
+#define INVALID_THREAD -500 // Valore di default per un thread non valido
 // Indici per l'utilizzo del buffer
 extern int indexAggiunta, indexRimozione;
-
-// Semafori e mutex per il coordinamento dei thread
-/*pthread_mutex_t mutex;
-sem_t bufferPieno, bufferVuoto;
-
-elementoGioco buffer[DIM_BUFFER]; // Buffer
-elementoGioco oggettoPreso;       // oggetto che viene preso e rimosso dal buffer*/
 
 // direzione flusso fiume
 typedef enum
@@ -244,7 +237,7 @@ extern bool controllo;                           // variabile di controllo per l
 extern int in;  // Indice per inserire nuovi elementi
 extern int out; // Indice per rimuovere elementi
 
-// Function declarations
+// Dichiarazione delle funzioni per la sincronizzazione
 void inizializza_meccanismi_sincronizzazione();
 void dealloca_meccanismi_sincronizzazione();
 void wait_produttore();
